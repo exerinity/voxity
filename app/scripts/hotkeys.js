@@ -55,4 +55,16 @@ document.addEventListener('keydown', (e) => {
         elements.player.volume = elements.vol.value / 2;
         stat_up(`${icon} Volume: ${(elements.player.volume * 100).toFixed(0)}%`);
     }
+
+    else if (e.code.startsWith('Digit')) {
+        const num = parseInt(e.code.slice(5), 10);
+        if (!isNaN(num)) {
+            e.preventDefault();
+            const perc = num === 0 ? 0 : num * 0.1;
+            const dur = elements.player.duration || 0;
+            elements.player.currentTime = dur * perc;
+            const cerp = dur ? (elements.player.currentTime / dur) * 100 : 0;
+            stat_up(`<i class="fa-solid fa-music"></i> Jumping to ${cerp.toFixed(0)}% (${form_time(elements.player.currentTime)} / ${form_time(dur)})`);
+        }
+    }
 });

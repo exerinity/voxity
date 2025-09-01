@@ -101,8 +101,10 @@ function play(file, name) {
             vis_init();
             elements.title2.innerHTML = name;
             get_meta(file);
-            elements.player.volume = elements.vol.value || 1;
-            elements.player.playbackRate = elements.speed.value || 1;
+            const ra = parseFloat(elements.vol.value);
+            elements.player.volume = isNaN(volRaw) ? 1 : Math.max(0, Math.min(1, ra / 2));
+            const rt = parseFloat(elements.speed.value);
+            elements.player.playbackRate = isNaN(rt) ? 1 : rateRaw;
         }).catch(e => {
             if (retries < m_retries) {
                 retries++;
