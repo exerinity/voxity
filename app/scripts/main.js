@@ -104,7 +104,7 @@ function play(file, name) {
             const ra = parseFloat(elements.vol.value);
             elements.player.volume = isNaN(ra) ? 1 : Math.max(0, Math.min(1, ra / 2));
             const rt = parseFloat(elements.speed.value);
-            elements.player.playbackRate = isNaN(rt) ? 1 : rateRaw;
+            elements.player.playbackRate = isNaN(rt) ? 1 : rt;
         }).catch(e => {
             if (retries < m_retries) {
                 retries++;
