@@ -188,7 +188,8 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('info').addEventListener('click', debounce(() => {
-    window.open("https://github.com/exerinity/audion", '_blank');
+    msg("Audion has been completed and the GitHub repository has been archived and privated. To view the source code, just right-click and select 'View Page Source'.<br><br>Thank you for using Audion!")
+    //window.open("https://github.com/exerinity/audion", '_blank');
 }));
 
 document.getElementById('status').addEventListener('click', debounce(() => {
