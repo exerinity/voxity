@@ -16,7 +16,7 @@ if ('serviceWorker' in navigator) {
           if (nw.state === 'installed') {
             if (navigator.serviceWorker.controller) {
               typeof throw_error === 'function'
-                ? msg('<h3>There is a new version of Audion available - refresh to update</h3>')
+                ? msg('There is a new version of Audion available! Please refresh the page to update - or to ensure it <i>actually</i> reloads, press CTRL+Shift+R.')
                 : console.log('New version available - refresh to update');
             } else {
               throw_error('Ready to work offline', true);
