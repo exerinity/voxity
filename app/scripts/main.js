@@ -102,7 +102,7 @@ function play(file, name) {
             elements.title2.innerHTML = name;
             get_meta(file);
             const ra = parseFloat(elements.vol.value);
-            elements.player.volume = isNaN(volRaw) ? 1 : Math.max(0, Math.min(1, ra / 2));
+            elements.player.volume = isNaN(ra) ? 1 : Math.max(0, Math.min(1, ra / 2));
             const rt = parseFloat(elements.speed.value);
             elements.player.playbackRate = isNaN(rt) ? 1 : rateRaw;
         }).catch(e => {
