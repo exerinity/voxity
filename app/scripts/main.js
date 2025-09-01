@@ -44,7 +44,7 @@ function stat_up(msg, ac = true) {
                 elements.branding.innerHTML = null;
             } else if (elements.player.paused) {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
-                elements.branding.innerHTML = '<br><i class="fa-solid fa-tower-broadcast" style="color: #8000ff;"></i> Audion';
+                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast" style="color: #8000ff;"></i> Audion';
             } else {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat" style="color: #8000ff;"></i> Audion';
@@ -101,6 +101,8 @@ function play(file, name) {
             vis_init();
             elements.title2.innerHTML = name;
             get_meta(file);
+            elements.player.volume = elements.vol.value || 1;
+            elements.player.playbackRate = elements.speed.value || 1;
         }).catch(e => {
             if (retries < m_retries) {
                 retries++;
@@ -116,9 +118,8 @@ function play(file, name) {
 
 function init() {
     if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent)) {
-        document.getElementById('mobo_warn').classList.remove('hidden');
-        document.getElementById('app').remove();
-        return;
+        throw_error("Mobile detected");
+        msg(`<h1>Mobile is not recommended</h1><p>Audion is not recommended or optimized for mobile devices. For the best experience, please use a desktop.`)
     }
 
     document.getElementById('app').classList.remove('hidden');
@@ -126,7 +127,7 @@ function init() {
     elements.upload.addEventListener('change', function () {
         const file = elements.upload.files[0];
         if (file) {
-            stat_up(`<i class="fa-solid fa-hourglass fa-spin"></i> Loading: ${file.name}`);
+            stat_up(`<i class="fa-solid fa-hourglass fa-spin"></i> Loading...`);
             play(file, file.name);
         }
     });
@@ -152,7 +153,6 @@ function init() {
     });
 
     elements.player.addEventListener('pause', () => {
-        document.title = 'Audion';
         if (frame_id) {
             cancelAnimationFrame(frame_id);
             frame_id = null;

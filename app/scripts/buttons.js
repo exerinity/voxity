@@ -11,6 +11,7 @@ document.getElementById('plps').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('rwd').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
     const dur = elements.player.duration || 0;
     const t = Math.max(0, (elements.player.currentTime || 0) - 10);
     elements.player.currentTime = t;
@@ -19,6 +20,7 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('fwd').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
     const dur = elements.player.duration || 0;
     const t = Math.min(dur, (elements.player.currentTime || 0) + 10);
     elements.player.currentTime = t;
@@ -27,6 +29,7 @@ document.getElementById('fwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('stop').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
     elements.player.currentTime = 0;
     elements.index.value = 0;
     stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
@@ -234,6 +237,7 @@ document.getElementById('album').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('volc').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_vol = Math.round(elements.player.volume * 100);
     msg(`
         <h2>Set volume</h2>
@@ -287,6 +291,7 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('speedc').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_spd = elements.speed.value;
     msg(`
         <h2>Set speed</h2>
@@ -340,6 +345,7 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('prog').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
     const dur = elements.player.duration || 0;
     const cur = elements.player.currentTime || 0;
 
