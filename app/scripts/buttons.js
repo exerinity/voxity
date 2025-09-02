@@ -1,12 +1,15 @@
 document.getElementById('plps').addEventListener('click', debounce(() => {
+    if (!metadata.title && !metadata.artist) {
+        return throw_error('No track playing!');
+    }
     if (elements.player.paused) {
         elements.player.play();
         document.getElementById('plps').innerHTML = '<i class="fa-solid fa-pause"></i>';
-        stat_up('<i class="fa-solid fa-circle-play"></i> Playing...');
+        stat_up('<i class="fa-solid fa-circle-play"></i> Resumed playback');
     } else {
         elements.player.pause();
         document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
-        stat_up('<i class="fa-solid fa-circle-pause"></i> Paused');
+        stat_up('<i class="fa-solid fa-circle-pause"></i> Paused playback');
     }
 }));
 
@@ -17,6 +20,10 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
     elements.player.currentTime = t;
     elements.index.value = t;
     stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(t)} / ${form_time(dur)}`);
+}));
+
+document.getElementById('audionalert').addEventListener('click', debounce(() => {
+    window.open('https://bsky.app/profile/exerinity.dev/post/3lxth5n5muc2f', '_blank');
 }));
 
 document.getElementById('fwd').addEventListener('click', debounce(() => {
@@ -93,6 +100,8 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
     colchange.addEventListener('input', () => {
         viz_color = colchange.value;
         button.style.color = viz_color;
+        // change lyric-colour
+        document.documentElement.style.setProperty('--lyric-colour', viz_color);
         stat_up(`<i class="fa-solid fa-palette"></i> Visualizer color set to: <span style="color: ${viz_color};">${viz_color}</span>`);
     });
     colchange.addEventListener('blur', () => {
@@ -185,11 +194,6 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
             });
         }
     }, 0);
-}));
-
-document.getElementById('info').addEventListener('click', debounce(() => {
-    msg("Audion has been completed and the GitHub repository has been archived and privated. To view the source code, just right-click and select 'View Page Source'.<br><br>Thank you for using Audion!")
-    //window.open("https://github.com/exerinity/audion", '_blank');
 }));
 
 document.getElementById('status').addEventListener('click', debounce(() => {

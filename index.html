@@ -22,12 +22,14 @@
 </head>
 
 <body>
-    <audio src="https://i.exerinity.com/Windows%20XP%20Startup.flac" autoplay id="sucsound" preload></audio>
-    <audio src="https://i.exerinity.com/Windows%20XP%20Exclamation.flac" id="errsound" preload></audio>
+    <audio src="welcome.ogg" autoplay id="sucsound" preload></audio>
+    <audio src="error.ogg" id="errsound" preload="auto"></audio>
+    <audio src="message.ogg" id="msgsound" preload="auto"></audio>
     <div id="mobo_warn" class="hidden">
         <h1>Mobile is not supported</h1>
         <p>
-            You probably won't enjoy using this on mobile. You have been warned - request desktop site if you want to continue.
+            You probably won't enjoy using this on mobile. You have been warned - request desktop site if you want to
+            continue.
         </p>
     </div>
     <noscript>
@@ -62,15 +64,16 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button id="rwd" title="Rewind 10s"><i class="fa-solid fa-backward"></i></button>
-                    <button id="plps" title="Play/Pause"><i class="fa-solid fa-play"></i></button>
-                    <button id="fwd" title="Forward 10s"><i class="fa-solid fa-forward"></i></button>
-                    <button id="stop" title="Go back to 0"><i class="fa-solid fa-arrow-rotate-left"></i></button>
-                    <button id="loop" title="Toggle Loop Mode"><i class="fa-solid fa-repeat"></i></button>
-                    <button id="viscolchange" title="Change Visualizer Colour"><i class="fa-solid fa-palette"></i></button>
-                    <button id="hotkeys">Hotkeys</button>
-                    <button id="toys">Toys</button>
-                    <button id="info" title="Open GitHub repo"><i class="fa-brands fa-github"></i></button>
+                    <button id="rwd" title="Rewind 10s" class="bop"><i class="fa-solid fa-backward"></i></button>
+                    <button id="plps" title="Play/pause" class="bop"><i class="fa-solid fa-play"></i></button>
+                    <button id="fwd" title="Forward 10s" class="bop"><i class="fa-solid fa-forward"></i></button>
+                    <button id="stop" title="Go back to 0" class="bop"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                    <button id="loop" title="Toggle loop"><i class="fa-solid fa-repeat"></i></button>
+                    <button id="viscolchange" title="Change accent color"><i
+                            class="fa-solid fa-palette"></i></button>
+                    <button id="hotkeys" class="bop">Hotkeys</button>
+                    <button id="toys" class="bop">Toys</button>
+                    <button id="audionalert" title="Audion final update" class="bop"><i class="fa-solid fa-info"></i></button>
                 </div>
                 <div class="sliders">
                     <div class="slidez">

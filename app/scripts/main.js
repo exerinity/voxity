@@ -18,7 +18,6 @@ const elements = {
     speed_max: document.getElementById('spd-max'),
     viz_int: document.getElementById('viz-intensity'),
     viz_mo: document.getElementById('viz-mode'),
-    eq_pre: document.getElementById('eq-preset'),
     err_tab: document.getElementById('error'),
     pnow: document.getElementById('play-now'),
     stopnow: document.getElementById('cancel'),
@@ -44,10 +43,10 @@ function stat_up(msg, ac = true) {
                 elements.branding.innerHTML = null;
             } else if (elements.player.paused) {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
-                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast" style="color: #8000ff;"></i> Audion';
+                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Audion';
             } else {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
-                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat" style="color: #8000ff;"></i> Audion';
+                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Audion';
             }
             stat_out = null;
         }, 2000);
@@ -269,7 +268,19 @@ function act_truncate(text, truncate_max = 30) {
 }
 
 
-stat_up('<i class="fa-solid fa-tower-broadcast fa-beat" style="color: #8000ff;"></i> Welcome to Audion!');
+stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
 
 
 document.addEventListener('DOMContentLoaded', init) || init();
+setTimeout (() => {
+    var war = `
+<h1>Welcome to Audion</h1>
+<p>Audion is a semi-advanced PWA music player, that supports any file your browser does.</p>
+<p>Audion has been discontinued and will no longer receive updates, but it will still work perfectly fine! <a href="https://bsky.app/profile/exerinity.dev/post/3lxth5n5muc2f" target="_blank" rel="noopener noreferrer">Read more on Bluesky</a>.</p>`
+
+// show message box on first load, then add a local storage flag that they've seen it
+if (!localStorage.getItem('seen_msg_v2')) {
+    localStorage.setItem('seen_msg_v2', 'true');
+    msg(war);
+}
+}, 2500);

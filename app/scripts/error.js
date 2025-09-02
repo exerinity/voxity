@@ -1,42 +1,150 @@
-const max_err_boxes = 5;
-const err_container = document.createElement('div');
-err_container.style.position = 'fixed';
-err_container.style.bottom = '20px';
-err_container.style.right = '20px';
-err_container.style.display = 'flex';
-err_container.style.flexDirection = 'column-reverse';
-err_container.style.gap = '10px';
-document.body.appendChild(err_container);
+const max = 5;
+const c = document.createElement('div');
+c.style.position = 'fixed';
+c.style.bottom = '20px';
+c.style.right = '20px';
+c.style.display = 'flex';
+c.style.flexDirection = 'column-reverse';
+c.style.gap = '10px';
+c.style.zIndex = '2147483647';
+document.body.appendChild(c);
 
-function throw_error(msg, success = false) {
-    const err_box = document.createElement('div');
-    err_box.className = 'error-box';
-    err_box.style.background = success ? '#047500ff' : '#da0000ff';
-    err_box.style.color = 'white';
-    err_box.style.padding = '10px 20px';
-    err_box.style.borderRadius = '4px';
-    err_box.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
-    err_box.style.opacity = '1';
-    err_box.style.transition = 'opacity 1s ease';
-    err_box.innerHTML = `<i class="fa-solid ${success ? 'fa-check' : 'fa-triangle-exclamation'}"></i> ${msg}`;
+function throw_error(msg, ok = false) {
+    const dur = 5000;
 
-    err_container.appendChild(err_box);
+    const box = document.createElement('div');
+    box.className = 'error-box';
+    box.style.background = ok ? '#047500ff' : '#da0000ff';
+    box.style.color = 'white';
+    box.style.padding = '12px 36px 16px 16px';
+    box.style.borderRadius = '8px';
+    box.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+    box.style.opacity = '1';
+    box.style.transition = 'opacity 1s ease, transform 160ms ease, max-height 200ms ease';
+    box.style.overflow = 'hidden';
+    box.style.maxHeight = '72px';
+    box.setAttribute('role', 'status');
+    box.setAttribute('aria-live', ok ? 'polite' : 'assertive');
 
-    setTimeout(() => {
-        err_box.style.opacity = '0';
+    const cnt = document.createElement('div');
+    cnt.className = 'error-content';
+    cnt.style.display = 'flex';
+    cnt.style.alignItems = 'flex-start';
+    cnt.style.gap = '10px';
+
+    const ico = document.createElement('i');
+    ico.className = `fa-solid ${ok ? 'fa-check' : 'fa-triangle-exclamation'}`;
+    ico.style.marginTop = '2px';
+
+    const txt = document.createElement('span');
+    txt.className = 'error-message';
+    txt.innerHTML = msg;
+    txt.style.display = '-webkit-box';
+    txt.style.webkitBoxOrient = 'vertical';
+    txt.style.overflow = 'hidden';
+    txt.style.webkitLineClamp = '2';
+
+    cnt.appendChild(ico);
+    cnt.appendChild(txt);
+
+    const x = document.createElement('button');
+    x.className = 'error-close';
+    x.setAttribute('aria-label', 'Dismiss notification');
+    x.innerHTML = '&times;';
+    x.style.position = 'absolute';
+    x.style.top = '6px';
+    x.style.right = '6px';
+    x.style.width = '24px';
+    x.style.height = '24px';
+    x.style.border = '0';
+    x.style.background = 'transparent';
+    x.style.color = 'white';
+    x.style.opacity = '0.85';
+    x.style.cursor = 'pointer';
+    x.style.borderRadius = '4px';
+
+    const prog = document.createElement('div');
+    prog.className = 'error-progress';
+    prog.style.position = 'absolute';
+    prog.style.left = '0';
+    prog.style.right = '0';
+    prog.style.bottom = '0';
+    prog.style.height = '3px';
+    prog.style.background = '#ffffff20';
+    const bar = document.createElement('span');
+    bar.style.display = 'block';
+    bar.style.height = '100%';
+    bar.style.width = '100%';
+    bar.style.background = '#ffffff';
+    bar.style.opacity = '0.85';
+    bar.style.transformOrigin = 'left';
+    bar.style.transform = 'scaleX(1)';
+    prog.appendChild(bar);
+
+    box.appendChild(x);
+    box.appendChild(cnt);
+    box.appendChild(prog);
+
+    c.appendChild(box);
+
+    let paus = false;
+    let raf = null;
+    let el = 0;
+    let last = performance.now();
+
+    const step = (now) => {
+        if (!paus) {
+            el += now - last;
+            const rem = Math.max(0, dur - el);
+            const sc = rem / dur;
+            bar.style.transform = `scaleX(${sc})`;
+            if (rem <= 0) {
+                bye();
+                return;
+            }
+        }
+        last = now;
+        raf = requestAnimationFrame(step);
+    };
+
+    const bye = () => {
+        if (raf) cancelAnimationFrame(raf);
+        box.style.opacity = '0';
         setTimeout(() => {
-            err_box.remove();
+            box.remove();
         }, 1000);
-    }, 5000);
+    };
 
-    if (err_container.children.length > max_err_boxes) {
-        err_container.firstChild.remove();
+    box.addEventListener('mouseenter', () => {
+        paus = true;
+        box.style.maxHeight = '600px';
+        txt.style.webkitLineClamp = 'unset';
+    });
+    box.addEventListener('mouseleave', () => {
+        paus = false;
+        last = performance.now();
+        box.style.maxHeight = '72px';
+        txt.style.webkitLineClamp = '2';
+    });
+
+    x.addEventListener('click', (e) => {
+        e.stopPropagation();
+        paus = false;
+        bye();
+    });
+
+    requestAnimationFrame((t) => {
+        last = t;
+        step(t);
+    });
+
+    if (c.children.length > max) {
+        c.firstChild?.remove();
     }
 
-    if (!success) {
+    if (!ok) {
         elements.error_sound.currentTime = 0;
         elements.error_sound.play();
+        console.error(msg);
     }
-
-    if (!success) console.error(msg);
 }

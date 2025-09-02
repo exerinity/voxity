@@ -1,11 +1,13 @@
 async function msg(text) {
+    document.getElementById('msgsound').position = 0;
+    document.getElementById('msgsound').play().catch(() => {});
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
     overlay.style.top = 0;
     overlay.style.left = 0;
     overlay.style.width = '100vw';
     overlay.style.height = '100vh';
-    overlay.style.background = '#00000034';
+    overlay.style.background = 'rgba(0, 0, 0, 0.62)';
     overlay.style.backdropFilter = 'blur(7px)';
     overlay.style.zIndex = 9999;
     overlay.style.display = 'flex';
