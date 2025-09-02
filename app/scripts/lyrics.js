@@ -1,6 +1,7 @@
 let cur_file = null;
 let lrc_data = [];
 let globalart = '';
+let _ms_art_url = null;
 
 const metadata = {};
 
@@ -35,9 +36,20 @@ function get_meta(file) {
                 cover.classList.remove('hidden');
                 cover.title = metadata.album || metadata.title || 'Cover art';
                 cover.alt = `Cover art for ${metadata.album || metadata.title} by ${metadata.artist}`;
+                if ('mediaSession' in navigator) {
+                    try {
+                        if (_ms_art_url) { URL.revokeObjectURL(_ms_art_url); _ms_art_url = null; }
+                        const blob = new Blob([new Uint8Array(metadata.picture.data)], { type: metadata.picture.format || 'image/jpeg' });
+                        _ms_art_url = URL.createObjectURL(blob);
+                        set_media_session_metadata(_ms_art_url);
+                    } catch {
+                        set_media_session_metadata();
+                    }
+                }
             } else {
                 globalart = ''; 
                 cover.classList.add('hidden');
+                if ('mediaSession' in navigator) set_media_session_metadata();
             }
 
             get_lyrics(metadata.title, metadata.artist, metadata.album, Math.floor(document.getElementById('player').duration));
@@ -54,6 +66,7 @@ function get_meta(file) {
             document.getElementById('cover-art').classList.add('hidden');
             globalart = ''; 
             throw_error("This file is missing sufficient metadata, lyrics most likely won't work");
+            if ('mediaSession' in navigator) set_media_session_metadata();
         }
     });
 }

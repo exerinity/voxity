@@ -151,6 +151,13 @@ function init() {
             cancelAnimationFrame(frame_id);
         }
         frame_id = requestAnimationFrame(vis_init);
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'playing'; } catch {}
+            const setPos = navigator.mediaSession.setPositionState?.bind(navigator.mediaSession);
+            if (setPos) {
+                try { setPos({ duration: elements.player.duration || 0, playbackRate: elements.player.playbackRate || 1, position: elements.player.currentTime || 0 }); } catch {}
+            }
+        }
     });
 
     elements.player.addEventListener('pause', () => {
@@ -158,10 +165,20 @@ function init() {
             cancelAnimationFrame(frame_id);
             frame_id = null;
         }
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'paused'; } catch {}
+            const setPos = navigator.mediaSession.setPositionState?.bind(navigator.mediaSession);
+            if (setPos) {
+                try { setPos({ duration: elements.player.duration || 0, playbackRate: elements.player.playbackRate || 1, position: elements.player.currentTime || 0 }); } catch {}
+            }
+        }
     });
 
     elements.player.addEventListener('ended', () => {
         stat_up('<i class="fa-solid fa-octagon"></i> Stopped');
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'paused'; } catch {}
+        }
     });
 
     elements.player.addEventListener('error', (e) => {
@@ -185,6 +202,15 @@ function init() {
         elements.index.max = elements.player.duration || 100;
         elements.index.value = elements.player.currentTime;
         update_lyrics();
+        if ('mediaSession' in navigator && navigator.mediaSession.setPositionState) {
+            try {
+                navigator.mediaSession.setPositionState({
+                    duration: elements.player.duration || 0,
+                    playbackRate: elements.player.playbackRate || 1,
+                    position: elements.player.currentTime || 0,
+                });
+            } catch {}
+        }
     });
 
     elements.vol.addEventListener('input', () => {
@@ -240,6 +266,29 @@ function init() {
     wheel(elements.index, () => 3);
     wheel(elements.vol, () => 0.1); 
     wheel(elements.speed, () => 0.01);
+
+    if ('mediaSession' in navigator) {
+        try {
+            navigator.mediaSession.setActionHandler('play', async () => {
+                try { await elements.player.play(); } catch {}
+            });
+            navigator.mediaSession.setActionHandler('pause', () => {
+                elements.player.pause();
+            });
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                if (typeof window.nextTrack === 'function') {
+                    window.nextTrack();
+                } else {
+                }
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                if (typeof window.prevTrack === 'function') {
+                    window.prevTrack();
+                } else {
+                }
+            });
+        } catch {}
+    }
 }
 
 function form_time(t) {
@@ -278,7 +327,6 @@ setTimeout (() => {
 <p>Audion is a semi-advanced PWA music player, that supports any file your browser does.</p>
 <p>Audion has been discontinued and will no longer receive updates, but it will still work perfectly fine! <a href="https://bsky.app/profile/exerinity.dev/post/3lxth5n5muc2f" target="_blank" rel="noopener noreferrer">Read more on Bluesky</a>.</p>`
 
-// show message box on first load, then add a local storage flag that they've seen it
 if (!localStorage.getItem('seen_msg_v2')) {
     localStorage.setItem('seen_msg_v2', 'true');
     msg(war);
