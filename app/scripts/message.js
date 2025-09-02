@@ -1,13 +1,11 @@
 async function msg(text) {
-    document.getElementById('msgsound').position = 0;
-    document.getElementById('msgsound').play().catch(() => {});
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
     overlay.style.top = 0;
     overlay.style.left = 0;
     overlay.style.width = '100vw';
     overlay.style.height = '100vh';
-    overlay.style.background = 'rgba(0, 0, 0, 0.62)';
+    overlay.style.background = 'var(--overlay-bg)';
     overlay.style.backdropFilter = 'blur(7px)';
     overlay.style.zIndex = 9999;
     overlay.style.display = 'flex';
@@ -16,8 +14,8 @@ async function msg(text) {
     overlay.style.animation = 'fin 0.2s ease';
 
     const box = document.createElement('div');
-    box.style.background = '#202020';
-    box.style.color = 'white';
+    box.style.background = 'var(--dialog-bg)';
+    box.style.color = 'var(--fg)';
     box.style.borderRadius = '16px';
     box.style.boxShadow = '0 4px 32px rgba(0,0,0,0.18)';
     box.style.padding = '2rem 2.5rem 1.5rem 2.5rem';
@@ -34,13 +32,13 @@ async function msg(text) {
     title.style.left = '16px';
     title.style.fontSize = '1.2rem';
     title.style.fontWeight = 'bold';
-    title.style.color = 'white';
+    title.style.color = 'var(--fg)';
     title.style.cursor = 'move';
     title.style.display = 'flex';
     title.style.alignItems = 'center';
     title.style.height = '24px';
     title.style.userSelect = 'none';
-    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: #8000ff"></i> Audion`;
+    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-colour)"></i> Audion`;
 
     const close = document.createElement('button');
     close.innerHTML = '<i class="fa-solid fa-xmark"></i>';
@@ -52,10 +50,10 @@ async function msg(text) {
     close.style.border = 'none';
     close.style.fontSize = '1.3rem';
     close.style.cursor = 'pointer';
-    close.style.color = 'red';
+    close.style.color = 'var(--error-bg)';
     close.style.transition = 'color 0.2s';
-    close.onmouseenter = () => close.style.color = 'white';
-    close.onmouseleave = () => close.style.color = 'red';
+    close.onmouseenter = () => close.style.color = 'var(--fg)';
+    close.onmouseleave = () => close.style.color = 'var(--error-bg)';
 
     const removeOverlay = () => {
         box.style.animation = 'zout 0.15s ease forwards';
@@ -98,7 +96,7 @@ async function msg(text) {
     msg.style.lineHeight = '1.6';
     msg.innerHTML = `
     <div style="margin-bottom:1rem; cursor: default;">${text}</div>
-    <div class="pop" style="align-items: center"><button class="bu">Close</button></div>
+    <div class="pop" style="align-items: center"><button class="bu" style="background: var(--btn-bg); color: var(--fg);">Close</button></div>
 `;
     msg.querySelector('.bu').addEventListener('click', removeOverlay);
 

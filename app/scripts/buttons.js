@@ -109,6 +109,100 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
     });
 }));
 
+(function theme() {
+    const THEMES = ['light', 'grey', 'dim', 'lights-out'];
+    const key = 'au_theme';
+
+    function apply(theme) {
+        const t = THEMES.includes(theme) ? theme : 'dim';
+        document.documentElement.setAttribute('data-theme', t);
+        try { localStorage.setItem(key, t); } catch {}
+    }
+
+    try {
+        const stored = localStorage.getItem(key);
+        if (stored) apply(stored);
+    } catch {}
+
+    const btn = document.getElementById('theme');
+    if (btn) {
+        btn.addEventListener('click', debounce(() => {
+            const cur = document.documentElement.getAttribute('data-theme') || 'dim';
+            const idx = THEMES.indexOf(cur);
+            const next = THEMES[(idx + 1) % THEMES.length];
+            apply(next);
+            const label = next.replace('-', ' ');
+            stat_up(`<i class="fa-solid fa-circle-half-stroke"></i> Theme: ${label}`);
+            btn.title = `Toggle theme (current: ${label})`;
+        }));
+    }
+})();
+
+document.getElementById('pastelrc').addEventListener('click', debounce(() => {
+    msg(`
+        <h2>Paste your own lyrics</h2>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+            <p style="margin: 0; color: #aaa;">Paste LRC text (e.g., [00:12.34] Line here). Unsupported lines are ignored.</p>
+            <textarea id="lrc_textarea" placeholder="[00:00.00] Start\n[00:10.50] Next line" rows="10" 
+                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 0.95rem;"></textarea>
+            <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                <button id="lrc_clear" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear</button>
+                <button id="lrc_apply" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Apply</button>
+            </div>
+        </div>
+    `);
+
+    setTimeout(() => {
+        const ta = document.getElementById('lrc_textarea');
+        const apply = document.getElementById('lrc_apply');
+        const clr = document.getElementById('lrc_clear');
+
+        if (ta) {
+            ta.focus();
+        }
+
+        if (clr) {
+            clr.addEventListener('click', () => {
+                ta.value = '';
+                ta.focus();
+            });
+        }
+
+        if (apply) {
+            const da = () => {
+                const raw = (ta.value || '').trim();
+                if (!raw) {
+                    return throw_error('Please paste some LRC text first');
+                }
+                try {
+                    let parsed = lrc_parse(raw);
+                    if (!parsed || parsed.length === 0) {
+                        parsed = raw.split('\n').map(line => ({ time: 0, text: line }));
+                    }
+                    parsed = parsed.filter(l => l && typeof l.text === 'string').sort((a,b) => a.time - b.time);
+                    if (parsed.length === 0) {
+                        return throw_error('No usable lines found');
+                    }
+                    lrc_wipe();
+                    lrc_data = parsed;
+                    update_lyrics();
+                    stat_up('<i class="fa-solid fa-check"></i> Applied pasted lyrics');
+                } catch (e) {
+                    console.error(e);
+                    throw_error('Failed to parse LRC');
+                }
+            };
+
+            apply.addEventListener('click', da);
+            ta?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    da();
+                }
+            });
+        }
+    }, 0);
+}));
+
 document.getElementById('toys').addEventListener('click', debounce(() => {
     msg(`
         <h2>Toys</h2>

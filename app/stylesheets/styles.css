@@ -15,8 +15,8 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #1a1a1a;
-    color: white;
+    background-color: var(--bg);
+    color: var(--fg);
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
     overflow: hidden;
@@ -28,7 +28,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: #FFFFFF;
+    color: var(--fg-strong);
     font-weight: 900;
 
 }
@@ -62,7 +62,7 @@ strong {
     justify-content: space-between;
     align-items: center;
     padding: 20px 20px;
-    background: #111;
+    background: var(--header-bg);
     cursor: default;
     user-select: none;
 }
@@ -71,7 +71,7 @@ strong {
     margin: 0;
     font-size: 16px;
     font-weight: normal;
-    color: #ffffff;
+    color: var(--fg);
     cursor: pointer;
 }
 
@@ -95,7 +95,7 @@ strong {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: #222;
+    background: var(--panel-bg);
     padding: 10px;
     border-radius: 8px;
     overflow-y: auto;
@@ -121,10 +121,10 @@ strong {
 .inputg input[type="text"] {
     width: 100%;
     padding: 8px;
-    background: #333;
-    border: 1px solid #555;
+    background: var(--control-bg);
+    border: 1px solid var(--control-br);
     border-radius: 4px;
-    color: white;
+    color: var(--fg);
 }
 
 #player {
@@ -153,16 +153,16 @@ strong {
 
 .controls button {
     padding: 10px 20px;
-    background: #333;
+    background: var(--btn-bg);
     border: none;
     border-radius: 4px;
-    color: white;
+    color: var(--fg);
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .controls button:hover {
-    background: #555;
+    background: var(--btn-hover-bg);
 }
 
 .sliders {
@@ -186,7 +186,7 @@ strong {
     align-items: center;
     gap: 8px;
     font-family: 'Courier New', monospace;
-    background: #222;
+    background: var(--panel-bg);
     padding: 4px 8px;
     border-radius: 4px;
 }
@@ -204,7 +204,7 @@ strong {
 .main_slide input[type="range"] {
     width: 100%;
     height: 6px;
-    background: #444;
+    background: var(--range-bg);
     border-radius: 3px;
     appearance: none;
     outline: none;
@@ -215,7 +215,7 @@ strong {
     appearance: none;
     width: 14px;
     height: 14px;
-    background: #e4e4e4;
+    background: var(--thumb-bg);
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.2s;
@@ -228,7 +228,7 @@ strong {
 .main_slide input[type="range"]::-moz-range-thumb {
     width: 14px;
     height: 14px;
-    background: #e9e9e9;
+    background: var(--thumb-bg);
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.2s;
@@ -245,7 +245,7 @@ strong {
 #visualizer {
     width: 100%;
     height: 200px;
-    background: #000;
+    background: var(--visualizer-bg);
     border-radius: 8px;
 }
 
@@ -255,17 +255,17 @@ strong {
 
 .viz_cons select {
     padding: 8px;
-    background: #333;
-    border: 1px solid #555;
+    background: var(--control-bg);
+    border: 1px solid var(--control-br);
     border-radius: 4px;
-    color: white;
+    color: var(--fg);
 }
 
 .lyrics-container {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
-    color: #d4d4d4;
+    color: var(--lyrics-fg);
 }
 
 .lyrics-container p {
@@ -285,10 +285,10 @@ strong {
 
 .error-box {
     position: relative;
-    background: #a00;
+    background: var(--error-bg);
     padding: 12px 36px 16px 16px;
     border-radius: 8px;
-    color: white;
+    color: var(--fg);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     transition: opacity 1s ease, transform 160ms ease, max-height 200ms ease;
     overflow: hidden;
@@ -315,7 +315,7 @@ strong {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #061f3040;
+    background: var(--statusbox-bg);
     padding: 10px 20px;
     border-radius: 4px;
 }
@@ -325,7 +325,7 @@ strong {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #333;
+    background: var(--dialog-bg);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -338,23 +338,23 @@ strong {
 
 #confirm-dialog button {
     padding: 8px 16px;
-    background: #444;
+    background: var(--btn-bg);
     border: none;
     border-radius: 4px;
-    color: white;
+    color: var(--fg);
     cursor: pointer;
     margin: 0 5px;
 }
 
 #confirm-dialog button:hover {
-    background: #555;
+    background: var(--btn-hover-bg);
 }
 
 .spinner {
     width: 20px;
     height: 20px;
-    border: 4px solid #061f30;
-    border-top-color: #1d9bf0;
+    border: 4px solid var(--spinner-trk);
+    border-top-color: var(--link);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -381,36 +381,37 @@ strong {
 .track-title {
     font-size: 2em;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--fg);
     margin: 0 0 6px 0;
     letter-spacing: 0.04em;
-    text-shadow: 0 1px 4px #2228;
+    text-shadow: 0 1px 4px var(--shadow-strong);
     cursor: pointer;
 }
 
 .track-artist {
     font-size: 1.2em;
-    color: #dadada;
+    color: var(--muted);
     margin: 0 0 4px 0;
     font-weight: 500;
-    text-shadow: 0 1px 2px #2226;
+    text-shadow: 0 1px 2px var(--shadow);
     cursor: pointer;
 }
 
 .track-album {
     font-size: 1em;
-    color: #bbbbbb;
+    color: var(--muted-2);
     margin: 0;
     font-style: italic;
     opacity: 0.85;
     cursor: pointer;
 }
 
+
 a,
 a:visited,
 a:active,
 a:hover {
-    color: #1d9bf0;
+    color: var(--link);
     text-decoration: none;
     transition: color 0.2s;
 }
@@ -424,25 +425,16 @@ a:hover {
 
 .pop button {
     padding: 10px 20px;
-    background: #333;
+    background: var(--btn-bg);
     border: none;
     border-radius: 4px;
-    color: white;
+    color: var(--fg);
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .pop button:hover {
-    background: #555;
-}
-
-a,
-a:visited,
-a:active,
-a:hover {
-    color: #cfcfcf;
-    text-decoration: none;
-    transition: color 0.2s;
+    background: var(--btn-hover-bg);
 }
 
 .mqcont {
@@ -472,5 +464,134 @@ a:hover {
 }
 
 :root {
+    /* Accent */
     --lyric-colour: #8000ff;
+    --link: #1d9bf0;
+
+    --bg: #1a1a1a;
+    --fg: #ffffff;
+    --fg-strong: #ffffff;
+    --muted: #dadada;
+    --muted-2: #bbbbbb;
+    --panel-bg: #222;
+    --header-bg: #111;
+    --control-bg: #333;
+    --control-br: #555;
+    --btn-bg: #333;
+    --btn-hover-bg: #555;
+    --range-bg: #444;
+    --thumb-bg: #e4e4e4;
+    --visualizer-bg: #000;
+    --lyrics-fg: #d4d4d4;
+    --error-bg: #a00;
+    --statusbox-bg: #061f3040;
+    --dialog-bg: #333;
+    --overlay-bg: rgba(0, 0, 0, 0.62);
+    --spinner-trk: #061f30;
+    --shadow: #2226;
+    --shadow-strong: #2228;
+}
+
+:root[data-theme="light"] {
+    --bg: #f7f7f7;
+    --fg: #111;
+    --fg-strong: #000;
+    --muted: #444;
+    --muted-2: #666;
+    --panel-bg: #ffffff;
+    --header-bg: #f0f0f0;
+    --control-bg: #ffffff;
+    --control-br: #ddd;
+    --btn-bg: #ffffff;
+    --btn-hover-bg: #eaeaea;
+    --range-bg: #ddd;
+    --thumb-bg: #666;
+    --visualizer-bg: #f0f0f0;
+    --lyrics-fg: #333;
+    --error-bg: #d9534f;
+    --statusbox-bg: #061f301a;
+    --dialog-bg: #ffffff;
+    --overlay-bg: rgba(0, 0, 0, 0.38);
+    --spinner-trk: #cfe7f5;
+    --link: #0a84ff;
+    --shadow: #0001;
+    --shadow-strong: #0002;
+}
+
+:root[data-theme="grey"] {
+    --bg: #2a2a2a;
+    --fg: #f2f2f2;
+    --fg-strong: #fff;
+    --muted: #d0d0d0;
+    --muted-2: #bdbdbd;
+    --panel-bg: #303030;
+    --header-bg: #262626;
+    --control-bg: #3a3a3a;
+    --control-br: #555;
+    --btn-bg: #3a3a3a;
+    --btn-hover-bg: #4a4a4a;
+    --range-bg: #505050;
+    --thumb-bg: #e4e4e4;
+    --visualizer-bg: #1c1c1c;
+    --lyrics-fg: #dedede;
+    --error-bg: #a33;
+    --statusbox-bg: #061f3040;
+    --dialog-bg: #3a3a3a;
+    --overlay-bg: rgba(0, 0, 0, 0.55);
+    --spinner-trk: #0d2536;
+    --link: #7cc6ff;
+    --shadow: #0006;
+    --shadow-strong: #0008;
+}
+
+:root[data-theme="dim"] {
+    --bg: #121212;
+    --fg: #eaeaea;
+    --fg-strong: #fff;
+    --muted: #d0d0d0;
+    --muted-2: #bcbcbc;
+    --panel-bg: #1a1a1a;
+    --header-bg: #0f0f0f;
+    --control-bg: #1f1f1f;
+    --control-br: #333;
+    --btn-bg: #242424;
+    --btn-hover-bg: #333333;
+    --range-bg: #2c2c2c;
+    --thumb-bg: #e4e4e4;
+    --visualizer-bg: #050505;
+    --lyrics-fg: #cfcfcf;
+    --error-bg: #a22;
+    --statusbox-bg: #061f3040;
+    --dialog-bg: #1f1f1f;
+    --overlay-bg: rgba(0, 0, 0, 0.62);
+    --spinner-trk: #0d2536;
+    --link: #5fb3ff;
+    --shadow: #0006;
+    --shadow-strong: #0008;
+}
+
+:root[data-theme="lights-out"] {
+    --bg: #000000;
+    --fg: #f1f1f1;
+    --fg-strong: #fff;
+    --muted: #cfcfcf;
+    --muted-2: #b5b5b5;
+    --panel-bg: #0b0b0b;
+    --header-bg: #000000;
+    --control-bg: #111111;
+    --control-br: #222222;
+    --btn-bg: #101010;
+    --btn-hover-bg: #1a1a1a;
+    --range-bg: #1a1a1a;
+    --thumb-bg: #e4e4e4;
+    --visualizer-bg: #000000;
+    --lyrics-fg: #d8d8d8;
+    --error-bg: #911;
+    --statusbox-bg: #00000066;
+    --dialog-bg: #111111;
+    --overlay-bg: rgba(0, 0, 0, 0.66);
+    --spinner-trk: #061f30;
+    --link: #4aa3ff;
+    --shadow: #0006;
+    --shadow-strong: #0008;
 }
