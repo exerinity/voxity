@@ -471,50 +471,6 @@ a:hover {
     }
 }
 
-:root { color-scheme: dark; }
-
-body { background-color: #000; color: #ffffff; }
-
-.header { background: #000; }
-.right { background: #000; }
-
-.inputg input[type="file"],
-.inputg input[type="text"] {
-    background: #0d0d0d;
-    border: 1px solid #1f1f1f;
-    color: #ffffff;
-}
-
-.controls button,
-.pop button {
-    background: #0d0d0d;
-}
-.controls button:hover,
-.pop button:hover { background: #1a1a1a; }
-
-.main_slide { background: #000; }
-.main_slide input[type="range"] { background: #111; }
-
-.viz_cons select {
-    background: #0d0d0d;
-    border: 1px solid #1f1f1f;
-    color: #ffffff;
-}
-
-#statusbox { background: #00000066; }
-
-#confirm-dialog { background: #000; }
-#confirm-dialog button { background: #0d0d0d; }
-#confirm-dialog button:hover { background: #1a1a1a; }
-
-.lyrics-container { color: #ffffff; }
-
-* { scrollbar-color: #333 #000; }
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #222; border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: #333; }
-
 :root {
     --lyric-colour: #8000ff;
 }
