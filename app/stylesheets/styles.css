@@ -20,6 +20,9 @@ body {
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
     overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 h1,
@@ -64,7 +67,6 @@ strong {
     padding: 20px 20px;
     background: var(--header-bg);
     cursor: default;
-    user-select: none;
 }
 
 #status {
@@ -88,7 +90,6 @@ strong {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    user-select: none;
 }
 
 .right {

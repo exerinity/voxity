@@ -321,16 +321,8 @@ stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audi
 
 
 document.addEventListener('DOMContentLoaded', init) || init();
-setTimeout (() => {
-    var war = `
-<h1>Welcome to Audion</h1>
-<p>Audion is a semi-advanced PWA music player, that supports any file your browser does.</p>
-<p>Audion has been discontinued and will no longer receive updates, but it will still work perfectly fine! <a href="https://bsky.app/profile/exerinity.dev/post/3lxth5n5muc2f" target="_blank" rel="noopener noreferrer">Read more on Bluesky</a>.</p>`
-
-if (!localStorage.getItem('seen_msg_v2')) {
-    localStorage.setItem('seen_msg_v2', 'true');
-    msg(war);
-}
-}, 2500);
+document.getElementById('dropzone').addEventListener('contextmenu', (e) => e.preventDefault());
+document.getElementById('droppedzone').addEventListener('contextmenu', (e) => e.preventDefault());
+// intentionally, i am leaving the top status bar right-clickable, but to keep it cleaner, no right-click on the rest of the app
 
 console.log('Main module loaded');

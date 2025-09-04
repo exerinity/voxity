@@ -7,14 +7,14 @@ document.getElementById('plps').addEventListener('click', debounce(() => {
         document.getElementById('plps').innerHTML = '<i class="fa-solid fa-pause"></i>';
         stat_up('<i class="fa-solid fa-circle-play"></i> Resumed playback');
         if ('mediaSession' in navigator) {
-            try { navigator.mediaSession.playbackState = 'playing'; } catch {}
+            try { navigator.mediaSession.playbackState = 'playing'; } catch { }
         }
     } else {
         elements.player.pause();
         document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
         stat_up('<i class="fa-solid fa-circle-pause"></i> Paused playback');
         if ('mediaSession' in navigator) {
-            try { navigator.mediaSession.playbackState = 'paused'; } catch {}
+            try { navigator.mediaSession.playbackState = 'paused'; } catch { }
         }
     }
 }));
@@ -55,7 +55,7 @@ document.getElementById('stop').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
-   msg(`
+    msg(`
   <h2>Hotkeys</h2>
   <ul style="list-style-type: none; padding: 0;">
     <li><strong>Space / K</strong>: play/pause</li>
@@ -112,7 +112,6 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
     colchange.addEventListener('input', () => {
         viz_color = colchange.value;
         button.style.color = viz_color;
-        // change lyric-colour
         document.documentElement.style.setProperty('--lyric-colour', viz_color);
         stat_up(`<i class="fa-solid fa-palette"></i> Visualizer color set to: <span style="color: ${viz_color};">${viz_color}</span>`);
     });
@@ -128,33 +127,55 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
     function apply(theme) {
         const t = THEMES.includes(theme) ? theme : 'dim';
         document.documentElement.setAttribute('data-theme', t);
-        try { localStorage.setItem(key, t); } catch {}
+        try { localStorage.setItem(key, t); } catch { }
     }
 
     try {
         const stored = localStorage.getItem(key);
         if (stored) apply(stored);
-    } catch {}
+    } catch { }
 
     const btn = document.getElementById('theme');
     if (btn) {
         btn.addEventListener('click', debounce(() => {
-            const cur = document.documentElement.getAttribute('data-theme') || 'dim';
-            const idx = THEMES.indexOf(cur);
-            const next = THEMES[(idx + 1) % THEMES.length];
-            apply(next);
-            const label = next.replace('-', ' ');
-            stat_up(`<i class="fa-solid fa-circle-half-stroke"></i> Theme: ${label}`);
-            btn.title = `Toggle theme (current: ${label})`;
+            msg(`
+                <h2>Select theme</h2>
+                <div style="margin: 1rem 0;">
+                    <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
+                        ${THEMES.map(t => {
+                const label = t.replace('-', ' ');
+                const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === t ? 'selected' : '';
+                return `<option value="${t}" ${selected}>${label}</option>`;
+            }).join('')}
+                    </select>
+                </div>
+            `);
+
+            setTimeout(() => {
+                const select = document.getElementById('theme_select');
+                if (select) {
+                    select.focus();
+                    select.addEventListener('change', () => {
+                        const next = select.value;
+                        apply(next);
+                        const label = next.replace('-', ' ');
+                        throw_error(`Set theme: ${label}`, true);
+                        btn.title = `Toggle theme (current: ${label})`;
+                    });
+                }
+            }, 0);
         }));
     }
 })();
 
 document.getElementById('pastelrc').addEventListener('click', debounce(() => {
+    if (!metadata.title && !metadata.artist) {
+        return throw_error('No track playing!');
+    }
     msg(`
         <h2>Paste your own lyrics</h2>
         <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
-            <p style="margin: 0; color: #aaa;">Paste LRC text (e.g., [00:12.34] Line here). Unsupported lines are ignored.</p>
+            <p style="margin: 0; color: #aaa;">They must be in LRC format - you can find them on <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a> or other lyrics sites.</p>
             <textarea id="lrc_textarea" placeholder="[00:00.00] Start\n[00:10.50] Next line" rows="10" 
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 0.95rem;"></textarea>
             <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
@@ -184,21 +205,21 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
             const da = () => {
                 const raw = (ta.value || '').trim();
                 if (!raw) {
-                    return throw_error('Please paste some LRC text first');
+                    return throw_error('No lyrics to apply!');
                 }
                 try {
                     let parsed = lrc_parse(raw);
                     if (!parsed || parsed.length === 0) {
                         parsed = raw.split('\n').map(line => ({ time: 0, text: line }));
                     }
-                    parsed = parsed.filter(l => l && typeof l.text === 'string').sort((a,b) => a.time - b.time);
+                    parsed = parsed.filter(l => l && typeof l.text === 'string').sort((a, b) => a.time - b.time);
                     if (parsed.length === 0) {
-                        return throw_error('No usable lines found');
+                        return throw_error('No usable lines found!');
                     }
                     lrc_wipe();
                     lrc_data = parsed;
                     update_lyrics();
-                    stat_up('<i class="fa-solid fa-check"></i> Applied pasted lyrics');
+                    throw_error('Applied pasted lyrics', true);
                 } catch (e) {
                     console.error(e);
                     throw_error('Failed to parse LRC');
@@ -389,8 +410,8 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
                 else if (value < 33) icon = '<i class="fa-solid fa-volume-off"></i>';
                 else if (value < 66) icon = '<i class="fa-solid fa-volume-low"></i>';
 
-                stat_up(`${icon} Volume set to: ${value}%`);
-                document.getElementById('footer').innerHTML = `current: ${value}%`;                
+                throw_error(`Volume set to: ${value}% ${icon}`, true);
+                document.getElementById('footer').innerHTML = `current: ${value}%`;
             };
 
             btn.addEventListener('click', set_vol);
@@ -443,7 +464,7 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
                 if (value >= 1.5) icon = '<i class="fa-solid fa-gauge-high"></i>';
                 else if (value >= 0.5) icon = '<i class="fa-solid fa-gauge"></i>';
 
-                stat_up(`${icon} Speed: ${value}x`);
+                throw_error(`Speed set to: ${value}x ${icon}`, true);
                 document.getElementById('footer').innerHTML = `current: ${value}x`;
             };
 
@@ -499,9 +520,9 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
                 elements.player.currentTime = val;
                 elements.index.value = val;
 
-                stat_up(`<i class="fa-solid fa-music"></i> Jumped to: ${form_time(val)} / ${form_time(dur)}`);
+                throw_error(`Set index to: ${form_time(val)} / ${form_time(dur)}`, true);
                 document.getElementById('footer').innerHTML = `current: ${Math.floor(val)}s / duration: ${Math.floor(dur)}s`;
-                
+
             };
 
             btn.addEventListener('click', set_ind);

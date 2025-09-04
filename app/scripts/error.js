@@ -39,6 +39,7 @@ function throw_error(msg, ok = false) {
     const txt = document.createElement('span');
     txt.className = 'error-message';
     txt.innerHTML = msg;
+    txt.style.userSelect = 'none';
     txt.style.display = '-webkit-box';
     txt.style.webkitBoxOrient = 'vertical';
     txt.style.overflow = 'hidden';
