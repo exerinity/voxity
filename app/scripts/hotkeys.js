@@ -68,3 +68,5 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+console.log('Hotkeys module loaded');

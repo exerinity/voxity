@@ -217,3 +217,5 @@ function force() {
 }
 
 document.addEventListener('DOMContentLoaded', force);
+
+console.log('Lyrics module loaded');

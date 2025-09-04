@@ -2,7 +2,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
-      console.log('SW registered:', registration.scope);
+      console.log("Service worker started");
 
       if (registration.waiting && typeof throw_error === 'function') {
         throw_error('New version available - refresh to update', true);

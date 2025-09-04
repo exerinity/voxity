@@ -38,8 +38,10 @@ const FILES_TO_CACHE = [
   '/app/webfonts/fa-solid-900.woff2',
   '/app/webfonts/fa-v4compatibility.woff2'
 ];
+console.log('Service worker initializing...');
 
 self.addEventListener('install', event => {
+  console.log('Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(FILES_TO_CACHE))

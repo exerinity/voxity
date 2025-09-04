@@ -332,3 +332,5 @@ if (!localStorage.getItem('seen_msg_v2')) {
     msg(war);
 }
 }, 2500);
+
+console.log('Main module loaded');

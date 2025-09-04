@@ -464,7 +464,6 @@ a:hover {
 }
 
 :root {
-    /* Accent */
     --lyric-colour: #8000ff;
     --link: #1d9bf0;
 
@@ -592,6 +591,60 @@ a:hover {
     --overlay-bg: rgba(0, 0, 0, 0.66);
     --spinner-trk: #061f30;
     --link: #4aa3ff;
+    --shadow: #0006;
+    --shadow-strong: #0008;
+}
+
+:root[data-theme="high-contrast"] {
+    --lyric-colour: #ffff00;
+    --link: #00ffff;
+
+    --bg: #000000;
+    --fg: #ffffff;
+    --fg-strong: #ffffff;
+    --muted: #ffffff;
+    --muted-2: #ffffff;
+    --panel-bg: #000000;
+    --header-bg: #000000;
+    --control-bg: #000000;
+    --control-br: #ffffff;
+    --btn-bg: #000000;
+    --btn-hover-bg: #222222;
+    --range-bg: #444444;
+    --thumb-bg: #ffffff;
+    --visualizer-bg: #000000;
+    --lyrics-fg: #ffffff;
+    --error-bg: #ff0000;
+    --statusbox-bg: #061f3040;
+    --dialog-bg: #000000;
+    --overlay-bg: rgba(0, 0, 0, 0.62);
+    --spinner-trk: #061f30;
+    --shadow: #0006;
+    --shadow-strong: #0008;
+}
+
+:root[data-theme="blue"] {
+    --bg: #15202b;
+    --fg: #f2f2f2;
+    --fg-strong: #fff;
+    --muted: #d0d0d0;
+    --muted-2: #bdbdbd;
+    --panel-bg: #192734;
+    --header-bg: #121b26;
+    --control-bg: #22303c;
+    --control-br: #44515c;
+    --btn-bg: #22303c;
+    --btn-hover-bg: #334050;
+    --range-bg: #38444e;
+    --thumb-bg: #e4e4e4;
+    --visualizer-bg: #0f1419;
+    --lyrics-fg: #d4d4d4;
+    --error-bg: #a33;
+    --statusbox-bg: #061f3040;
+    --dialog-bg: #22303c;
+    --overlay-bg: rgba(0, 0, 0, 0.55);
+    --spinner-trk: #0d2536;
+    --link: #1d9bf0;
     --shadow: #0006;
     --shadow-strong: #0008;
 }

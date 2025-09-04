@@ -29,7 +29,13 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('audionalert').addEventListener('click', debounce(() => {
-    window.open('https://bsky.app/profile/exerinity.dev/post/3lxth5n5muc2f', '_blank');
+    msg(`
+        <h2>About </h2>
+        <p>Audion is a <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace any players; but rather to be a fast quick way for casual listening.</p>
+        <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
+        <hr>
+        <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p>
+        `);
 }));
 
 document.getElementById('fwd').addEventListener('click', debounce(() => {
@@ -116,7 +122,7 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
 }));
 
 (function theme() {
-    const THEMES = ['light', 'grey', 'dim', 'lights-out'];
+    const THEMES = ['light', 'grey', 'dim', 'lights-out', 'high-contrast', 'blue'];
     const key = 'au_theme';
 
     function apply(theme) {
@@ -506,3 +512,4 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
     }, 0);
 }));
 
+console.log('Buttons module loaded');
