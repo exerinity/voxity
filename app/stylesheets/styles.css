@@ -477,8 +477,8 @@ a:hover {
     --header-bg: #111;
     --control-bg: #333;
     --control-br: #555;
-    --btn-bg: #333;
-    --btn-hover-bg: #555;
+    --btn-bg: #444; /* Brighter */
+    --btn-hover-bg: #666; /* Brighter */
     --range-bg: #444;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #000;
@@ -502,7 +502,7 @@ a:hover {
     --header-bg: #f0f0f0;
     --control-bg: #ffffff;
     --control-br: #ddd;
-    --btn-bg: #ffffff;
+    --btn-bg: #f5f5f5; /* Brighter */
     --btn-hover-bg: #eaeaea;
     --range-bg: #ddd;
     --thumb-bg: #666;
@@ -528,8 +528,8 @@ a:hover {
     --header-bg: #262626;
     --control-bg: #3a3a3a;
     --control-br: #555;
-    --btn-bg: #3a3a3a;
-    --btn-hover-bg: #4a4a4a;
+    --btn-bg: #4a4a4a; /* Brighter */
+    --btn-hover-bg: #666666; /* Brighter */
     --range-bg: #505050;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #1c1c1c;
@@ -554,8 +554,8 @@ a:hover {
     --header-bg: #0f0f0f;
     --control-bg: #1f1f1f;
     --control-br: #333;
-    --btn-bg: #242424;
-    --btn-hover-bg: #333333;
+    --btn-bg: #333333; /* Brighter */
+    --btn-hover-bg: #555555; /* Brighter */
     --range-bg: #2c2c2c;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #050505;
@@ -580,8 +580,8 @@ a:hover {
     --header-bg: #000000;
     --control-bg: #111111;
     --control-br: #222222;
-    --btn-bg: #101010;
-    --btn-hover-bg: #1a1a1a;
+    --btn-bg: #222222; /* Brighter */
+    --btn-hover-bg: #444444; /* Brighter */
     --range-bg: #1a1a1a;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #000000;
@@ -609,8 +609,8 @@ a:hover {
     --header-bg: #000000;
     --control-bg: #000000;
     --control-br: #ffffff;
-    --btn-bg: #000000;
-    --btn-hover-bg: #222222;
+    --btn-bg: #222222; /* Brighter */
+    --btn-hover-bg: #444444; /* Brighter */
     --range-bg: #444444;
     --thumb-bg: #ffffff;
     --visualizer-bg: #000000;
@@ -634,8 +634,8 @@ a:hover {
     --header-bg: #121b26;
     --control-bg: #22303c;
     --control-br: #44515c;
-    --btn-bg: #22303c;
-    --btn-hover-bg: #334050;
+    --btn-bg: #334050; /* Brighter */
+    --btn-hover-bg: #44515c; /* Brighter */
     --range-bg: #38444e;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #0f1419;
