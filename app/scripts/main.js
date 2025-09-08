@@ -152,10 +152,10 @@ function init() {
         }
         frame_id = requestAnimationFrame(vis_init);
         if ('mediaSession' in navigator) {
-            try { navigator.mediaSession.playbackState = 'playing'; } catch {}
+            try { navigator.mediaSession.playbackState = 'playing'; } catch { }
             const setPos = navigator.mediaSession.setPositionState?.bind(navigator.mediaSession);
             if (setPos) {
-                try { setPos({ duration: elements.player.duration || 0, playbackRate: elements.player.playbackRate || 1, position: elements.player.currentTime || 0 }); } catch {}
+                try { setPos({ duration: elements.player.duration || 0, playbackRate: elements.player.playbackRate || 1, position: elements.player.currentTime || 0 }); } catch { }
             }
         }
     });
@@ -166,18 +166,25 @@ function init() {
             frame_id = null;
         }
         if ('mediaSession' in navigator) {
-            try { navigator.mediaSession.playbackState = 'paused'; } catch {}
+            try { navigator.mediaSession.playbackState = 'paused'; } catch { }
             const setPos = navigator.mediaSession.setPositionState?.bind(navigator.mediaSession);
             if (setPos) {
-                try { setPos({ duration: elements.player.duration || 0, playbackRate: elements.player.playbackRate || 1, position: elements.player.currentTime || 0 }); } catch {}
+                try { setPos({ duration: elements.player.duration || 0, playbackRate: elements.player.playbackRate || 1, position: elements.player.currentTime || 0 }); } catch { }
             }
         }
     });
 
     elements.player.addEventListener('ended', () => {
         stat_up('<i class="fa-solid fa-octagon"></i> Stopped');
+        // properly reset the scrubbers, lyrics, set back to 0 and pause
+        elements.player.currentTime = 0;
+        elements.player.pause();
+        document.getElementById('msgsound').currentTime = 0;
+        document.getElementById('msgsound').play().catch(() => { });
+        document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
+        lrc_reset();
         if ('mediaSession' in navigator) {
-            try { navigator.mediaSession.playbackState = 'paused'; } catch {}
+            try { navigator.mediaSession.playbackState = 'paused'; } catch { }
         }
     });
 
@@ -209,7 +216,7 @@ function init() {
                     playbackRate: elements.player.playbackRate || 1,
                     position: elements.player.currentTime || 0,
                 });
-            } catch {}
+            } catch { }
         }
     });
 
@@ -264,13 +271,13 @@ function init() {
     });
 
     wheel(elements.index, () => 3);
-    wheel(elements.vol, () => 0.1); 
+    wheel(elements.vol, () => 0.1);
     wheel(elements.speed, () => 0.01);
 
     if ('mediaSession' in navigator) {
         try {
             navigator.mediaSession.setActionHandler('play', async () => {
-                try { await elements.player.play(); } catch {}
+                try { await elements.player.play(); } catch { }
             });
             navigator.mediaSession.setActionHandler('pause', () => {
                 elements.player.pause();
@@ -287,7 +294,7 @@ function init() {
                 } else {
                 }
             });
-        } catch {}
+        } catch { }
     }
 }
 

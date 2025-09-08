@@ -1,3 +1,5 @@
+// this is mostly for windows to make it work with media keys and show whats playing
+
 function set_media_session_metadata(artUrl) {
     if (!('mediaSession' in navigator)) return;
     try {
