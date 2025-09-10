@@ -20,5 +20,3 @@ function set_media_session_metadata(artUrl) {
         });
     } catch {}
 }
-
-console.log('API module loaded');

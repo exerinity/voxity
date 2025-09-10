@@ -208,6 +208,10 @@ function lrc_wipe() {
     lrc_data = [];
 }
 
+function lrc_reset() { // who fucking knows what the fuck this is for
+    lrc_wipe();
+}
+
 function setCurrentFile(file) {
     cur_file = file;
 }
@@ -218,5 +222,3 @@ function force() {
 }
 
 document.addEventListener('DOMContentLoaded', force);
-
-console.log('Lyrics module loaded');

@@ -99,7 +99,7 @@ strong {
     background: var(--panel-bg);
     padding: 10px;
     border-radius: 8px;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .inputs {
@@ -262,8 +262,46 @@ strong {
     color: var(--fg);
 }
 
+.queue-container {
+    margin-top: auto;
+    background: var(--panel-bg);
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.queue-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.queue-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: default;
+}
+.queue-item:hover, .queue-item.focus {
+    background: color-mix(in srgb, var(--lyric-colour) 12%, transparent);
+}
+.queue-item.active {
+    background: color-mix(in srgb, var(--lyric-colour) 22%, transparent);
+    border-left: 3px solid var(--lyric-colour);
+}
+.queue-item .qi-remove {
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    cursor: pointer;
+}
+.queue-item .qi-left { display:flex; gap:8px; align-items:center; }
+.queue-item .qi-num { font-family: 'Courier New', monospace; opacity:.8; }
+.queue-item .qi-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
 .lyrics-container {
-    flex: 1;
+    flex: 1 1 auto;
     overflow-y: auto;
     padding: 10px;
     color: var(--lyrics-fg);
@@ -477,8 +515,8 @@ a:hover {
     --header-bg: #111;
     --control-bg: #333;
     --control-br: #555;
-    --btn-bg: #444; /* Brighter */
-    --btn-hover-bg: #666; /* Brighter */
+    --btn-bg: #444;
+    --btn-hover-bg: #666;
     --range-bg: #444;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #000;
@@ -502,7 +540,7 @@ a:hover {
     --header-bg: #f0f0f0;
     --control-bg: #ffffff;
     --control-br: #ddd;
-    --btn-bg: #f5f5f5; /* Brighter */
+    --btn-bg: #f5f5f5;
     --btn-hover-bg: #eaeaea;
     --range-bg: #ddd;
     --thumb-bg: #666;
@@ -528,8 +566,8 @@ a:hover {
     --header-bg: #262626;
     --control-bg: #3a3a3a;
     --control-br: #555;
-    --btn-bg: #4a4a4a; /* Brighter */
-    --btn-hover-bg: #666666; /* Brighter */
+    --btn-bg: #4a4a4a;
+    --btn-hover-bg: #666666;
     --range-bg: #505050;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #1c1c1c;
@@ -554,8 +592,8 @@ a:hover {
     --header-bg: #0f0f0f;
     --control-bg: #1f1f1f;
     --control-br: #333;
-    --btn-bg: #333333; /* Brighter */
-    --btn-hover-bg: #555555; /* Brighter */
+    --btn-bg: #333333;
+    --btn-hover-bg: #555555;
     --range-bg: #2c2c2c;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #050505;
@@ -580,8 +618,8 @@ a:hover {
     --header-bg: #000000;
     --control-bg: #111111;
     --control-br: #222222;
-    --btn-bg: #222222; /* Brighter */
-    --btn-hover-bg: #444444; /* Brighter */
+    --btn-bg: #222222;
+    --btn-hover-bg: #444444;
     --range-bg: #1a1a1a;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #000000;
@@ -609,8 +647,8 @@ a:hover {
     --header-bg: #000000;
     --control-bg: #000000;
     --control-br: #ffffff;
-    --btn-bg: #222222; /* Brighter */
-    --btn-hover-bg: #444444; /* Brighter */
+    --btn-bg: #222222;
+    --btn-hover-bg: #444444;
     --range-bg: #444444;
     --thumb-bg: #ffffff;
     --visualizer-bg: #000000;
@@ -634,8 +672,8 @@ a:hover {
     --header-bg: #121b26;
     --control-bg: #22303c;
     --control-br: #44515c;
-    --btn-bg: #334050; /* Brighter */
-    --btn-hover-bg: #44515c; /* Brighter */
+    --btn-bg: #334050;
+    --btn-hover-bg: #44515c;
     --range-bg: #38444e;
     --thumb-bg: #e4e4e4;
     --visualizer-bg: #0f1419;

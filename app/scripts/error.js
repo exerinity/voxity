@@ -149,5 +149,3 @@ function throw_error(msg, ok = false) {
         console.error(msg);
     }
 }
-
-console.log('Error handler module loaded');

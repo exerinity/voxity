@@ -30,5 +30,3 @@ function clean() {
 function getAnalyser() {
     return analyser;
 }
-
-console.log('Audio module loaded');

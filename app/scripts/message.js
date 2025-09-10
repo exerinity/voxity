@@ -137,5 +137,3 @@ async function msg(text) {
         document.head.appendChild(style);
     }
 }
-
-console.log('Message module loaded');

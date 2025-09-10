@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head><script>console.log("Loading...");</script>
+<head>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://ex3.icu">
     <link rel="preconnect" href="https://i.exerinity.com">
@@ -48,11 +48,11 @@
             <div class="left" id="dropzone">
                 <div class="inputs">
                     <div class="inputg">
-                        <label for="upload">Upload audio file, or drag-and-drop...</label>
-                        <input id="upload" type="file" accept="audio/*" class="files">
+                        <label for="upload">Upload audio files, or drag-and-drop...</label>
+                        <input id="upload" type="file" accept="audio/*" class="files" multiple>
                     </div>
                 </div>
-                <audio id="player" controls crossorigin="anonymous" class="hidden" loop></audio>
+                <audio id="player" crossorigin="anonymous" class="hidden" loop></audio>
                 <div class="metadata">
                     <img id="cover-art" class="hidden" alt="Cover art">
                     <div>
@@ -65,19 +65,22 @@
                     </div>
                 </div>
                 <div class="controls">
+                    <button id="prevtrack" title="Previous track" class="bop"><i class="fa-solid fa-step-backward"></i></button>
                     <button id="rwd" title="Rewind 10s" class="bop"><i class="fa-solid fa-backward"></i></button>
                     <button id="plps" title="Play/pause" class="bop"><i class="fa-solid fa-play"></i></button>
                     <button id="fwd" title="Forward 10s" class="bop"><i class="fa-solid fa-forward"></i></button>
+                    <button id="nexttrack" title="Next track" class="bop"><i class="fa-solid fa-step-forward"></i></button>
                     <button id="stop" title="Go back to 0" class="bop"><i class="fa-solid fa-arrow-rotate-left"></i></button>
                     <button id="loop" title="Toggle loop"><i class="fa-solid fa-repeat"></i></button>
+                    <button id="clearqueue" title="Clear queue"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <div class="controls">
-                    
-                    <button id="theme" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i> Change theme</button>
+                    <button id="theme" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i> Theme</button>
                     <button id="viscolchange" title="Change accent"><i class="fa-solid fa-palette"></i> Accent</button>
-                    <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i class="fa-solid fa-paste"></i> Paste lyrics</button>
+                    <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i class="fa-solid fa-paste"></i> Lyrics</button>
                     <button id="hotkeys" class="bop"><i class="fa-solid fa-keyboard"></i> Hotkeys</button>
                     <button id="toys" class="bop"><i class="fa-solid fa-robot"></i> Toys</button>
+                    <button id="vizmode" class="bop" title="Visualizer mode"><i class="fa-solid fa-chart-simple"></i> Visualizer</button>
                     <button id="audionalert" title="About this app" class="bop"><i class="fa-solid fa-info"></i> About</button>
                 </div>
                 <div class="sliders">
@@ -113,21 +116,19 @@
                 </div>
                 <div class="viz_sec">
                     <canvas id="visualizer"></canvas>
-                    <div class="viz_cons">
-                        <label for="viz-mode">Visualizer mode</label>
-                        <select id="viz-mode">
-                            <option value="waveform">Waveform</option>
-                            <option value="bars">Bars</option>
-                            <option value="circular">Circular</option>
-                            <option value="spectrum">Spectrum</option>
-                            <option value="none">None (off)</option>
-                            <option value="nonefr">Actually none</option>
-                        </select>
-                    </div>
+                    <input id="viz-mode" type="hidden" value="waveform">
                 </div>
             </div>
             <div class="right" id="droppedzone">
                 <div id="lyrics" class="lyrics-container"></div>
+                <div id="queue-container" class="queue-container">
+                    <div class="queue-header">
+                        <h3 style="margin:0;">Queue</h3>
+                    </div>
+                    <ul id="queue-list" class="queue-list">
+                        <li class="queue-item placeholder">Awaiting files...</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div id="error" class="hidden"></div>

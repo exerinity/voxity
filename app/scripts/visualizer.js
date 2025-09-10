@@ -122,5 +122,3 @@ function vis_init() {
     }
     draw();
 }
-
-console.log('Visualizer module loaded');

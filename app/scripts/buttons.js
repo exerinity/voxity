@@ -38,6 +38,45 @@ document.getElementById('audionalert').addEventListener('click', debounce(() => 
         `);
 }));
 
+document.getElementById('vizmode').addEventListener('click', debounce(() => {
+    const current = (document.getElementById('viz-mode')?.value) || 'waveform';
+    const options = [
+        {v:'waveform', l:'Waveform'},
+        {v:'bars', l:'Bars'},
+        {v:'circular', l:'Circular'},
+        {v:'spectrum', l:'Spectrum'},
+        {v:'none', l:'None (off)'},
+        {v:'nonefr', l:'Actually none'},
+    ];
+    msg(`
+        <h2>Visualizer mode</h2>
+        <div style="margin:1rem 0;">
+            <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                ${options.map(o => `<option value="${o.v}" ${o.v===current?'selected':''}>${o.l}</option>`).join('')}
+            </select>
+        </div>
+        <div class="pop">
+            <button id="vizmode_apply">Apply (should automatically apply)</button>
+        </div>
+    `);
+
+    setTimeout(() => {
+        const sel = document.getElementById('vizmode_select');
+        const apply = document.getElementById('vizmode_apply');
+        const hise = document.getElementById('viz-mode');
+        const applyChange = () => {
+            if (hise && sel) {
+                hise.value = sel.value;
+                hise.dispatchEvent(new Event('change', { bubbles: true }));
+                throw_error(`Visualizer: ${sel.options[sel.selectedIndex]?.text || sel.value}`, true);
+            }
+        };
+        apply?.addEventListener('click', applyChange);
+        sel?.addEventListener('change', applyChange);
+        sel?.focus();
+    }, 0);
+}));
+
 document.getElementById('fwd').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     const dur = elements.player.duration || 0;
@@ -532,5 +571,3 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
         }
     }, 0);
 }));
-
-console.log('Buttons module loaded');

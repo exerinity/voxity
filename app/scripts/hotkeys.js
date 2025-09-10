@@ -38,6 +38,10 @@ document.addEventListener('keydown', (e) => {
         stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${e.shiftKey ? '1 second' : '10 seconds'})`);
     } else if (e.code === 'KeyT') {
         document.getElementById('loop').click();
+    } else if (e.code === 'KeyN') {
+        if (typeof nextTrack === 'function') nextTrack();
+    } else if (e.code === 'KeyP') {
+        if (typeof prevTrack === 'function') prevTrack();
     }
     else if (e.code === 'KeyR' && !e.ctrlKey) {
         e.preventDefault();
@@ -68,5 +72,3 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
-
-console.log('Hotkeys module loaded');

@@ -24,10 +24,14 @@ const elements = {
     success_sound: document.getElementById('sucsound'),
     error_sound: document.getElementById('errsound'),
     branding: document.getElementById('branding'),
+    queueList: document.getElementById('queue-list'),
 };
 
 let stat_calls = 0;
 let stat_out = null;
+let currentObjectUrl = null;
+let pt = 0;
+let cph = null;
 
 function stat_up(msg, ac = true) {
     stat_calls++;
@@ -57,8 +61,8 @@ function debounce(fn) {
     return () => {
         const now = Date.now();
         if (now - lastact < deb_ms) return;
-        lastact = now;
         fn();
+        lastact = Date.now();
     };
 }
 
@@ -82,19 +86,28 @@ function wheel(target, fall) {
 }
 
 function play(file, name) {
+    const t = ++pt;
+    try { elements.player.pause(); } catch { }
     lrc_wipe();
     if (!elements.success_sound.paused) {
         elements.success_sound.pause();
     }
-    const now = Date.now();
-    if (now - lastact < deb_ms) return;
-    lastact = now;
-    elements.player.src = URL.createObjectURL(file);
+    if (cph) {
+        try { elements.player.removeEventListener('canplaythrough', cph); } catch { }
+        cph = null;
+    }
+    try { if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl); } catch { }
+    currentObjectUrl = URL.createObjectURL(file);
+    elements.player.src = currentObjectUrl;
+    try { elements.player.load(); } catch { }
+    elements.player.classList.remove('hidden');
     setCurrentFile(file);
-    let retries = 0;
-    const m_retries = 3;
-    function attempt2play() {
+    let r = 0;
+    const mr = 3;
+    function ap() {
+        if (t !== pt) return;
         elements.player.play().then(() => {
+            if (t !== pt) return;
             document.getElementById('plps').innerHTML = '<i class="fa-solid fa-pause"></i>';
             context_init(elements.player);
             vis_init();
@@ -105,16 +118,167 @@ function play(file, name) {
             const rt = parseFloat(elements.speed.value);
             elements.player.playbackRate = isNaN(rt) ? 1 : rt;
         }).catch(e => {
-            if (retries < m_retries) {
-                retries++;
-                setTimeout(attempt2play, 1000);
+            if (t !== pt) return;
+            if (r < mr) {
+                r++;
+                setTimeout(() => { if (t !== pt) return; ap(); }, 1000);
             } else {
                 throw_error(e.message);
                 stat_up('Error playing...');
             }
         });
     }
-    elements.player.addEventListener('canplaythrough', attempt2play, { once: true });
+    ap();
+    cph = () => { if (t !== pt) return; ap(); };
+    elements.player.addEventListener('canplaythrough', cph, { once: true });
+}
+
+const queue = [];
+let currentIndex = -1;
+
+function rqueue() {
+    const ul = elements.queueList;
+    if (!ul) return;
+    ul.innerHTML = '';
+    queue.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'queue-item' + (idx === currentIndex ? ' active' : '');
+        const title = item.meta?.title;
+        const artist = item.meta?.artist;
+        const label = (title || artist) ? `${title || 'Unknown track'} by ${artist || 'Unknown artist'}` : (item.displayName || item.file.name);
+        li.textContent = '';
+        li.title = label;
+        li.addEventListener('dblclick', () => pindex(idx));
+        li.addEventListener('click', () => {
+            const cur = ul.querySelector('.queue-item.focus');
+            if (cur) cur.classList.remove('focus');
+            li.classList.add('focus');
+        });
+
+        const lf = document.createElement('span');
+        lf.className = 'qi-left';
+        const n = document.createElement('span');
+        n.className = 'qi-num';
+        n.textContent = String(idx + 1);
+        const lb = document.createElement('span');
+        lb.className = 'qi-label';
+        lb.textContent = label;
+        lf.appendChild(n);
+        lf.appendChild(lb);
+
+        const rem = document.createElement('button');
+        rem.className = 'qi-remove';
+        rem.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        rem.title = 'Remove from queue';
+        rem.addEventListener('click', (e) => {
+            e.stopPropagation();
+            remq(idx);
+        });
+        li.appendChild(lf);
+        li.appendChild(rem);
+
+        ul.appendChild(li);
+    });
+}
+
+function quf(fileList) {
+    const files = Array.from(fileList).filter(f => f && f.type?.startsWith('audio/'));
+    if (files.length === 0) {
+        throw_error('No audio files selected');
+        return;
+    }
+    const isemp = queue.length === 0;
+    for (const f of files) {
+        const item = { file: f, displayName: f.name };
+        queue.push(item);
+        try {
+            jsmediatags.read(f, {
+                onSuccess: (tag) => {
+                    const t = tag?.tags || {};
+                    item.meta = {
+                        title: t.title || '',
+                        artist: t.artist || '',
+                        album: t.album || '',
+                    };
+                    rqueue();
+                },
+                onError: () => { null }
+            });
+        } catch { null }
+    }
+    rqueue();
+    throw_error(`Added ${files.length} file${files.length > 1 ? 's' : ''} to queue`, true);
+    if (isemp && queue.length > 0) {
+        pindex(0);
+    }
+}
+
+function pindex(idx) {
+    if (idx < 0 || idx >= queue.length) return;
+    currentIndex = idx;
+    const item = queue[idx];
+    play(item.file, item.displayName || item.file.name);
+    rqueue();
+}
+
+function contin() {
+    if (queue.length === 0) return;
+    const next = currentIndex + 1;
+    if (next < queue.length) {
+        pindex(next);
+    } else {
+        throw_error('Already at the end of the queue');
+    }
+}
+
+function previ() {
+    if (queue.length === 0) return;
+    const prev = currentIndex - 1;
+    if (prev >= 0) {
+        pindex(prev);
+    } else {
+        throw_error('Already at the start of the queue');
+    }
+}
+
+function clea() {
+    if (!metadata.title && !metadata.artist) {
+        return throw_error('No track playing!');
+    }
+    if (queue.length === 0) {
+        return throw_error('Queue is already empty');
+    }
+    window.location.reload();
+    // this is scrappy but whatever
+}
+
+function remq(idx) {
+    if (queue.length <= 1) {
+        throw_error('There are no more tracks to remove');
+        return;
+    }
+    if (idx < 0 || idx >= queue.length) return;
+    const wasCurrent = idx === currentIndex;
+    queue.splice(idx, 1);
+    if (currentIndex > idx) currentIndex -= 1;
+    if (wasCurrent) {
+        if (idx < queue.length) {
+            pindex(idx);
+        } else if (queue.length > 0) {
+            pindex(queue.length - 1);
+        } else {
+            elements.player.pause();
+            elements.player.src = '';
+            lrc_wipe();
+            metadata.title = '';
+            metadata.artist = '';
+            metadata.album = '';
+            document.getElementById('np2').innerHTML = '';
+            document.getElementById('artist').innerHTML = '';
+            document.getElementById('album').innerHTML = '';
+        }
+    }
+    rqueue();
 }
 
 function init() {
@@ -124,20 +288,21 @@ function init() {
     }
 
     document.getElementById('app').classList.remove('hidden');
+    document.getElementById('dropzone')?.addEventListener('contextmenu', (e) => e.preventDefault(), { once: true });
+    document.getElementById('droppedzone')?.addEventListener('contextmenu', (e) => e.preventDefault(), { once: true });
 
     elements.upload.addEventListener('change', function () {
-        const file = elements.upload.files[0];
-        if (file) {
-            stat_up(`<i class="fa-solid fa-hourglass fa-spin"></i> Loading...`);
-            play(file, file.name);
+        if (elements.upload.files && elements.upload.files.length > 0) {
+            quf(elements.upload.files);
+            elements.upload.value = '';
         }
     });
 
-    let onrepeat = true;
-    elements.player.loop = true;
+    let onrepeat = false;
+    elements.player.loop = onrepeat;
     const rep_button = document.getElementById('loop');
     rep_button.innerHTML = '<i class="fa-solid fa-repeat"></i>';
-    rep_button.style.color = 'green';
+    rep_button.style.color = onrepeat ? 'green' : 'red';
     document.getElementById('loop').addEventListener('click', debounce(() => {
         onrepeat = !onrepeat;
         elements.player.loop = onrepeat;
@@ -175,16 +340,23 @@ function init() {
     });
 
     elements.player.addEventListener('ended', () => {
-        stat_up('<i class="fa-solid fa-octagon"></i> Stopped');
-        // properly reset the scrubbers, lyrics, set back to 0 and pause
-        elements.player.currentTime = 0;
-        elements.player.pause();
-        document.getElementById('msgsound').currentTime = 0;
-        document.getElementById('msgsound').play().catch(() => { });
-        document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
-        lrc_reset();
-        if ('mediaSession' in navigator) {
-            try { navigator.mediaSession.playbackState = 'paused'; } catch { }
+        if (elements.player.loop) {
+            return;
+        }
+        const hadNext = currentIndex + 1 < queue.length;
+        if (hadNext) {
+            contin();
+        } else {
+            stat_up('<i class="fa-solid fa-octagon"></i> Stopped');
+            elements.player.currentTime = 0;
+            elements.player.pause();
+            document.getElementById('msgsound').currentTime = 0;
+            document.getElementById('msgsound').play().catch(() => { });
+            document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
+            lrc_reset();
+            if ('mediaSession' in navigator) {
+                try { navigator.mediaSession.playbackState = 'paused'; } catch { }
+            }
         }
     });
 
@@ -192,10 +364,19 @@ function init() {
         const error = elements.player.error;
         let err_msg = 'Playback error: ';
         if (error) {
-            if (error.code === 4) {
-                err_msg = "Your browser doesn't support this file format!";
-            } else {
-                err_msg += ` (Code ${error.code}${error.message ? ': ' + error.message : ''})`;
+            switch (error.code) {
+                case error.MEDIA_ERR_ABORTED:
+                    err_msg += 'you aborted the media playback';
+                    break;
+                case error.MEDIA_ERR_DECODE:
+                    err_msg += 'this file is either corrupted or is unsupported by your browser';
+                    break;
+                case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                    err_msg += 'this format is unsupported by your browser';
+                    break;
+                default:
+                    err_msg += 'unknown';
+                    break;
             }
         }
         throw_error(err_msg);
@@ -282,21 +463,38 @@ function init() {
             navigator.mediaSession.setActionHandler('pause', () => {
                 elements.player.pause();
             });
-            navigator.mediaSession.setActionHandler('nexttrack', () => {
-                if (typeof window.nextTrack === 'function') {
-                    window.nextTrack();
-                } else {
-                }
-            });
+            navigator.mediaSession.setActionHandler('nexttrack', () => { contin(); });
             navigator.mediaSession.setActionHandler('previoustrack', () => {
-                if (typeof window.prevTrack === 'function') {
-                    window.prevTrack();
-                } else {
-                }
+                previ();
             });
         } catch { }
     }
+
+    const dropTarget = document.getElementById('dropzone');
+    if (dropTarget) {
+        dropTarget.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        });
+        dropTarget.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dt = e.dataTransfer;
+            if (dt?.files && dt.files.length > 0) {
+                quf(dt.files);
+            }
+        });
+    }
+
+    document.getElementById('nexttrack')?.addEventListener('click', debounce(() => contin()));
+    document.getElementById('prevtrack')?.addEventListener('click', debounce(() => previ()));
+    document.getElementById('clearqueue')?.addEventListener('click', debounce(() => {
+        clea();
+    }));
 }
+window.contin = contin;
+window.previ = previ;
+window.nextTrack = contin;
+window.prevTrack = previ;
 
 function form_time(t) {
     if (isNaN(t)) return '--:--';
@@ -326,10 +524,10 @@ function act_truncate(text, truncate_max = 30) {
 
 stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
 
-
-document.addEventListener('DOMContentLoaded', init) || init();
-document.getElementById('dropzone').addEventListener('contextmenu', (e) => e.preventDefault());
-document.getElementById('droppedzone').addEventListener('contextmenu', (e) => e.preventDefault());
-// intentionally, i am leaving the top status bar right-clickable, but to keep it cleaner, no right-click on the rest of the app
-
-console.log('Main module loaded');
+let inited = false;
+function ri() { if (inited) return; inited = true; init(); }
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ri, { once: true });
+} else {
+    ri();
+}

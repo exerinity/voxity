@@ -23,5 +23,3 @@ function tabtitle() {
 
 tabtitle();
 setInterval(tabtitle, 5000);
-
-console.log('Scrolling title module loaded');

@@ -572,15 +572,12 @@ var twemoji = (function (
 
 // Twemoji is unlikely to actually be used in a fucking music player, but you never know...
 
-console.log("twemoji loaded");
-
 function twittermoji() {
     twemoji.parse(document, {
         base: 'https://twemoji.exerinity.dev/',
         size: '72x72',
         ext: '.png'
     });
-    console.log("twemoji parsed");
 }
 
 document.addEventListener('DOMContentLoaded', twittermoji);
