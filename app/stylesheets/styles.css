@@ -332,6 +332,13 @@ strong {
     white-space: nowrap;
 }
 
+.queue-item .qi-dur { 
+  margin-left: auto; 
+  margin-right: 8px; 
+  font-family: 'Courier New', monospace; 
+  opacity: .6; 
+}
+
 .lyrics-container {
     flex: 1 1 auto;
     overflow-y: auto;

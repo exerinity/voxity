@@ -69,7 +69,6 @@ function debounce(fn) {
 function wheel(target, fall) {
     if (!target) return;
     target.addEventListener('wheel', (e) => {
-        // Allow browser zoom with Ctrl/Cmd + wheel
         if (!(e.ctrlKey || e.metaKey)) {
             e.preventDefault();
         }
@@ -139,6 +138,13 @@ function play(file, name) {
 const queue = [];
 let currentIndex = -1;
 
+function form_time_short(sec) {
+    if (!isFinite(sec) || sec <= 0) return '--:--';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
 function rqueue() {
     const ul = elements.queueList;
     if (!ul) return;
@@ -150,7 +156,7 @@ function rqueue() {
         const artist = item.meta?.artist;
         const label = (title || artist) ? `${title || 'Unknown track'} by ${artist || 'Unknown artist'}` : (item.displayName || item.file.name);
         li.textContent = '';
-        li.title = label;
+        li.title = item.displayName || item.file.name || label || 'Unknown track';
         li.addEventListener('dblclick', () => pindex(idx));
         li.addEventListener('click', () => {
             const cur = ul.querySelector('.queue-item.focus');
@@ -177,7 +183,25 @@ function rqueue() {
             e.stopPropagation();
             remq(idx);
         });
+
+        const dur = document.createElement('span');
+        dur.className = 'qi-dur qi-num'; 
+        dur.textContent = form_time_short(item.duration);
+        if (!item.duration && item.file) {
+            try {
+                const a = document.createElement('audio');
+                a.preload = 'metadata';
+                a.src = URL.createObjectURL(item.file);
+                a.addEventListener('loadedmetadata', () => {
+                    item.duration = a.duration;
+                    dur.textContent = form_time_short(item.duration);
+                    URL.revokeObjectURL(a.src);
+                }, { once: true });
+            } catch { null }
+        }
+
         li.appendChild(lf);
+        li.appendChild(dur);
         li.appendChild(rem);
 
         ul.appendChild(li);
