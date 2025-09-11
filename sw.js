@@ -1,15 +1,18 @@
-const CACHE_NAME = 'audion40';
+const CACHE_NAME = 'audion42';
 const FILES_TO_CACHE = [
   '/',                // root
   '/index.html',
+  '/app.html',
   '/entry.html',
   '/404.html',
   '/favicon.ico',
-  '/LICENSE',
-  '/README.md',
   '/manifest.json',
   '/sw.js',
-  '/_redirects',
+
+  // media
+  '/welcome.ogg',
+  '/error.ogg',
+  '/message.ogg',
 
   // stylesheets
   '/app/stylesheets/styles.css',
@@ -22,11 +25,13 @@ const FILES_TO_CACHE = [
   '/app/scripts/buttons.js',
   '/app/scripts/error.js',
   '/app/scripts/hotkeys.js',
-  '/app/scripts/jsmediatags.min.js',
+  '/app/scripts/jsmediatags.js',
   '/app/scripts/lyrics.js',
   '/app/scripts/message.js',
   '/app/scripts/title.js',
   '/app/scripts/visualizer.js',
+  '/app/scripts/api.js',
+  '/app/scripts/twemoji.js',
 
   // fonts
   '/app/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf',
@@ -42,11 +47,35 @@ console.log('Service worker initializing...');
 
 self.addEventListener('install', event => {
   console.log('Installing...');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(FILES_TO_CACHE))
-      .catch(err => console.error('Failed to pre-cache:', err))
-  );
+  event.waitUntil((async () => {
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      const results = await Promise.allSettled(
+        FILES_TO_CACHE.map(url =>
+          fetch(url, { cache: 'reload' })
+            .then(res => ({ url, res }))
+        )
+      );
+
+      let okCount = 0;
+      results.forEach(r => {
+        if (r.status === 'fulfilled' && r.value.res && r.value.res.ok) {
+          okCount++;
+          cache.put(r.value.url, r.value.res.clone()).catch(err =>
+            console.warn('Cache put failed for', r.value.url, err)
+          );
+        } else {
+          const url = r.status === 'fulfilled' ? r.value.url : '(unknown)';
+          const status = r.status === 'fulfilled' && r.value.res ? r.value.res.status : r.reason;
+          console.warn('Skipping precache for', url, '->', status);
+        }
+      });
+
+      console.log(`Precache complete: ${okCount}/${FILES_TO_CACHE.length} cached`);
+    } catch (err) {
+      console.error('Failed to pre-cache:', err);
+    }
+  })());
   self.skipWaiting();
 });
 

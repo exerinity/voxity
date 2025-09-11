@@ -43,13 +43,13 @@ function stat_up(msg, ac = true) {
         }
         stat_out = setTimeout(() => {
             if (!elements.player.src) {
-                elements.status.innerHTML = '<i class="fa-solid fa-tower-broadcast"></i> Audion';
-                elements.branding.innerHTML = null;
+                elements.status.innerHTML = '<i class="fa-solid fa-tower-broadcast"></i> Not playing';
+                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Audion';
             } else if (elements.player.paused) {
-                elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
+                elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Audion';
             } else {
-                elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
+                elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> Now playing: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Audion';
             }
             stat_out = null;
@@ -69,7 +69,10 @@ function debounce(fn) {
 function wheel(target, fall) {
     if (!target) return;
     target.addEventListener('wheel', (e) => {
-        e.preventDefault();
+        // Allow browser zoom with Ctrl/Cmd + wheel
+        if (!(e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+        }
         const raws = parseFloat(target.step);
         let step = !isNaN(raws) && raws > 0 ? raws : (fall ? fall() : 1);
         if (e.shiftKey) step *= 5;
@@ -249,7 +252,7 @@ function clea() {
         return throw_error('Queue is already empty');
     }
     window.location.reload();
-    // this is scrappy but whatever
+    // this is scrappy but whatever xD
 }
 
 function remq(idx) {

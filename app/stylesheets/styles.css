@@ -19,7 +19,7 @@ body {
     color: var(--fg);
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
-    overflow: hidden;
+    overflow-y: auto;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -57,7 +57,7 @@ strong {
 #app {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .header {
@@ -270,11 +270,25 @@ strong {
     max-height: 200px;
     overflow-y: auto;
 }
+
+.queue-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.queue-container::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+.queue-container:hover::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
 .queue-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
+
 .queue-item {
     display: flex;
     justify-content: space-between;
@@ -283,22 +297,40 @@ strong {
     border-radius: 6px;
     cursor: default;
 }
-.queue-item:hover, .queue-item.focus {
+
+.queue-item:hover,
+.queue-item.focus {
     background: color-mix(in srgb, var(--lyric-colour) 12%, transparent);
 }
+
 .queue-item.active {
     background: color-mix(in srgb, var(--lyric-colour) 22%, transparent);
     border-left: 3px solid var(--lyric-colour);
 }
+
 .queue-item .qi-remove {
     background: transparent;
     border: none;
     color: var(--fg);
     cursor: pointer;
 }
-.queue-item .qi-left { display:flex; gap:8px; align-items:center; }
-.queue-item .qi-num { font-family: 'Courier New', monospace; opacity:.8; }
-.queue-item .qi-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.queue-item .qi-left {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.queue-item .qi-num {
+    font-family: 'Courier New', monospace;
+    opacity: .8;
+}
+
+.queue-item .qi-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 .lyrics-container {
     flex: 1 1 auto;
@@ -686,4 +718,24 @@ a:hover {
     --link: #1d9bf0;
     --shadow: #0006;
     --shadow-strong: #0008;
+}
+
+* {
+    scrollbar-color: transparent transparent;
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: transparent;
 }
