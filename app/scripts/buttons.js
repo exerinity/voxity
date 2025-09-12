@@ -164,18 +164,29 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
     const key = 'au_theme';
 
     function apply(theme) {
-        const t = THEMES.includes(theme) ? theme : 'dim';
+        const t = THEMES.includes(theme) ? theme : 'lights-out';
         document.documentElement.setAttribute('data-theme', t);
         try { localStorage.setItem(key, t); } catch { }
     }
 
     try {
         const stored = localStorage.getItem(key);
-        if (stored) apply(stored);
-    } catch { }
+        if (stored) {
+            apply(stored);
+        } else {
+            apply('lights-out');
+        }
+    } catch {
+        apply('lights-out');
+    }
 
     const btn = document.getElementById('theme');
     if (btn) {
+        try {
+            const current = document.documentElement.getAttribute('data-theme') || 'lights-out';
+            const label = current.replace('-', ' ');
+            btn.title = `Toggle theme (current: ${label})`;
+        } catch { }
         btn.addEventListener('click', debounce(() => {
             msg(`
                 <h2>Select theme</h2>
@@ -188,6 +199,7 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
             }).join('')}
                     </select>
                 </div>
+                <i>To toggle the starry background, use the Toys button</i>
             `);
 
             setTimeout(() => {

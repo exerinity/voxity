@@ -115,6 +115,7 @@ function play(file, name) {
             vis_init();
             elements.title2.innerHTML = name;
             get_meta(file);
+            sfa(metadata.picture.data ? URL.createObjectURL(new Blob([new Uint8Array(metadata.picture.data)], { type: metadata.picture.format })) : '/favicon.ico');
             const ra = parseFloat(elements.vol.value);
             elements.player.volume = isNaN(ra) ? 1 : Math.max(0, Math.min(1, ra / 2));
             const rt = parseFloat(elements.speed.value);
@@ -381,7 +382,7 @@ function init() {
             document.getElementById('msgsound').currentTime = 0;
             document.getElementById('msgsound').play().catch(() => { });
             document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
-            lrc_reset();
+            sfa('/favicon.ico');
             if ('mediaSession' in navigator) {
                 try { navigator.mediaSession.playbackState = 'paused'; } catch { }
             }
@@ -558,4 +559,16 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', ri, { once: true });
 } else {
     ri();
+}
+
+const link = document.createElement('link');
+link.rel = 'icon';
+link.type = 'image/png';
+link.href = '/favicon.ico';
+document.getElementsByTagName('head')[0].appendChild(link);
+function sfa(url) {
+    if (!url) return;
+    try {
+        link.href = url;
+    } catch { null }
 }
