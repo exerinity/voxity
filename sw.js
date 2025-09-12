@@ -1,8 +1,7 @@
-const CACHE_NAME = 'audion42';
+const CACHE_NAME = 'audion43';
 const FILES_TO_CACHE = [
   '/',                // root
   '/index.html',
-  '/app.html',
   '/entry.html',
   '/404.html',
   '/favicon.ico',

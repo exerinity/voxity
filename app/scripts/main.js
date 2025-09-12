@@ -119,6 +119,7 @@ function play(file, name) {
             elements.player.volume = isNaN(ra) ? 1 : Math.max(0, Math.min(1, ra / 2));
             const rt = parseFloat(elements.speed.value);
             elements.player.playbackRate = isNaN(rt) ? 1 : rt;
+            twittermoji();
         }).catch(e => {
             if (t !== pt) return;
             if (r < mr) {
@@ -142,7 +143,7 @@ function form_time_short(sec) {
     if (!isFinite(sec) || sec <= 0) return '--:--';
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
-    return `${m}:${s.toString().padStart(2,'0')}`;
+    return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 function rqueue() {
@@ -185,7 +186,7 @@ function rqueue() {
         });
 
         const dur = document.createElement('span');
-        dur.className = 'qi-dur qi-num'; 
+        dur.className = 'qi-dur qi-num';
         dur.textContent = form_time_short(item.duration);
         if (!item.duration && item.file) {
             try {

@@ -30,11 +30,11 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 
 document.getElementById('audionalert').addEventListener('click', debounce(() => {
     msg(`
-        <h2>About </h2>
         <p>Audion is a <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
         <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
         <hr>
         <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p>
+        <p>Sound effects are from <a href="https://store.steampowered.com/app/1304550" target="_blank" rel="noopener">Progressbar95</a>.</p>
         `);
 }));
 
@@ -314,6 +314,15 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
                     </button>
                 </div>
             </div>
+
+            <div>
+                <p style="margin: 0 0 0.5rem 0;">Star background:</p>
+                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; user-select:none;">
+                    <input id="stars_toggle" type="checkbox" ${typeof window !== 'undefined' && window.AudionStars && window.AudionStars.isEnabled() ? 'checked' : ''}>
+                    <span id="stars_toggle_label">${(typeof window !== 'undefined' && window.AudionStars && window.AudionStars.isEnabled()) ? 'Enabled' : 'Disabled'}</span>
+                </label>
+                <small style="color:#888; display:block; margin-top:0.25rem;">When enabled the right panel becomes transparent.</small>
+            </div>
         </div>
     `);
 
@@ -326,6 +335,8 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
 
         const btn3 = document.getElementById('msgbtn');
         const input3 = document.getElementById('msginp');
+    const starsToggle = document.getElementById('stars_toggle');
+    const starsLabel = document.getElementById('stars_toggle_label');
 
         if (btn1 && input1) {
             btn1.addEventListener('click', () => {
@@ -359,8 +370,55 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
                 }
             });
         }
+
+        function applyStarPanel(enabled){
+            const right = document.querySelector('.right');
+            if (!right) return;
+            if (enabled){
+                if (!right.dataset.prevBg) right.dataset.prevBg = right.style.background || '';
+                right.style.background = 'rgba(0,0,0,0.2)';
+                right.style.backdropFilter = 'blur(2px)';
+            } else {
+                right.style.background = right.dataset.prevBg || '';
+                right.style.backdropFilter = '';
+            }
+        }
+
+        window.addEventListener('audionStarsChange', (e) => {
+            const en = e.detail?.enabled;
+            applyStarPanel(en);
+            if (starsToggle) starsToggle.checked = !!en;
+            if (starsLabel) starsLabel.textContent = en ? 'Enabled' : 'Disabled';
+        });
+
+        if (starsToggle) {
+            starsToggle.addEventListener('change', () => {
+                if (starsToggle.checked) {
+                    window.AudionStars?.enable();
+                    throw_error('Stars enabled', true);
+                } else {
+                    window.AudionStars?.disable();
+                    throw_error('Stars disabled', true);
+                }
+            });
+        }
     }, 0);
 }));
+
+window.addEventListener('audionStarsChange', (e)=>{
+    const en = e.detail?.enabled;
+    const right = document.querySelector('.right');
+    if (right){
+        if (en){
+            if (!right.dataset.prevBg) right.dataset.prevBg = right.style.background || '';
+            right.style.background = 'rgba(0,0,0,0.2)';
+            right.style.backdropFilter = 'blur(2px)';
+        } else {
+            right.style.background = right.dataset.prevBg || '';
+            right.style.backdropFilter = '';
+        }
+    }
+});
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {

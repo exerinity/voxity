@@ -20,3 +20,21 @@ function set_media_session_metadata(artUrl) {
         });
     } catch {}
 }
+
+// make it so media keys work, hopefully
+if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', () => {
+        audio.play().catch(() => {
+            throw_error('Unable to play the audio!');
+        });
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+        audio.pause();
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+        prevTrack();
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        nextTrack();
+    });
+}
