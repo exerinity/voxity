@@ -31,6 +31,8 @@ try {
     if (stored === 'false') starsEnabled = false;
 } catch {}
 
+let reducedMotion = false;
+
 function draw() {
     for (let star of stars) {
         ctx.beginPath();
@@ -178,8 +180,6 @@ document.addEventListener('visibilitychange', function () {
 
 window.addEventListener('blur', () => { if (starsEnabled) pause(); });
 window.addEventListener('focus', () => { if (starsEnabled && !reducedMotion) resume(); });
-
-let reducedMotion = false;
 function applyReducedMotion(flag) {
     reducedMotion = !!flag;
     if (reducedMotion) {
