@@ -333,7 +333,6 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
                     <input id="stars_toggle" type="checkbox" ${typeof window !== 'undefined' && window.AudionStars && window.AudionStars.isEnabled() ? 'checked' : ''}>
                     <span id="stars_toggle_label">${(typeof window !== 'undefined' && window.AudionStars && window.AudionStars.isEnabled()) ? 'Enabled' : 'Disabled'}</span>
                 </label>
-                <small style="color:#888; display:block; margin-top:0.25rem;">When enabled the right panel becomes transparent.</small>
             </div>
         </div>
     `);
