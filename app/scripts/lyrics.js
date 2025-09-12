@@ -24,6 +24,7 @@ function get_meta(file) {
 
             const cover = document.getElementById('cover-art');
             if (metadata.picture) {
+                sfa(metadata.picture.data ? URL.createObjectURL(new Blob([new Uint8Array(metadata.picture.data)], { type: metadata.picture.format })) : '/favicon.ico');
                 const arr = new Uint8Array(metadata.picture.data);
                 let binary = '';
                 const cs = 8192;
