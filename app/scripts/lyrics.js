@@ -2,6 +2,8 @@ let cur_file = null;
 let lrc_data = [];
 let globalart = '';
 let _ms_art_url = null;
+// Guard to ensure lyrics are only fetched once per track load
+let activeLyricsKey = null;
 
 const metadata = {};
 
@@ -53,7 +55,15 @@ function get_meta(file) {
                 if ('mediaSession' in navigator) set_media_session_metadata();
             }
 
-            get_lyrics(metadata.title, metadata.artist, metadata.album, Math.floor(document.getElementById('player').duration));
+            try {
+                const player = document.getElementById('player');
+                const duration = Math.floor(player?.duration || 0) || 0;
+                const key = `${file?.name || ''}|${file?.size || 0}|${file?.lastModified || 0}|${metadata.title}|${metadata.artist}|${metadata.album}|${duration}`;
+                if (activeLyricsKey !== key) {
+                    activeLyricsKey = key;
+                    get_lyrics(metadata.title, metadata.artist, metadata.album, duration);
+                }
+            } catch { null }
         },
         onError: function() {
             metadata.title = 'Unknown track';
@@ -215,6 +225,8 @@ function lrc_reset() { // who fucking knows what the fuck this is for
 
 function setCurrentFile(file) {
     cur_file = file;
+    // Reset so the next track triggers a lyrics fetch
+    activeLyricsKey = null;
 }
 
 function force() {
