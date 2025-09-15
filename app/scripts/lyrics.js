@@ -2,7 +2,6 @@ let cur_file = null;
 let lrc_data = [];
 let globalart = '';
 let _ms_art_url = null;
-// Guard to ensure lyrics are only fetched once per track load
 let activeLyricsKey = null;
 
 const metadata = {};
@@ -66,17 +65,16 @@ function get_meta(file) {
             } catch { null }
         },
         onError: function() {
-            metadata.title = 'Unknown track';
+            metadata.title = truncate(file.name) || 'Unknown title';
             metadata.artist = 'Unknown artist';
             metadata.album = 'Unknown album';
 
             document.getElementById('artist').innerHTML = '';
             document.getElementById('album').innerHTML = '';
-            document.getElementById('np2').innerHTML = metadata.title;
+            document.getElementById('np2').innerHTML = truncate(file.name || 'Unknown track');
             document.getElementById('aod').innerHTML = '';
             document.getElementById('cover-art').classList.add('hidden');
             globalart = ''; 
-            throw_error("This file is missing sufficient metadata, lyrics most likely won't work");
             if ('mediaSession' in navigator) set_media_session_metadata();
         }
     });
@@ -126,7 +124,6 @@ function lrc_parse(syncedLyrics) {
             const time = parseInt(timeParts[0]) * 60 + parseFloat(timeParts[1]);
             return { time, text: match[2].trim() };
         }
-        console.warn(`Skipping malformed LRC line: ${line}`);
         return { time: 0, text: line.trim() };
     }).filter(line => line.text);
 }

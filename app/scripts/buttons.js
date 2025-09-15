@@ -34,7 +34,7 @@ document.getElementById('audionalert').addEventListener('click', debounce(() => 
         <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
         <hr>
         <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p>
-        <p>Sound effects are from <a href="https://store.steampowered.com/app/1304550" target="_blank" rel="noopener">Progressbar95</a>.</p>
+        <p>Sound effects are from Windows 7.</p>
         `);
 }));
 
@@ -106,6 +106,7 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     <li><strong>S / Down</strong>: volume down</li>
     <li><strong>R</strong>: restart track</li>
     <li><strong>T</strong>: toggle loop</li>
+    <li><strong>Numeric keys (0-9)</strong>: jump to 0-90% of track</li>
     <p><i>You can also scroll over progress bars to change values</i></p>
   </ul>
 `);
@@ -123,7 +124,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
                     if (ua.includes('Firefox')) {
                         window.open(globalart, '_blank');
                     } else if (ua.includes('Chrome')) {
-                        return msg(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chrome.<br><small>For some reason, on Chrome, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`);
+                        return throw_error(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chrome.<br><small>For some reason, on Chrome, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`);
                     } else {
                         window.open(globalart, '_blank');
                     }
@@ -406,7 +407,7 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
             starsToggle.addEventListener('change', () => {
                 if (starsToggle.checked) {
                     window.AudionStars?.enable();
-                    throw_error('Stars enabled', true);
+                    throw_error('Stars enabled - for best results, use with lights out theme!', true);
                 } else {
                     window.AudionStars?.disable();
                     throw_error('Stars disabled', true);
