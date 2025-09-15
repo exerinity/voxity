@@ -80,8 +80,20 @@ async function msg(text) {
 
     document.addEventListener('mousemove', (e) => {
         if (isDragging) {
-            box.style.left = `${e.clientX - offsetX}px`;
-            box.style.top = `${e.clientY - offsetY}px`;
+            let newLeft = e.clientX - offsetX;
+            let newTop = e.clientY - offsetY;
+            // Clamp within viewport
+            const rect = box.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            const maxLeft = window.innerWidth - width;
+            const maxTop = window.innerHeight - height;
+            if (newLeft < 0) newLeft = 0;
+            if (newTop < 0) newTop = 0;
+            if (newLeft > maxLeft) newLeft = maxLeft;
+            if (newTop > maxTop) newTop = maxTop;
+            box.style.left = `${newLeft}px`;
+            box.style.top = `${newTop}px`;
         }
     });
 
@@ -89,6 +101,21 @@ async function msg(text) {
         isDragging = false;
         document.body.style.userSelect = '';
     });
+
+    const eiv = () => {
+        const rect = box.getBoundingClientRect();
+        let left = rect.left;
+        let top = rect.top;
+        const maxLeft = Math.max(0, window.innerWidth - rect.width);
+        const maxTop = Math.max(0, window.innerHeight - rect.height);
+        if (left < 0) left = 0;
+        if (top < 0) top = 0;
+        if (left > maxLeft) left = maxLeft;
+        if (top > maxTop) top = maxTop;
+        box.style.left = `${left}px`;
+        box.style.top = `${top}px`;
+    };
+    window.addEventListener('resize', eiv);
 
     const msg = document.createElement('div');
     msg.style.marginTop = '0.5rem';

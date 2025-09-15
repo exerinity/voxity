@@ -572,3 +572,15 @@ function sfa(url) {
         link.href = url;
     } catch { null }
 }
+
+if (!localStorage.getItem('hai')) {
+    localStorage.setItem('hai', '1');
+    setTimeout(() => {
+        msg(`<h1>Welcome to Audion</h1>
+<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
+<p>To learn more, visit Audion's page on my website: <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">https://exerinity.dev/projects/audion</a></p>
+<p>Enjoy! <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></p>
+<small><i>You won't see this message again</i></small>
+`);
+    }, 2500);
+}

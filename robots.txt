@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /index.html
+Allow: /manifest.json
+Allow: /favicon.ico
+Disallow: /entry.html
+Disallow: /sw.js
+Disallow: /app/
+Disallow: /404.html
+Disallow: /message.ogg
+Disallow: /error.ogg
+Disallow: /welcome.ogg
