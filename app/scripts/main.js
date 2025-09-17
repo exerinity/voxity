@@ -256,7 +256,7 @@ function contin() {
     if (next < queue.length) {
         pindex(next);
     } else {
-        throw_error('Already at the end of the queue');
+        throw_error('This is the only track in the queue!');
     }
 }
 
@@ -266,7 +266,7 @@ function previ() {
     if (prev >= 0) {
         pindex(prev);
     } else {
-        throw_error('Already at the start of the queue');
+        throw_error('This is the only track in the queue!<br>To restart this track, press the <i class="fa-solid fa-arrow-rotate-left"></i>!');
     }
 }
 
@@ -404,7 +404,7 @@ function init() {
                     err_msg += 'this format is unsupported by your browser';
                     break;
                 default:
-                    err_msg += 'unknown';
+                    err_msg += 'idk man';
                     break;
             }
         }
@@ -579,8 +579,9 @@ if (!localStorage.getItem('hai')) {
         msg(`<h1>Welcome to Audion</h1>
 <p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
 <p>To learn more, visit Audion's page on my website: <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">https://exerinity.dev/projects/audion</a></p>
+<p><a href="https://exerinity.dev/projects/audion/screenshots" target="_blank" rel="noopener">View some screenshots of Audion here</a></p>
 <p>Enjoy! <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></p>
-<small><i>You won't see this message again</i></small>
+<small><i>You won't see this message again (unless you clear your local storage, lol)</i></small>
 `);
     }, 2500);
 }

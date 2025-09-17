@@ -218,7 +218,7 @@ strong {
     height: 14px;
     background: var(--thumb-bg);
     border-radius: 50%;
-    cursor: pointer;
+    cursor: ew-resize;
     transition: transform 0.2s;
 }
 
@@ -231,7 +231,7 @@ strong {
     height: 14px;
     background: var(--thumb-bg);
     border-radius: 50%;
-    cursor: pointer;
+    cursor: ew-resize;
     transition: transform 0.2s;
 }
 
