@@ -9,3 +9,9 @@ Disallow: /404.html
 Disallow: /message.ogg
 Disallow: /error.ogg
 Disallow: /welcome.ogg
+
+# The first three files are useful for crawlers; the rest are not.
+
+User-agent: Bingbot
+Disallow: /
+# Fuck Bing

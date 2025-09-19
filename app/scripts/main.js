@@ -43,8 +43,8 @@ function stat_up(msg, ac = true) {
         }
         stat_out = setTimeout(() => {
             if (!elements.player.src) {
-                elements.status.innerHTML = '<i class="fa-solid fa-tower-broadcast"></i> Not playing';
-                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Audion';
+                elements.status.innerHTML = `<i class="fa-solid fa-tower-broadcast bop"></i> Audion`;
+                elements.branding.innerHTML = null;
             } else if (elements.player.paused) {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Audion';
@@ -53,7 +53,7 @@ function stat_up(msg, ac = true) {
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Audion';
             }
             stat_out = null;
-        }, 2000);
+        }, 2500);
     }
 }
 
@@ -550,9 +550,6 @@ function act_truncate(text, truncate_max = 30) {
     return text.slice(0, truncate_max) + '...';
 }
 
-
-stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
-
 let inited = false;
 function ri() { if (inited) return; inited = true; init(); }
 if (document.readyState === 'loading') {
@@ -576,12 +573,17 @@ function sfa(url) {
 if (!localStorage.getItem('hai')) {
     localStorage.setItem('hai', '1');
     setTimeout(() => {
-        msg(`<h1>Welcome to Audion</h1>
-<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
+        msg(`<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
 <p>To learn more, visit Audion's page on my website: <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">https://exerinity.dev/projects/audion</a></p>
 <p><a href="https://exerinity.dev/projects/audion/screenshots" target="_blank" rel="noopener">View some screenshots of Audion here</a></p>
 <p>Enjoy! <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></p>
 <small><i>You won't see this message again (unless you clear your local storage, lol)</i></small>
-`);
+`, "Welcome");
     }, 2500);
+}
+
+if (localStorage.getItem('hai')) {
+    stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Audion!');
+} else {
+    stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
 }

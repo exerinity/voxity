@@ -1,4 +1,4 @@
-const CACHE_NAME = 'audion46';
+const CACHE_NAME = 'audion47';
 const FILES_TO_CACHE = [
   '/',                // root
   '/index.html',
@@ -8,7 +8,7 @@ const FILES_TO_CACHE = [
   '/manifest.json',
   '/sw.js',
 
-  // media
+  // media 
   '/welcome.ogg',
   '/error.ogg',
   '/message.ogg',

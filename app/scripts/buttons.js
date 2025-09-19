@@ -35,7 +35,7 @@ document.getElementById('audionalert').addEventListener('click', debounce(() => 
         <hr>
         <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p>
         <p>Sound effects are from Windows 7.</p>
-        `);
+        `, "About");
 }));
 
 document.getElementById('vizmode').addEventListener('click', debounce(() => {
@@ -115,7 +115,7 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
     if (globalart) {
-        msg(`<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart">`);
+        msg(`<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart"><small><i>Click image to open in new tab</i></small>`, `${metadata.album || metadata.title || "Cover art"}`);
         setTimeout(() => {
             const img = document.getElementById('msgart');
             if (img) {

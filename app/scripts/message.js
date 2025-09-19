@@ -1,4 +1,4 @@
-async function msg(text) {
+async function msg(text, tbartext) {
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
     overlay.style.top = 0;
@@ -38,7 +38,7 @@ async function msg(text) {
     title.style.alignItems = 'center';
     title.style.height = '24px';
     title.style.userSelect = 'none';
-    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-colour)"></i> Audion`;
+    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-colour); margin-right: 0.5em;"></i> ${tbartext || "Audion"}`
 
     const close = document.createElement('button');
     close.innerHTML = '<i class="fa-solid fa-xmark"></i>';
