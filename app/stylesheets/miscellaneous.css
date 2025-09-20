@@ -1,0 +1,45 @@
+a,
+a:visited,
+a:active,
+a:hover {
+    color: var(--link);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.pop {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pop button {
+    padding: 10px 20px;
+    background: var(--btn-bg);
+    border: none;
+    border-radius: 4px;
+    color: var(--fg);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pop button:hover {
+    background: var(--btn-hover-bg);
+}
+
+.mqcont {
+    width: 500px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.mqtext {
+    display: inline-block;
+    padding-left: 100%;
+    animation: s 15s linear infinite;
+}
+
+.mqcont:hover .mqtext {
+    animation-play-state: paused;
+}

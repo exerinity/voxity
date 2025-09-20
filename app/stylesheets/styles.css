@@ -1,3 +1,7 @@
+/*
+   I have split the CSS into multiple files - this is the old, unused one. I am keeping it here in case something breaks lol
+*/
+
 @font-face {
     font-family: 'Inter';
     src: url('/app/fonts/inter/Inter-VariableFont_opsz,wght.ttf') format('truetype');

@@ -1,0 +1,115 @@
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.controls button {
+    padding: 10px 20px;
+    background: var(--btn-bg);
+    border: none;
+    border-radius: 4px;
+    color: var(--fg);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.controls button:hover {
+    background: var(--btn-hover-bg);
+}
+
+.sliders {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.slidez {
+    flex: 1;
+    min-width: 150px;
+}
+
+.slidez label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.main_slide {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Courier New', monospace;
+    background: var(--panel-bg);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.main_slide span {
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.range-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.main_slide input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: var(--range-bg);
+    border-radius: 3px;
+    appearance: none;
+    outline: none;
+    margin: 0 8px;
+}
+
+.main_slide input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--thumb-bg);
+    border-radius: 50%;
+    cursor: ew-resize;
+    transition: transform 0.2s;
+}
+
+.main_slide input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.main_slide input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--thumb-bg);
+    border-radius: 50%;
+    cursor: ew-resize;
+    transition: transform 0.2s;
+}
+
+.main_slide input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+.viz_sec {
+    flex: 1;
+}
+
+#visualizer {
+    width: 100%;
+    height: 200px;
+    background: var(--visualizer-bg);
+    border-radius: 8px;
+}
+
+.viz_cons {
+    margin-top: 10px;
+}
+
+.viz_cons select {
+    padding: 8px;
+    background: var(--control-bg);
+    border: 1px solid var(--control-br);
+    border-radius: 4px;
+    color: var(--fg);
+}

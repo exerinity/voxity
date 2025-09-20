@@ -1,4 +1,6 @@
-const CACHE_NAME = 'audion47';
+const CACHE_NAME = 'audion48';
+const sc = '/app/scripts/';
+const cs = '/app/stylesheets/';
 const FILES_TO_CACHE = [
   '/',                // root
   '/index.html',
@@ -14,23 +16,26 @@ const FILES_TO_CACHE = [
   '/message.ogg',
 
   // stylesheets
-  '/app/stylesheets/styles.css',
-  '/app/stylesheets/fontawesome.css',
+  cs+'controls.css',
+  cs+'miscellaneous.css',
+  cs+'structure.css',
+  cs+'tandem.css',
+  cs+'themes.css',
 
   // scripts
-  '/app/scripts/main.js',
-  '/app/scripts/app.js',
-  '/app/scripts/audio.js',
-  '/app/scripts/buttons.js',
-  '/app/scripts/error.js',
-  '/app/scripts/hotkeys.js',
-  '/app/scripts/jsmediatags.js',
-  '/app/scripts/lyrics.js',
-  '/app/scripts/message.js',
-  '/app/scripts/title.js',
-  '/app/scripts/visualizer.js',
-  '/app/scripts/api.js',
-  '/app/scripts/twemoji.js',
+  sc+'main.js',
+  sc+'app.js',
+  sc+'audio.js',
+  sc+'buttons.js',
+  sc+'error.js',
+  sc+'hotkeys.js',
+  sc+'jsmediatags.js',
+  sc+'lyrics.js',
+  sc+'message.js',
+  sc+'title.js',
+  sc+'visualizer.js',
+  sc+'api.js',
+  sc+'twemoji.js',
 
   // fonts
   '/app/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf',

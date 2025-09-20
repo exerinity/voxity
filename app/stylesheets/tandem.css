@@ -1,0 +1,241 @@
+.queue-container {
+    margin-top: auto;
+    background: var(--panel-bg);
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.queue-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.queue-container::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+.queue-container:hover::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+.queue-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.queue-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: default;
+}
+
+.queue-item:hover,
+.queue-item.focus {
+    background: color-mix(in srgb, var(--lyric-colour) 12%, transparent);
+}
+
+.queue-item.active {
+    background: color-mix(in srgb, var(--lyric-colour) 22%, transparent);
+    border-left: 3px solid var(--lyric-colour);
+}
+
+.queue-item .qi-remove {
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    cursor: pointer;
+}
+
+.queue-item .qi-left {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.queue-item .qi-num {
+    font-family: 'Courier New', monospace;
+    opacity: .8;
+}
+
+.queue-item .qi-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.queue-item .qi-dur {
+    margin-left: auto;
+    margin-right: 8px;
+    font-family: 'Courier New', monospace;
+    opacity: .6;
+}
+
+.lyrics-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px;
+    color: var(--lyrics-fg);
+}
+
+.lyrics-container p {
+    margin: 5px 0;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.lyrics-container .active {
+    color: var(--lyric-colour);
+    font-weight: bold;
+}
+
+.bop {
+    color: var(--lyric-colour);
+}
+
+.error-box {
+    position: relative;
+    background: var(--error-bg);
+    padding: 12px 36px 16px 16px;
+    border-radius: 8px;
+    color: var(--fg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: opacity 1s ease, transform 160ms ease, max-height 200ms ease;
+    overflow: hidden;
+    max-height: 72px;
+}
+
+.error-box:hover {
+    transform: translateY(-1px);
+}
+
+.error-box .error-close:hover {
+    opacity: 1 !important;
+}
+
+.error-box .error-close:focus-visible {
+    outline: 2px solid #ffffffaa;
+}
+
+.error-box .error-progress {
+    pointer-events: none;
+}
+
+#statusbox {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--statusbox-bg);
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+#confirm-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--dialog-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+#confirm-dialog p {
+    margin: 0 0 10px;
+}
+
+#confirm-dialog button {
+    padding: 8px 16px;
+    background: var(--btn-bg);
+    border: none;
+    border-radius: 4px;
+    color: var(--fg);
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+#confirm-dialog button:hover {
+    background: var(--btn-hover-bg);
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 4px solid var(--spinner-trk);
+    border-top-color: var(--link);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.track {
+    margin-top: 14px;
+    padding: 18px 24px;
+    border-radius: 16px;
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 240px;
+    transition: box-shadow 0.2s;
+    outline: none;
+}
+
+.track-title {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--fg);
+    margin: 0 0 6px 0;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 4px var(--shadow-strong);
+    cursor: pointer;
+}
+
+.track-artist {
+    font-size: 1.2em;
+    color: var(--muted);
+    margin: 0 0 4px 0;
+    font-weight: 500;
+    text-shadow: 0 1px 2px var(--shadow);
+    cursor: pointer;
+}
+
+.track-album {
+    font-size: 1em;
+    color: var(--muted-2);
+    margin: 0;
+    font-style: italic;
+    opacity: 0.85;
+    cursor: pointer;
+}
+
+* {
+    scrollbar-color: transparent transparent;
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: transparent;
+}

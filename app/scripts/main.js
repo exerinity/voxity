@@ -115,7 +115,7 @@ function play(file, name) {
             vis_init();
             elements.title2.innerHTML = name;
             get_meta(file);
-            sfa(metadata.picture.data ? URL.createObjectURL(new Blob([new Uint8Array(metadata.picture.data)], { type: metadata.picture.format })) : '/favicon.ico');
+            sfa(metadata.picture && metadata.picture.data ? URL.createObjectURL(new Blob([new Uint8Array(metadata.picture.data)], { type: metadata.picture.format })) : '/favicon.ico');
             const ra = parseFloat(elements.vol.value);
             elements.player.volume = isNaN(ra) ? 1 : Math.max(0, Math.min(1, ra / 2));
             const rt = parseFloat(elements.speed.value);
@@ -207,6 +207,12 @@ function rqueue() {
         li.appendChild(rem);
 
         ul.appendChild(li);
+
+        const qh = document.getElementById('queuehead');
+        if (qh) {
+            const td = queue.reduce((acc, cur) => acc + (cur.duration || 0), 0);
+            qh.innerHTML = `Queue (${queue.length} track${queue.length !== 1 ? 's' : ''}, ${form_time_short(td)})`;
+        }
     });
 }
 

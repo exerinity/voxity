@@ -1,0 +1,147 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('/app/fonts/inter/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('/app/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: italic;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--fg-strong);
+    font-weight: 900;
+
+}
+
+strong {
+    font-weight: 700;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#mobile-warning {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 20px;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px;
+    background: var(--header-bg);
+    cursor: default;
+}
+
+#status {
+    margin: 0;
+    font-size: 16px;
+    font-weight: normal;
+    color: var(--fg);
+    cursor: pointer;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 20px;
+}
+
+.left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel-bg);
+    padding: 10px;
+    border-radius: 8px;
+    overflow-y: hidden;
+}
+
+.inputs {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.inputg {
+    flex: 1;
+    min-width: 300px;
+}
+
+.inputg label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.inputg input[type="file"],
+.inputg input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    background: var(--control-bg);
+    border: 1px solid var(--control-br);
+    border-radius: 4px;
+    color: var(--fg);
+}
+
+#player {
+    width: 100%;
+    max-width: 400px;
+}
+
+#cover-art {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.metadata {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
