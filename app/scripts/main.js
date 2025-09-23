@@ -49,6 +49,7 @@ function stat_up(msg, ac = true) {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Audion';
             } else {
+                calqueue();
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> Now playing: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Audion';
             }
@@ -121,6 +122,7 @@ function play(file, name) {
             const rt = parseFloat(elements.speed.value);
             elements.player.playbackRate = isNaN(rt) ? 1 : rt;
             twittermoji();
+            calqueue();
         }).catch(e => {
             if (t !== pt) return;
             if (r < mr) {
@@ -208,11 +210,7 @@ function rqueue() {
 
         ul.appendChild(li);
 
-        const qh = document.getElementById('queuehead');
-        if (qh) {
-            const td = queue.reduce((acc, cur) => acc + (cur.duration || 0), 0);
-            qh.innerHTML = `Queue (${queue.length} track${queue.length !== 1 ? 's' : ''}, ${form_time_short(td)})`;
-        }
+        calqueue();
     });
 }
 
@@ -242,6 +240,7 @@ function quf(fileList) {
         } catch { null }
     }
     rqueue();
+    calqueue();
     throw_error(`Added ${files.length} file${files.length > 1 ? 's' : ''} to queue`, true);
     if (isemp && queue.length > 0) {
         pindex(0);
@@ -592,4 +591,20 @@ if (localStorage.getItem('hai')) {
     stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Audion!');
 } else {
     stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
+}
+
+function calqueue() {
+    const qh = document.getElementById('queuehead');
+    if (qh) {
+        const td = queue.reduce((acc, cur) => acc + (cur.duration || 0), 0);
+        let timeStr = form_time_short(td);
+        let hourStr = '';
+        if (td >= 3600) {
+            const h = Math.floor(td / 3600);
+            const m = Math.floor((td % 3600) / 60);
+            const s = Math.floor(td % 60);
+            hourStr = ` / ${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        qh.innerHTML = `Queue (${queue.length} track${queue.length !== 1 ? 's' : ''}, ${timeStr}${hourStr})`;
+    }
 }

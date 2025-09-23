@@ -38,6 +38,10 @@ document.getElementById('audionalert').addEventListener('click', debounce(() => 
         `, "About");
 }));
 
+document.getElementById('queuehead').addEventListener('click', debounce(() => {
+    calqueue();
+}));
+
 document.getElementById('vizmode').addEventListener('click', debounce(() => {
     const current = (document.getElementById('viz-mode')?.value) || 'waveform';
     const options = [
@@ -161,7 +165,7 @@ document.getElementById('viscolchange').addEventListener('click', debounce(() =>
 }));
 
 (function theme() {
-    const THEMES = ['light', 'grey', 'dim', 'lights-out', 'high-contrast', 'blue'];
+    const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'blue'];
     const key = 'au_theme';
 
     function apply(theme) {
