@@ -42,7 +42,8 @@
             <p>This app will not work without JavaScript - please enable it to continue</p>
         </div>
     </noscript>
-    <div id="app" class="hidden"><canvas id="bgstars" width="1223" height="945" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></canvas>
+    <div id="app" class="hidden"><canvas id="bgstars" width="1223" height="945"
+            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></canvas>
         <div class="header">
             <h3 id="status"></h3>
             <div id="branding"></div>
@@ -68,22 +69,30 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button id="prevtrack" title="Previous track" class="bop"><i class="fa-solid fa-step-backward"></i></button>
+                    <button id="prevtrack" title="Previous track" class="bop"><i
+                            class="fa-solid fa-step-backward"></i></button>
                     <button id="rwd" title="Rewind 10s" class="bop"><i class="fa-solid fa-backward"></i></button>
                     <button id="plps" title="Play/pause" class="bop"><i class="fa-solid fa-play"></i></button>
                     <button id="fwd" title="Forward 10s" class="bop"><i class="fa-solid fa-forward"></i></button>
-                    <button id="nexttrack" title="Next track" class="bop"><i class="fa-solid fa-step-forward"></i></button>
-                    <button id="stop" title="Go back to 0" class="bop"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                    <button id="nexttrack" title="Next track" class="bop"><i
+                            class="fa-solid fa-step-forward"></i></button>
+                    <button id="stop" title="Go back to 0" class="bop"><i
+                            class="fa-solid fa-arrow-rotate-left"></i></button>
                     <button id="loop" title="Toggle loop"><i class="fa-solid fa-repeat"></i></button>
                     <button id="clearqueue" title="Clear queue"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <div class="controls">
-                    <button id="theme" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i> Theme</button>
-                    <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i class="fa-solid fa-paste"></i> Lyrics</button>
+                    <button id="theme" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i>
+                        Theme</button>
+                    <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i
+                            class="fa-solid fa-paste"></i> Lyrics</button>
                     <button id="hotkeys" class="bop"><i class="fa-solid fa-keyboard"></i> Hotkeys</button>
-                    <button id="vizmode" class="bop" title="Visualizer mode"><i class="fa-solid fa-chart-simple"></i> Visualizer</button>
-                    <button id="audionalert" title="About this app" class="bop"><i class="fa-solid fa-info"></i> About</button>
-                    <button id="searchlrclib" title="Search LRCLIB for lyrics" class="bop"><i class="fa-solid fa-search"></i> Search lyrics</button>
+                    <button id="vizmode" class="bop" title="Visualizer mode"><i class="fa-solid fa-chart-simple"></i>
+                        Visualizer</button>
+                    <button id="audionalert" title="About this app" class="bop"><i class="fa-solid fa-info"></i>
+                        About</button>
+                    <button id="searchlrclib" title="Search LRCLIB for lyrics" class="bop"><i
+                            class="fa-solid fa-search"></i> Search lyrics</button>
                 </div>
                 <div class="sliders">
                     <div class="slidez">
@@ -128,7 +137,8 @@
                         <h3 style="margin:0;" id="queuehead">Queue</h3>
                     </div>
                     <ul id="queue-list" class="queue-list">
-                        <li class="queue-item placeholder">Awaiting files... <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></li>
+                        <li class="queue-item placeholder">Awaiting files... <i
+                                class="fa-solid fa-tower-broadcast fa-beat bop"></i></li>
                     </ul>
                 </div>
             </div>
@@ -145,9 +155,5 @@
     <script src="/app/scripts/title.js"></script>
     <script src="/app/scripts/api.js"></script>
 </body>
-
-<!--
-    subscribe to pewdiepie
--->
 
 </html>

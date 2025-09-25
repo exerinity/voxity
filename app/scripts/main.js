@@ -312,6 +312,7 @@ function remq(idx) {
             document.getElementById('album').innerHTML = '';
         }
     }
+    stat_up('<i class="fa-solid fa-trash"></i> Removed from queue');
     rqueue();
 }
 

@@ -82,7 +82,6 @@ async function msg(text, tbartext) {
         if (isDragging) {
             let newLeft = e.clientX - offsetX;
             let newTop = e.clientY - offsetY;
-            // Clamp within viewport
             const rect = box.getBoundingClientRect();
             const width = rect.width;
             const height = rect.height;

@@ -35,51 +35,49 @@ document.getElementById('audionalert').addEventListener('click', debounce(() => 
         <hr>
         <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p>
         <p>Sound effects are from Windows 7.</p>
-        `, "About");
+        `, 'About Audion');
 }));
 
 document.getElementById('queuehead').addEventListener('click', debounce(() => {
     calqueue();
 }));
 
-document.getElementById('vizmode').addEventListener('click', debounce(() => {
-    const current = (document.getElementById('viz-mode')?.value) || 'spectrum';
-    const options = [
-        { v: 'spectrum', l: 'Spectrum' },
-        { v: 'waveform', l: 'Waveform' },
-        { v: 'bars', l: 'Bars' },
-        { v: 'circular', l: 'Circular' },
-        { v: 'none', l: 'None (off)' },
-        { v: 'nonefr', l: 'Actually none' },
-    ];
-    msg(`
-        <h2>Visualizer mode</h2>
-        <div style="margin:1rem 0;">
-            <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
-                ${options.map(o => `<option value="${o.v}" ${o.v === current ? 'selected' : ''}>${o.l}</option>`).join('')}
-            </select>
-        </div>
-        <div class="pop">
-            <button id="vizmode_apply">Apply (should automatically apply)</button>
-        </div>
-    `);
+['vizmode', 'visualizer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('click', debounce(() => {
+            const current = (document.getElementById('viz-mode')?.value) || 'spectrum';
+            const options = [
+                { v: 'spectrum', l: 'Spectrum' },
+                { v: 'waveform', l: 'Waveform' },
+                { v: 'bars', l: 'Bars' },
+                { v: 'circular', l: 'Circular' },
+                { v: 'none', l: 'None (off)' },
+                { v: 'nonefr', l: 'Actually none' },
+            ];
+            msg(`<div style="margin:1rem 0;">
+                    <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                        ${options.map(o => `<option value="${o.v}" ${o.v === current ? 'selected' : ''}>${o.l}</option>`).join('')}
+                    </select>
+                </div>
+            `, 'Select visualizer mode');
 
-    setTimeout(() => {
-        const sel = document.getElementById('vizmode_select');
-        const apply = document.getElementById('vizmode_apply');
-        const hise = document.getElementById('viz-mode');
-        const applyChange = () => {
-            if (hise && sel) {
-                hise.value = sel.value;
-                hise.dispatchEvent(new Event('change', { bubbles: true }));
-                throw_error(`Visualizer: ${sel.options[sel.selectedIndex]?.text || sel.value}`, true);
-            }
-        };
-        apply?.addEventListener('click', applyChange);
-        sel?.addEventListener('change', applyChange);
-        sel?.focus();
-    }, 0);
-}));
+            setTimeout(() => {
+                const sel = document.getElementById('vizmode_select');
+                const hise = document.getElementById('viz-mode');
+                const applyChange = () => {
+                    if (hise && sel) {
+                        hise.value = sel.value;
+                        hise.dispatchEvent(new Event('change', { bubbles: true }));
+                        throw_error(`Visualizer: ${sel.options[sel.selectedIndex]?.text || sel.value}`, true);
+                    }
+                };
+                sel?.addEventListener('change', applyChange);
+                sel?.focus();
+            }, 0);
+        }));
+    }
+});
 
 document.getElementById('fwd').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
@@ -98,9 +96,7 @@ document.getElementById('stop').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
-    msg(`
-  <h2>Hotkeys</h2>
-  <ul style="list-style-type: none; padding: 0;">
+    msg(`<ul style="list-style-type: none; padding: 0;">
     <li><strong>Space / K</strong>: play/pause</li>
     <li><strong>Left / J / A</strong>: rewind 10 seconds</li>
     <li><strong>Right / L / D</strong>: forward 10 seconds</li>
@@ -113,7 +109,7 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     <li><strong>Numeric keys (0-9)</strong>: jump to 0-90% of track</li>
     <p><i>You can also scroll over progress bars to change values</i></p>
   </ul>
-`);
+`, 'Hotkeys');
 
 }));
 
@@ -128,7 +124,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
                     if (ua.includes('Firefox')) {
                         window.open(globalart, '_blank');
                     } else if (ua.includes('Chrome')) {
-                        return throw_error(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chrome.<br><small>For some reason, on Chrome, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`);
+                        return throw_error(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chrome.<br><small>For some reason, on Chrome, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`, 'Hold up...');
                     } else {
                         window.open(globalart, '_blank');
                     }
@@ -160,9 +156,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById('theme');
         if (btn) {
             btn.addEventListener('click', debounce(() => {
-                msg(`
-                    <h2>Select theme</h2>
-                    <div style="margin: 1rem 0;">
+                msg(`<div style="margin: 1rem 0;">
                         <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
                             ${THEMES.map(t => {
                                 const label = t.replace('-', ' ');
@@ -175,7 +169,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         <p style="margin: 0 0 0.5rem 0;">Accent color:</p>
                         <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-colour') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
                     </div>
-                `);
+                `, 'Theme and accent preferences');
 
                 setTimeout(() => {
                     const select = document.getElementById('theme_select');
@@ -218,9 +212,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');
     }
-    msg(`
-        <h2>Paste your own lyrics</h2>
-        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
             <p style="margin: 0; color: #aaa;">They must be in LRC format - you can find them on <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a> or other lyrics sites.</p>
             <textarea id="lrc_textarea" placeholder="[00:00.00] Start\n[00:10.50] Next line" rows="10" 
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 0.95rem;"></textarea>
@@ -229,7 +221,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
                 <button id="lrc_apply" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Apply</button>
             </div>
         </div>
-    `);
+    `, 'Paste your own lyrics');
 
     setTimeout(() => {
         const ta = document.getElementById('lrc_textarea');
@@ -282,150 +274,6 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
     }, 0);
 }));
 
-/*document.getElementById('toys').addEventListener('click', debounce(() => {
-    msg(`
-        <h2>Toys</h2>
-        <div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
-            <div>
-                <p style="margin: 0 0 0.5rem 0;">Throw an error:</p>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input id="cuserrinp" type="text" placeholder="Error message" 
-                        style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
-                    <button id="cusbtn1" 
-                        style="padding: 10px 20px; background: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
-                        Throw!
-                    </button>
-                </div>
-            </div>
-
-            <div>
-                <p style="margin: 0 0 0.5rem 0;">Push a status:</p>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input id="statinp" type="text" placeholder="Status message" 
-                        style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
-                    <button id="btn2" 
-                        style="padding: 10px 20px; background: #2980b9; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
-                        Send
-                    </button>
-                </div>
-            </div>
-
-            <div>
-                <p style="margin: 0 0 0.5rem 0;">Show a message popup:</p>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input id="msginp" type="text" placeholder="Dialog HTML or text" 
-                        style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
-                    <button id="msgbtn" 
-                        style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
-                        Show
-                    </button>
-                </div>
-            </div>
-
-            <div>
-                <p style="margin: 0 0 0.5rem 0;">Star background:</p>
-                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; user-select:none;">
-                    <input id="stars_toggle" type="checkbox" ${typeof window !== 'undefined' && window.AudionStars && window.AudionStars.isEnabled() ? 'checked' : ''}>
-                    <span id="stars_toggle_label">${(typeof window !== 'undefined' && window.AudionStars && window.AudionStars.isEnabled()) ? 'Enabled' : 'Disabled'}</span>
-                </label>
-            </div>
-        </div>
-    `);
-
-    setTimeout(() => {
-        const btn1 = document.getElementById('cusbtn1');
-        const input1 = document.getElementById('cuserrinp');
-
-        const btn2 = document.getElementById('btn2');
-        const input2 = document.getElementById('statinp');
-
-        const btn3 = document.getElementById('msgbtn');
-        const input3 = document.getElementById('msginp');
-        const starsToggle = document.getElementById('stars_toggle');
-        const starsLabel = document.getElementById('stars_toggle_label');
-
-        if (btn1 && input1) {
-            btn1.addEventListener('click', () => {
-                const message = input1.value.trim();
-                if (message) {
-                    throw_error(message, false);
-                } else {
-                    throw_error('You must enter a message, that\'s <i>your</i> error!', false);
-                }
-            });
-        }
-
-        if (btn2 && input2) {
-            btn2.addEventListener('click', () => {
-                const message = input2.value.trim();
-                if (message) {
-                    stat_up(message);
-                } else {
-                    stat_up('<span style="display: inline-flex; align-items: center;"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0d/Winamp-logo.svg" style="width: 1.2em; height: 1.2em; margin-right: 0.4em; vertical-align: middle;">This is inspired by Winamp!</span>');
-                }
-            });
-        }
-
-        if (btn3 && input3) {
-            btn3.addEventListener('click', () => {
-                const message = input3.value.trim();
-                if (message) {
-                    msg(message);
-                } else {
-                    msg('???');
-                }
-            });
-        }
-
-        function applyStarPanel(enabled) {
-            const right = document.querySelector('.right');
-            if (!right) return;
-            if (enabled) {
-                if (!right.dataset.prevBg) right.dataset.prevBg = right.style.background || '';
-                right.style.background = 'rgba(0,0,0,0.2)';
-                right.style.backdropFilter = 'blur(2px)';
-            } else {
-                right.style.background = right.dataset.prevBg || '';
-                right.style.backdropFilter = '';
-            }
-        }
-
-        window.addEventListener('audionStarsChange', (e) => {
-            const en = e.detail?.enabled;
-            applyStarPanel(en);
-            if (starsToggle) starsToggle.checked = !!en;
-            if (starsLabel) starsLabel.textContent = en ? 'Enabled' : 'Disabled';
-        });
-
-        if (starsToggle) {
-            starsToggle.addEventListener('change', () => {
-                if (starsToggle.checked) {
-                    window.AudionStars?.enable();
-                    throw_error('Stars enabled - for best results, use with lights out theme!', true);
-                } else {
-                    window.AudionStars?.disable();
-                    throw_error('Stars disabled', true);
-                }
-            });
-        }
-    }, 0);
-}));*/
-
-window.addEventListener('audionStarsChange', (e) => {
-    const en = e.detail?.enabled;
-    const right = document.querySelector('.right');
-    if (right) {
-        if (en) {
-            if (!right.dataset.prevBg) right.dataset.prevBg = right.style.background || '';
-            right.style.background = 'rgba(0,0,0,0.2)';
-            right.style.backdropFilter = 'blur(2px)';
-        } else {
-            right.style.background = right.dataset.prevBg || '';
-            right.style.backdropFilter = '';
-        }
-    }
-});
-
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');
@@ -474,9 +322,7 @@ document.getElementById('album').addEventListener('click', debounce(() => {
 document.getElementById('volc').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_vol = Math.round(elements.player.volume * 100);
-    msg(`
-        <h2>Set volume</h2>
-        <div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="vol_inp" type="number" min="0" max="100" value="${cur_vol}" 
@@ -489,7 +335,7 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
                 <small style="color: #888;" id="footer">current: ${cur_vol}%</small>
             </div>
         </div>
-    `);
+    `, 'Set volume');
 
     setTimeout(() => {
         const input = document.getElementById('vol_inp');
@@ -528,11 +374,8 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
 document.getElementById('speedc').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_spd = elements.speed.value;
-    msg(`
-        <h2>Set speed</h2>
-        <div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
-                <p style="margin: 0 0 0.5rem 0;">set playback speed (0.1-2.0):</p>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="spd_inp" type="number" min="0.1" max="2.0" step="0.1" value="${cur_spd}" 
                         style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
@@ -544,7 +387,7 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
                 <small style="color: #888;" id="footer">current: ${cur_spd}x</small>
             </div>
         </div>
-    `);
+    `, 'Set speed');
 
     setTimeout(() => {
         const input = document.getElementById('spd_inp');
@@ -588,11 +431,8 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
         return throw_error('No track loaded!');
     }
 
-    msg(`
-        <h2>Set index</h2>
-        <div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
-                <p style="margin: 0 0 0.5rem 0;">jump to time (0-${Math.floor(dur)} seconds):</p>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="ind_inp" type="number" min="0" max="${Math.floor(dur)}" value="${Math.floor(cur)}" 
                         style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
@@ -604,7 +444,7 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
                 <small style="color: #888;" id="footer">current: ${Math.floor(cur)}s / duration: ${Math.floor(dur)}s</small>
             </div>
         </div>
-    `);
+    `, 'Set playback time');
 
     setTimeout(() => {
         const input = document.getElementById('ind_inp');
@@ -656,9 +496,9 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
 
         if (sbt) {
             sbt.addEventListener('click', async () => {
-                const query = sin.value.trim();
+                let query = sin.value.trim();
                 if (!query) {
-                    return;
+                    query = metadata.title;
                 }
 
                 try {
