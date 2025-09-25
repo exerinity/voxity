@@ -43,20 +43,20 @@ document.getElementById('queuehead').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('vizmode').addEventListener('click', debounce(() => {
-    const current = (document.getElementById('viz-mode')?.value) || 'waveform';
+    const current = (document.getElementById('viz-mode')?.value) || 'spectrum';
     const options = [
-        {v:'waveform', l:'Waveform'},
-        {v:'bars', l:'Bars'},
-        {v:'circular', l:'Circular'},
-        {v:'spectrum', l:'Spectrum'},
-        {v:'none', l:'None (off)'},
-        {v:'nonefr', l:'Actually none'},
+        { v: 'spectrum', l: 'Spectrum' },
+        { v: 'waveform', l: 'Waveform' },
+        { v: 'bars', l: 'Bars' },
+        { v: 'circular', l: 'Circular' },
+        { v: 'none', l: 'None (off)' },
+        { v: 'nonefr', l: 'Actually none' },
     ];
     msg(`
         <h2>Visualizer mode</h2>
         <div style="margin:1rem 0;">
             <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
-                ${options.map(o => `<option value="${o.v}" ${o.v===current?'selected':''}>${o.l}</option>`).join('')}
+                ${options.map(o => `<option value="${o.v}" ${o.v === current ? 'selected' : ''}>${o.l}</option>`).join('')}
             </select>
         </div>
         <div class="pop">
@@ -138,91 +138,81 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
     }
 }));
 
-document.getElementById('viscolchange').addEventListener('click', debounce(() => {
-    const button = document.getElementById('viscolchange');
-    const colchange = document.createElement('input');
-    colchange.type = 'color';
-    colchange.value = viz_color;
-    colchange.style.position = 'absolute';
-    colchange.style.left = `${button.offsetLeft}px`;
-    colchange.style.top = `${button.offsetTop + button.offsetHeight}px`;
-    colchange.style.zIndex = '1000';
-    colchange.style.width = '100px';
-    colchange.style.height = '50px';
-    colchange.style.border = 'none';
-    colchange.style.cursor = 'pointer';
-    colchange.style.background = 'none';
-    document.body.appendChild(colchange);
-    colchange.addEventListener('input', () => {
-        viz_color = colchange.value;
-        button.style.color = viz_color;
-        document.documentElement.style.setProperty('--lyric-colour', viz_color);
-        stat_up(`<i class="fa-solid fa-palette"></i> Visualizer color set to: <span style="color: ${viz_color};">${viz_color}</span>`);
-    });
-    colchange.addEventListener('blur', () => {
-        document.body.removeChild(colchange);
-    });
-}));
+window.addEventListener('DOMContentLoaded', () => {
+    (function theme() {
+        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'blue'];
+        const key = 'au_theme';
 
-(function theme() {
-    const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'blue'];
-    const key = 'au_theme';
-
-    function apply(theme) {
-        const t = THEMES.includes(theme) ? theme : 'lights-out';
-        document.documentElement.setAttribute('data-theme', t);
-        try { localStorage.setItem(key, t); } catch { }
-    }
-
-    try {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-            apply(stored);
-        } else {
-            apply('lights-out');
+        function apply(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(key, theme);
         }
-    } catch {
-        apply('lights-out');
-    }
 
-    const btn = document.getElementById('theme');
-    if (btn) {
         try {
-            const current = document.documentElement.getAttribute('data-theme') || 'lights-out';
-            const label = current.replace('-', ' ');
-            btn.title = `Toggle theme (current: ${label})`;
-        } catch { }
-        btn.addEventListener('click', debounce(() => {
-            msg(`
-                <h2>Select theme</h2>
-                <div style="margin: 1rem 0;">
-                    <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
-                        ${THEMES.map(t => {
-                const label = t.replace('-', ' ');
-                const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === t ? 'selected' : '';
-                return `<option value="${t}" ${selected}>${label}</option>`;
-            }).join('')}
-                    </select>
-                </div>
-                <i>To toggle the starry background, use the Toys button</i>
-            `);
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                apply(stored);
+            } else {
+                apply('lights-out');
+            }
+        } catch {}
 
-            setTimeout(() => {
-                const select = document.getElementById('theme_select');
-                if (select) {
-                    select.focus();
-                    select.addEventListener('change', () => {
-                        const next = select.value;
-                        apply(next);
-                        const label = next.replace('-', ' ');
-                        throw_error(`Set theme: ${label}`, true);
-                        btn.title = `Toggle theme (current: ${label})`;
-                    });
-                }
-            }, 0);
-        }));
-    }
-})();
+        const btn = document.getElementById('theme');
+        if (btn) {
+            btn.addEventListener('click', debounce(() => {
+                msg(`
+                    <h2>Select theme</h2>
+                    <div style="margin: 1rem 0;">
+                        <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
+                            ${THEMES.map(t => {
+                                const label = t.replace('-', ' ');
+                                const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === t ? 'selected' : '';
+                                return `<option value="${t}" ${selected}>${label}</option>`;
+                            }).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <p style="margin: 0 0 0.5rem 0;">Accent color:</p>
+                        <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-colour') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
+                    </div>
+                `);
+
+                setTimeout(() => {
+                    const select = document.getElementById('theme_select');
+                    const acin = document.getElementById('accent_color');
+
+                    if (select) {
+                        select.focus();
+                        select.addEventListener('change', () => {
+                            const next = select.value;
+                            apply(next);
+                            const label = next.replace('-', ' ');
+                            throw_error(`Set theme: ${label}`, true);
+                            btn.title = `Toggle theme (current: ${label})`;
+                        });
+                    }
+
+                    if (acin) {
+                        acin.addEventListener('input', () => {
+                            const color = acin.value;
+                            document.documentElement.style.setProperty('--lyric-colour', color);
+                            viz_color = color;
+                            uvzc(color);
+                            throw_error(`<i class='fa-solid fa-palette'></i> Accent color set to: <span style='color: ${color};'>${color}</span>`, true);
+                        });
+                    }
+
+                    function uvzc(color) {
+                        const visualizer = document.getElementById('visualizer');
+                        if (visualizer) {
+                            visualizer.style.backgroundColor = color;
+                        }
+                    }
+                }, 0);
+            }));
+        }
+    })();
+});
 
 document.getElementById('pastelrc').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
@@ -292,7 +282,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
     }, 0);
 }));
 
-document.getElementById('toys').addEventListener('click', debounce(() => {
+/*document.getElementById('toys').addEventListener('click', debounce(() => {
     msg(`
         <h2>Toys</h2>
         <div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
@@ -351,8 +341,8 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
 
         const btn3 = document.getElementById('msgbtn');
         const input3 = document.getElementById('msginp');
-    const starsToggle = document.getElementById('stars_toggle');
-    const starsLabel = document.getElementById('stars_toggle_label');
+        const starsToggle = document.getElementById('stars_toggle');
+        const starsLabel = document.getElementById('stars_toggle_label');
 
         if (btn1 && input1) {
             btn1.addEventListener('click', () => {
@@ -387,10 +377,10 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
             });
         }
 
-        function applyStarPanel(enabled){
+        function applyStarPanel(enabled) {
             const right = document.querySelector('.right');
             if (!right) return;
-            if (enabled){
+            if (enabled) {
                 if (!right.dataset.prevBg) right.dataset.prevBg = right.style.background || '';
                 right.style.background = 'rgba(0,0,0,0.2)';
                 right.style.backdropFilter = 'blur(2px)';
@@ -419,13 +409,13 @@ document.getElementById('toys').addEventListener('click', debounce(() => {
             });
         }
     }, 0);
-}));
+}));*/
 
-window.addEventListener('audionStarsChange', (e)=>{
+window.addEventListener('audionStarsChange', (e) => {
     const en = e.detail?.enabled;
     const right = document.querySelector('.right');
-    if (right){
-        if (en){
+    if (right) {
+        if (en) {
             if (!right.dataset.prevBg) right.dataset.prevBg = right.style.background || '';
             right.style.background = 'rgba(0,0,0,0.2)';
             right.style.backdropFilter = 'blur(2px)';
@@ -641,6 +631,98 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
             btn.addEventListener('click', set_ind);
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') set_ind();
+            });
+        }
+    }, 0);
+}));
+
+document.getElementById('searchlrclib').addEventListener('click', debounce(() => {
+    if (!metadata.title && !metadata.artist) {
+        return throw_error('No track playing!');
+    }
+
+    msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+            <input id="lrcse" placeholder="${metadata.title}" 
+                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+            <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+            </div>
+        </div>
+    `, 'Search for lyrics');
+
+    setTimeout(() => {
+        const sin = document.getElementById('lrcse');
+        const sbt = document.getElementById('lrsea');
+
+        if (sbt) {
+            sbt.addEventListener('click', async () => {
+                const query = sin.value.trim();
+                if (!query) {
+                    return;
+                }
+
+                try {
+                    throw_error('Searching...', true);
+                    const response = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
+                    const results = await response.json();
+
+                    if (results.length === 0) {
+                        return throw_error('No results');
+                    }
+
+                    msg(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                            ${results.slice(0, 10).map((result, index) => `
+                                <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                    <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
+                                </p>
+                            `).join('')}
+                        </div>
+                    `, 'Results');
+
+                    setTimeout(() => {
+                        document.querySelectorAll('[data-id]').forEach(p => {
+                            p.addEventListener('click', async () => {
+                                const id = p.dataset.id;
+                                try {
+                                    throw_error('Loading...', true);
+                                    const flrs = await fetch(`https://lrclib.net/api/get/${id}`);
+                                    const flcd = await flrs.json();
+
+                                    if (flcd.syncedLyrics || flcd.plainLyrics) {
+                                        msg(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                                                <pre style="white-space: pre-wrap; color: white;">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
+                                            </div>
+                                            <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top: 1rem;">
+                                                <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
+                                            </div>
+                                        `, 'Preview lyrics');
+
+                                        setTimeout(() => {
+                                            const insb = document.getElementById('insert_lyrics');
+                                            if (insb) {
+                                                insb.addEventListener('click', () => {
+                                                    if (flcd.syncedLyrics) {
+                                                        lrc_data = lrc_parse(flcd.syncedLyrics);
+                                                    } else {
+                                                        lrc_data = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
+                                                    }
+                                                    update_lyrics();
+                                                    throw_error('Lyrics inserted successfully!', true);
+                                                });
+                                            }
+                                        }, 0);
+                                    } else {
+                                        throw_error('No lyrics found, is it an instrumental?');
+                                    }
+                                } catch (e) {
+                                    throw_error(e);
+                                }
+                            });
+                        });
+                    }, 0);
+                } catch (e) {
+                    throw_error(e);
+                }
             });
         }
     }, 0);

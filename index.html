@@ -79,12 +79,11 @@
                 </div>
                 <div class="controls">
                     <button id="theme" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i> Theme</button>
-                    <button id="viscolchange" title="Change accent"><i class="fa-solid fa-palette"></i> Accent</button>
                     <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i class="fa-solid fa-paste"></i> Lyrics</button>
                     <button id="hotkeys" class="bop"><i class="fa-solid fa-keyboard"></i> Hotkeys</button>
-                    <button id="toys" class="bop"><i class="fa-solid fa-robot"></i> Toys</button>
                     <button id="vizmode" class="bop" title="Visualizer mode"><i class="fa-solid fa-chart-simple"></i> Visualizer</button>
                     <button id="audionalert" title="About this app" class="bop"><i class="fa-solid fa-info"></i> About</button>
+                    <button id="searchlrclib" title="Search LRCLIB for lyrics" class="bop"><i class="fa-solid fa-search"></i> Search lyrics</button>
                 </div>
                 <div class="sliders">
                     <div class="slidez">
@@ -119,7 +118,7 @@
                 </div>
                 <div class="viz_sec">
                     <canvas id="visualizer"></canvas>
-                    <input id="viz-mode" type="hidden" value="waveform">
+                    <input id="viz-mode" type="hidden" value="spectrum">
                 </div>
             </div>
             <div class="right" id="droppedzone">
@@ -145,7 +144,6 @@
     <script src="/app/scripts/buttons.js"></script>
     <script src="/app/scripts/title.js"></script>
     <script src="/app/scripts/api.js"></script>
-    <script src="/app/scripts/stars.js"></script>
 </body>
 
 <!--
