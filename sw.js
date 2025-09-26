@@ -1,4 +1,4 @@
-const CACHE_NAME = 'audion50';
+const CACHE_NAME = 'audion51';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const FILES_TO_CACHE = [
@@ -14,6 +14,7 @@ const FILES_TO_CACHE = [
   '/welcome.ogg',
   '/error.ogg',
   '/message.ogg',
+  '/done.ogg',
 
   // stylesheets
   cs+'controls.css',

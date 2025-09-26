@@ -30,7 +30,7 @@
     --error-bg: #a00;
     --statusbox-bg: #061f3040;
     --dialog-bg: #333;
-    --overlay-bg: rgba(0, 0, 0, 0.62);
+    --overlay-bg: transparent;
     --spinner-trk: #061f30;
     --shadow: #2226;
     --shadow-strong: #2228;
@@ -55,7 +55,7 @@
     --error-bg: #a33;
     --statusbox-bg: #061f3040;
     --dialog-bg: #3a3a3a;
-    --overlay-bg: rgba(0, 0, 0, 0.55);
+    --overlay-bg: transparent;
     --spinner-trk: #0d2536;
     --link: #7cc6ff;
     --shadow: #0006;
@@ -81,7 +81,7 @@
     --error-bg: #a22;
     --statusbox-bg: #061f3040;
     --dialog-bg: #1f1f1f;
-    --overlay-bg: rgba(0, 0, 0, 0.62);
+    --overlay-bg: transparent;
     --spinner-trk: #0d2536;
     --link: #5fb3ff;
     --shadow: #0006;
@@ -107,7 +107,7 @@
     --error-bg: #911;
     --statusbox-bg: #00000066;
     --dialog-bg: #111111;
-    --overlay-bg: rgba(0, 0, 0, 0.66);
+    --overlay-bg: transparent;
     --spinner-trk: #061f30;
     --link: #4aa3ff;
     --shadow: #0006;
@@ -136,7 +136,7 @@
     --error-bg: #ff0000;
     --statusbox-bg: #061f3040;
     --dialog-bg: #000000;
-    --overlay-bg: rgba(0, 0, 0, 0.62);
+    --overlay-bg: transparent;
     --spinner-trk: #061f30;
     --shadow: #0006;
     --shadow-strong: #0008;
@@ -161,7 +161,7 @@
     --error-bg: #a33;
     --statusbox-bg: #061f3040;
     --dialog-bg: #22303c;
-    --overlay-bg: rgba(0, 0, 0, 0.55);
+    --overlay-bg: transparent;
     --spinner-trk: #0d2536;
     --link: #1d9bf0;
     --shadow: #0006;

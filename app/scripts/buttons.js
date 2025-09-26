@@ -28,7 +28,7 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
     stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(t)} / ${form_time(dur)}`);
 }));
 
-document.getElementById('audionalert').addEventListener('click', debounce(() => {
+document.getElementById('branding').addEventListener('click', debounce(() => {
     msg(`
         <p>Audion is a <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
         <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
@@ -124,7 +124,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
                     if (ua.includes('Firefox')) {
                         window.open(globalart, '_blank');
                     } else if (ua.includes('Chrome')) {
-                        return throw_error(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chrome.<br><small>For some reason, on Chrome, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`, 'Hold up...');
+                        return msg(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chrome.<br><small>For some reason, on Chrome, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`, 'Hold up...');
                     } else {
                         window.open(globalart, '_blank');
                     }
@@ -168,7 +168,8 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div>
                         <p style="margin: 0 0 0.5rem 0;">Accent color:</p>
                         <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-colour') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
-                    </div>
+                    </div><br>
+                    <p style="font-size: 0.9rem; color: #aaa; margin: 0;">To change the visualizer mode, click on the visualizer itself</p>
                 `, 'Theme and accent preferences');
 
                 setTimeout(() => {
@@ -192,7 +193,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             document.documentElement.style.setProperty('--lyric-colour', color);
                             viz_color = color;
                             uvzc(color);
-                            throw_error(`<i class='fa-solid fa-palette'></i> Accent color set to: <span style='color: ${color};'>${color}</span>`, true);
+                            stat_up(`<i class='fa-solid fa-palette'></i> Accent color set to: <span style='color: ${color};'>${color}</span>`);
                         });
                     }
 
@@ -547,7 +548,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
                                                         lrc_data = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
                                                     }
                                                     update_lyrics();
-                                                    throw_error('Lyrics inserted successfully!', true);
+                                                    throw_error('Inserted lyrics', true);
                                                 });
                                             }
                                         }, 0);

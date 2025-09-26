@@ -6,7 +6,7 @@ async function msg(text, tbartext) {
     overlay.style.width = '100vw';
     overlay.style.height = '100vh';
     overlay.style.background = 'var(--overlay-bg)';
-    overlay.style.backdropFilter = 'blur(7px)';
+    overlay.style.backdropFilter = 'blur(2px)';
     overlay.style.zIndex = 9999;
     overlay.style.display = 'flex';
     overlay.style.alignItems = 'center';

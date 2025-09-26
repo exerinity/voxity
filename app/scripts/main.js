@@ -382,11 +382,11 @@ function init() {
         if (hadNext) {
             contin();
         } else {
-            stat_up('<i class="fa-solid fa-octagon"></i> Stopped');
             elements.player.currentTime = 0;
             elements.player.pause();
-            document.getElementById('msgsound').currentTime = 0;
-            document.getElementById('msgsound').play().catch(() => { });
+            document.getElementById('donesound').currentTime = 0;
+            document.getElementById('donesound').play().catch(() => { });
+            throw_error('Finished playing queue', true);
             document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
             sfa('/favicon.ico');
             if ('mediaSession' in navigator) {
