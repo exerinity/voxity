@@ -1,4 +1,4 @@
-const CACHE_NAME = 'audion51';
+const CACHE_NAME = 'audion52';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const FILES_TO_CACHE = [

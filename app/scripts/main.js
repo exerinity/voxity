@@ -271,7 +271,8 @@ function previ() {
     if (prev >= 0) {
         pindex(prev);
     } else {
-        throw_error('This is the only track in the queue!<br>To restart this track, press the <i class="fa-solid fa-arrow-rotate-left"></i>!');
+        elements.player.currentTime = 0;
+        stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
     }
 }
 
