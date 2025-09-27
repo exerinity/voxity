@@ -34,7 +34,6 @@ document.getElementById('branding').addEventListener('click', debounce(() => {
         <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
         <hr>
         <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p>
-        <p>Sound effects are from Windows 7.</p>
         `, 'About Audion');
 }));
 

@@ -23,6 +23,7 @@ const elements = {
     stopnow: document.getElementById('cancel'),
     success_sound: document.getElementById('sucsound'),
     error_sound: document.getElementById('errsound'),
+    message_sound: document.getElementById('msgsound'),
     branding: document.getElementById('branding'),
     queueList: document.getElementById('queue-list'),
 };

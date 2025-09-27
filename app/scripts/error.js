@@ -143,7 +143,10 @@ function throw_error(msg, ok = false) {
         c.firstChild?.remove();
     }
 
-    if (!ok) {
+    if (ok) {
+        elements.message_sound.currentTime = 0;
+        elements.message_sound.play();
+    } else {
         elements.error_sound.currentTime = 0;
         elements.error_sound.play();
         console.error(msg);
