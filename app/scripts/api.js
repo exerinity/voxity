@@ -1,5 +1,3 @@
-// this is mostly for windows to make it work with media keys and show whats playing
-
 function set_media_session_metadata(artUrl) {
     if (!('mediaSession' in navigator)) return;
     try {
@@ -21,7 +19,6 @@ function set_media_session_metadata(artUrl) {
     } catch {}
 }
 
-// make it so media keys work, hopefully
 if ('mediaSession' in navigator) {
     navigator.mediaSession.setActionHandler('play', () => {
         audio.play().catch(() => {
