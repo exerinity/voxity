@@ -323,8 +323,9 @@ function init() {
         throw_error("Mobile detected");
         msg(`<h1>Mobile is not recommended</h1><p>Audion is not recommended or optimized for mobile devices. For the best experience, please use a desktop.`)
     }
-
+    document.getElementById('preemptive_warn').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
+
     document.getElementById('dropzone')?.addEventListener('contextmenu', (e) => e.preventDefault(), { once: true });
     document.getElementById('droppedzone')?.addEventListener('contextmenu', (e) => e.preventDefault(), { once: true });
 
@@ -578,22 +579,23 @@ function sfa(url) {
     } catch { null }
 }
 
-if (!localStorage.getItem('hai')) {
-    localStorage.setItem('hai', '1');
-    setTimeout(() => {
-        msg(`<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
+if (typeof localStorage !== 'undefined') {
+    const isFirstVisit = !localStorage.getItem('hai');
+    if (isFirstVisit) {
+        try { localStorage.setItem('hai', '1'); } catch { /* ignore */ }
+        setTimeout(() => {
+            msg(`<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
 <p>To learn more, visit Audion's page on my website: <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">https://exerinity.dev/projects/audion</a></p>
 <p><a href="https://exerinity.dev/projects/audion/screenshots" target="_blank" rel="noopener">View some screenshots of Audion here</a></p>
 <p>Enjoy! <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></p>
 <small><i>You won't see this message again (unless you clear your local storage, lol)</i></small>
-`, "Welcome");
-    }, 2500);
-}
+`, "Welcome!");
+        }, 2500);
 
-if (localStorage.getItem('hai')) {
-    stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Audion!');
-} else {
-    stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
+        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
+    } else {
+        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Audion!');
+    }
 }
 
 function calqueue() {

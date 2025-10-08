@@ -25,7 +25,7 @@ if ('serviceWorker' in navigator) {
       });
     } catch (error) {
       console.error('SW registration failed:', error);
-      throw_error("Service worker failed to start");
+      throw_error("Service worker failed to start! Audion won't work offline.");
     }
   });
 }
