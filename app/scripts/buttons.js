@@ -230,6 +230,14 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
     setTimeout(() => {
         const ta = document.getElementById('lrc_textarea');
+        if (lrc_data) ta.value = lrc_data.map(item => {
+            const time = item.time;
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            const milliseconds = Math.floor((time * 100) % 100);
+            const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+            return `[${formattedTime}] ${item.text}`;
+        }).join('\n');
         const apply = document.getElementById('lrc_apply');
         const clr = document.getElementById('lrc_clear');
 
