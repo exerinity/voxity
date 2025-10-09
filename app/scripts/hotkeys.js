@@ -30,12 +30,16 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('plps').click();
     } else if (e.code === 'ArrowLeft' || e.code === 'KeyJ' || e.code === 'KeyA') {
         e.preventDefault();
-        elements.player.currentTime -= e.shiftKey ? 1 : 10;
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${e.shiftKey ? '1 second' : '10 seconds'})`);
+        const seekAmount = e.ctrlKey ? 5 : (e.shiftKey ? 1 : 10);
+        elements.player.currentTime -= seekAmount;
+        const label = e.ctrlKey ? '5 seconds' : (e.shiftKey ? '1 second' : '10 seconds');
+        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${label})`);
     } else if (e.code === 'ArrowRight' || e.code === 'KeyL' || e.code === 'KeyD') {
         e.preventDefault();
-        elements.player.currentTime += e.shiftKey ? 1 : 10;
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${e.shiftKey ? '1 second' : '10 seconds'})`);
+        const seekAmount = e.ctrlKey ? 5 : (e.shiftKey ? 1 : 10);
+        elements.player.currentTime += seekAmount;
+        const label = e.ctrlKey ? '5 seconds' : (e.shiftKey ? '1 second' : '10 seconds');
+        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${label})`);
     } else if (e.code === 'KeyT') {
         document.getElementById('loop').click();
     } else if (e.code === 'KeyN') {

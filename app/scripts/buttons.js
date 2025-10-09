@@ -1,3 +1,11 @@
+function getAbout() {
+    return `Audion is a <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
+        <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
+        <hr>
+        <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Audion is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}`;
+}
+
+
 document.getElementById('plps').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');
@@ -29,12 +37,7 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
-    msg(`
-        <p>Audion is a <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
-        <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
-        <hr>
-        <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p>
-        `, 'About Audion');
+    msg(getAbout(), 'About Audion');
 }));
 
 document.getElementById('queuehead').addEventListener('click', debounce(() => {
@@ -101,6 +104,8 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     <li><strong>Right / L / D</strong>: forward 10 seconds</li>
     <li><strong>Shift + Left</strong>: rewind 1 second</li>
     <li><strong>Shift + Right</strong>: forward 1 second</li>
+    <li><strong>Ctrl + Left</strong>: rewind 5 seconds</li>
+    <li><strong>Ctrl + Right</strong>: forward 5 seconds</li>
     <li><strong>W / Up</strong>: volume up</li>
     <li><strong>S / Down</strong>: volume down</li>
     <li><strong>R</strong>: restart track</li>
@@ -108,7 +113,7 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     <li><strong>Numeric keys (0-9)</strong>: jump to 0-90% of track</li>
     <p><i>You can also scroll over progress bars to change values</i></p>
   </ul>
-`, 'Hotkeys');
+`, 'Hotkeys / keyboard shortcuts');
 
 }));
 
@@ -150,7 +155,7 @@ window.addEventListener('DOMContentLoaded', () => {
             } else {
                 apply('lights-out');
             }
-        } catch {}
+        } catch { }
 
         const btn = document.getElementById('theme');
         if (btn) {
@@ -158,10 +163,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 msg(`<div style="margin: 1rem 0;">
                         <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
                             ${THEMES.map(t => {
-                                const label = t.replace('-', ' ');
-                                const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === t ? 'selected' : '';
-                                return `<option value="${t}" ${selected}>${label}</option>`;
-                            }).join('')}
+                    const label = t.replace('-', ' ');
+                    const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === t ? 'selected' : '';
+                    return `<option value="${t}" ${selected}>${label}</option>`;
+                }).join('')}
                         </select>
                     </div>
                     <div>
@@ -219,7 +224,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
             <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
                 <button id="lrc_clear" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear</button>
                 <button id="lrc_apply" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Apply</button>
-            </div>
+            </div><br><small style="color: #888;">Tip: You can drag and drop a .lrc or .srt/.vtt file to the dropzone</small>
         </div>
     `, 'Paste your own lyrics');
 
@@ -276,7 +281,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        return throw_error('No track playing!');
+        return msg(getAbout(), 'About Audion');
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {
