@@ -571,6 +571,8 @@ function init() {
         elements.player.playbackRate = elements.speed.value;
         elements.speed_min.innerHTML = '0.1x';
         elements.speed_max.innerHTML = '2.0x';
+        // if speed 2.0 throw success error
+        if (parseFloat(elements.speed.value) === 2.0) throw_error('To go higher, click the "speed" text above the slider!', true);
         stat_up(`${icon} Speed: ${elements.speed.value}x`);
     });
 

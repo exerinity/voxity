@@ -382,14 +382,14 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
     msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input id="spd_inp" type="number" min="0.1" max="2.0" step="0.1" value="${cur_spd}" 
+                    <input id="spd_inp" type="number" min="0.1" max="14.0" step="0.1" value="${cur_spd}" 
                         style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
                     <button id="set_spd" 
                         style="padding: 10px 20px; background: #333333; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
                         Set
                     </button>
                 </div>
-                <small style="color: #888;" id="footer">current: ${cur_spd}x</small>
+                <small style="color: #888;" id="footer">current: ${cur_spd}x - min: 0.1x, max: 14.0x</small>
             </div>
         </div>
     `, 'Set speed');
@@ -404,8 +404,8 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
 
             const set_spd = () => {
                 const value = parseFloat(input.value);
-                if (isNaN(value) || value < 0.1 || value > 2.0) {
-                    throw_error('Speed must be between 0.1 and 2.0!');
+                if (isNaN(value) || value < 0.1 || value > 14.0) {
+                    throw_error('Speed must be between 0.1 and 14.0!');
                     return;
                 }
                 elements.speed.value = value;
@@ -416,7 +416,7 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
                 else if (value >= 0.5) icon = '<i class="fa-solid fa-gauge"></i>';
 
                 throw_error(`Speed set to: ${value}x ${icon}`, true);
-                document.getElementById('footer').innerHTML = `current: ${value}x`;
+                document.getElementById('footer').innerHTML = `current: ${value}x - min: 0.1x, max: 14.0x`;
             };
 
             btn.addEventListener('click', set_spd);
