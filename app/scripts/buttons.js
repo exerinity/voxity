@@ -1,5 +1,5 @@
 function getAbout() {
-    return `Audion is a <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
+    return `Audion is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
         <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
         <hr>
         <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Audion is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}`;
@@ -61,6 +61,7 @@ document.getElementById('queuehead').addEventListener('click', debounce(() => {
                     <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
                         ${options.map(o => `<option value="${o.v}" ${o.v === current ? 'selected' : ''}>${o.l}</option>`).join('')}
                     </select>
+                    <br><i style="font-size:0.9rem; color:#888;">To change its color, press the <strong><i class="fa-solid fa-gear"></i> Theme</strong> button</i>
                 </div>
             `, 'Select visualizer mode');
 
@@ -110,16 +111,18 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     <li><strong>S / Down</strong>: volume down</li>
     <li><strong>R</strong>: restart track</li>
     <li><strong>T</strong>: toggle loop</li>
+    <li><strong>Z</strong>: previous track</li>
+    <li><strong>X</strong>: next track</li>
     <li><strong>Numeric keys (0-9)</strong>: jump to 0-90% of track</li>
-    <p><i>You can also scroll over progress bars to change values</i></p>
   </ul>
-`, 'Hotkeys / keyboard shortcuts');
+  <i style="font-size:0.9rem; color:#888;">You can also scroll over bars like volume and speed to change them</i>
+`, 'Hotkeys');
 
 }));
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
     if (globalart) {
-        msg(`<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart"><small><i>Click image to open in new tab</i></small>`, `${metadata.album || metadata.title || "Cover art"}`);
+        msg(`<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart"><small><a href="${globalart}" target="_blank"><i>Open in new tab</i></a></small>`, `${act_truncate(metadata.album || metadata.title || "Cover art")}`);
         setTimeout(() => {
             const img = document.getElementById('msgart');
             if (img) {
@@ -170,11 +173,11 @@ window.addEventListener('DOMContentLoaded', () => {
                         </select>
                     </div>
                     <div>
-                        <p style="margin: 0 0 0.5rem 0;">Accent color:</p>
+                        <abbr title="This changes the color of highlighted lyrics, the visualizer, and the Audion icon in these modals and top-right corner" style="margin: 0 0 0.5rem 0;">Accent color:</abbr>
                         <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-colour') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
                     </div><br>
-                    <p style="font-size: 0.9rem; color: #aaa; margin: 0;">To change the visualizer mode, click on the visualizer itself</p>
-                `, 'Theme and accent preferences');
+                    <p style="font-size: 0.9rem; color: #888; margin: 0;">To change the visualizer mode, click on the visualizer itself or <strong><i class="fa-solid fa-chart-simple"></i> Visualizer</strong></p>
+                `, 'Theme settings');
 
                 setTimeout(() => {
                     const select = document.getElementById('theme_select');
@@ -218,13 +221,13 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
         return throw_error('No track playing!');
     }
     msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
-            <p style="margin: 0; color: #aaa;">They must be in LRC format - you can find them on <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a> or other lyrics sites.</p>
+            <p style="margin: 0; color: #888;">They must be in LRC format - you can find them on <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a> or other lyrics sites.</p>
             <textarea id="lrc_textarea" placeholder="[00:00.00] Start\n[00:10.50] Next line" rows="10" 
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 0.95rem;"></textarea>
             <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
                 <button id="lrc_clear" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear</button>
                 <button id="lrc_apply" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Apply</button>
-            </div><br><small style="color: #888;">Tip: You can drag and drop a .lrc or .srt/.vtt file to the dropzone</small>
+            </div><br><small style="color: #888;">You can drag and drop a .lrc or .srt/.vtt file to the dropzone or search LRCLIB for lyrics by pressing <strong><i class="fa-solid fa-magnifying-glass"></i> Search lyrics</strong></small>
         </div>
     `, 'Paste your own lyrics');
 
@@ -499,7 +502,8 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
             <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
                 <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
-            </div>
+            </div><br>
+            <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
         </div>
     `, 'Search for lyrics');
 

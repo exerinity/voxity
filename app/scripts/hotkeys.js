@@ -63,6 +63,12 @@ document.addEventListener('keydown', (e) => {
         elements.player.volume = elements.vol.value / 2;
         stat_up(`${icon} Volume: ${(elements.player.volume * 100).toFixed(0)}%`);
     }
+    else if (e.code === 'KeyZ') {
+        if (typeof prevTrack === 'function') previ();
+    }
+    else if (e.code === 'KeyX') {
+        if (typeof nextTrack === 'function') contin();
+    }
 
     else if (e.code.startsWith('Digit')) {
         const num = parseInt(e.code.slice(5), 10);
