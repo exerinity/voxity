@@ -303,7 +303,7 @@ function quf(fileList) {
                 }
 
                 if (!elements.player || !elements.player.src) {
-                    throw_error('To apply lyrics, you need to play something first!');
+                    throw_error('Play something first!');
                     return;
                 }
 
@@ -356,7 +356,7 @@ function contin() {
     if (next < queue.length) {
         pindex(next);
     } else {
-        throw_error('This is the only track in the queue!');
+        throw_error('This is a dead end, add more tracks');
     }
 }
 
@@ -384,7 +384,7 @@ function clea() {
 
 function remq(idx) {
     if (queue.length <= 1) {
-        throw_error('There are no more tracks to remove');
+        throw_error('You cannot remove the last track');
         return;
     }
     if (idx < 0 || idx >= queue.length) return;
@@ -415,7 +415,7 @@ function remq(idx) {
 function init() {
     if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent)) {
         throw_error("Mobile detected");
-        msg(`<h1>Mobile is not recommended</h1><p>Audion is not recommended or optimized for mobile devices. For the best experience, please use a desktop.`)
+        msg(`<h1>Mobile is not recommended</h1><p>Audion is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Audion is a "two panel" design, only one panel would realistically fit.`)
     }
     document.getElementById('preemptive_warn').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -440,7 +440,7 @@ function init() {
         elements.player.loop = onrepeat;
         rep_button.innerHTML = '<i class="fa-solid fa-repeat"></i>';
         rep_button.style.color = onrepeat ? 'green' : 'red';
-        stat_up(onrepeat ? '<i class="fa-solid fa-repeat"></i> Loop ON' : '<i class="fa-solid fa-repeat"></i> Loop OFF');
+        stat_up(onrepeat ? '<i class="fa-solid fa-repeat" style="color: green;"></i> Loop ON' : '<i class="fa-solid fa-repeat" style="color: red;"></i> Loop OFF');
     }));
 
     elements.player.addEventListener('play', () => {
@@ -571,8 +571,7 @@ function init() {
         elements.player.playbackRate = elements.speed.value;
         elements.speed_min.innerHTML = '0.1x';
         elements.speed_max.innerHTML = '2.0x';
-        // if speed 2.0 throw success error
-        if (parseFloat(elements.speed.value) === 2.0) throw_error('To go higher, click the "speed" text above the slider!', true);
+        if (parseFloat(elements.speed.value) === 2.0) throw_error('To go higher than 2x, click the "speed" text above the slider!', true);
         stat_up(`${icon} Speed: ${elements.speed.value}x`);
     });
 
@@ -678,14 +677,14 @@ function sfa(url) {
 if (typeof localStorage !== 'undefined') {
     const isFirstVisit = !localStorage.getItem('hai');
     if (isFirstVisit) {
-        try { localStorage.setItem('hai', '1'); } catch { /* ignore */ }
+        try { localStorage.setItem('hai', '1'); } catch { null }
         setTimeout(() => {
             msg(`<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
 <p>To learn more, visit Audion's page on my website: <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">https://exerinity.dev/projects/audion</a></p>
 <p><a href="https://exerinity.dev/projects/audion/screenshots" target="_blank" rel="noopener">View some screenshots of Audion here</a></p>
 <p>Enjoy! <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></p>
 <small><i>You won't see this message again (unless you clear your local storage, lol)</i></small>
-`, "Welcome!");
+`, "Welcome to Audion");
         }, 2500);
 
         stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');

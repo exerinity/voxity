@@ -23,3 +23,7 @@ function tabtitle() {
 
 tabtitle();
 setInterval(tabtitle, 5000);
+
+/* The goal of this is to make titles look better...
+if you have something like "Sometimes Things Get, Whatever / Random Album Title / deadmau5 / Audion" all crammed into the title bar,
+it looks shitty, and 11 times out of 10, truncated. This doesn't matter much anyway, Audion integrates with the Media Session API so.. */

@@ -1,17 +1,25 @@
 {
-  "name": "Audion",
+  "name": "Audion beta",
   "short_name": "Audion",
   "start_url": "index.html",
+  "lang": "en-AU",
+  "orientation": "landscape",
+  "categories": ["music", "audio", "player", "media", "lyrics", "meta"],
   "display": "standalone",
   "description": "A semi-advanced music player that supports any audio file your browser does.",
   "background_color": "#000000",
   "packaged": "com.exerinity.audion",
-  "theme_color": "#000000",
+  "theme_color": "#8000ff",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "48x48 72x72 96x96 128x128 256x256",
       "type": "image/x-icon"
+    },
+    {
+      "src": "favicona.png",
+      "sizes": "32x32 64x64",
+      "type": "image/png"
     }
   ]
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'audion57';
+const CACHE_NAME = 'audion58';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const FILES_TO_CACHE = [
@@ -7,6 +7,7 @@ const FILES_TO_CACHE = [
   '/entry.html',
   '/404.html',
   '/favicon.ico',
+  '/favicona.png',
   '/manifest.json',
   '/sw.js',
 
@@ -18,8 +19,10 @@ const FILES_TO_CACHE = [
 
   // stylesheets
   cs+'controls.css',
+  cs+'fontawesome.css',
   cs+'miscellaneous.css',
   cs+'structure.css',
+  cs+'styles.css',
   cs+'tandem.css',
   cs+'themes.css',
 
@@ -46,7 +49,11 @@ const FILES_TO_CACHE = [
   '/app/webfonts/fa-brands-400.woff2',
   '/app/webfonts/fa-regular-400.woff2',
   '/app/webfonts/fa-solid-900.woff2',
-  '/app/webfonts/fa-v4compatibility.woff2'
+  '/app/webfonts/fa-v4compatibility.woff2',
+
+  // root misc
+  '/robots.txt',
+  '/README.md'
 ];
 console.log('Service worker initializing...');
 
