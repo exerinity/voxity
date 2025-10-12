@@ -1,4 +1,4 @@
-# Audion
+# Voxity
 A semi-advanced web-based music player app. Built with no frameworks, just vanilla JS, HTML and CSS.
 
 # Features
@@ -14,7 +14,7 @@ This repository used to have a detailed README and actual new commit messages, b
 ![https://i.exerinity.com/swRvub3LKs.png](https://i.exerinity.com/swRvub3LKs.png)
 
 # https://audion.exerinity.com
-### To learn more about Audion, and view screenshots/FAQ, please visit https://exerinity.dev/projects/audion
+### To learn more about Voxity, and view screenshots/FAQ, please visit https://exerinity.dev/projects/audion
 # License
 This is free and unencumbered software released into the public domain.
 

@@ -1,8 +1,8 @@
 function getAbout() {
-    return `Audion is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
-        <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a> - <a onclick="changelogmsg()" style="cursor: pointer">Release notes</a>
+    return `Voxity (<a href="https://bsky.app/profile/exerinity.dev/post/3m2yswjoaes2l">fka "Audion"</a>) is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
+        <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Voxity</a> - <a onclick="changelogmsg()" style="cursor: pointer">Release notes</a>
         <hr>
-        <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Audion is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
+        <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
         <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>`;
 }
 
@@ -38,7 +38,7 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
-    msg(getAbout(), 'About Audion');
+    msg(getAbout(), 'About Voxity');
 }));
 
 document.getElementById('queuehead').addEventListener('click', debounce(() => {
@@ -175,7 +175,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         </select>
                     </div>
                     <div>
-                        <abbr title="This changes the color of highlighted lyrics, the visualizer, and the Audion icon in these modals and top-right corner" style="margin: 0 0 0.5rem 0;">Accent color:</abbr>
+                        <abbr title="This changes the color of highlighted lyrics, the visualizer, and the Voxity icon in these modals and top-right corner" style="margin: 0 0 0.5rem 0;">Accent color:</abbr>
                         <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-colour') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
                     </div><br>
                     <p style="font-size: 0.9rem; color: #888; margin: 0;">To change the visualizer mode, click on the visualizer itself or <strong><i class="fa-solid fa-chart-simple"></i> Visualizer</strong></p>
@@ -293,13 +293,13 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        return msg(getAbout(), 'About Audion');
+        return msg(getAbout(), 'About Voxity');
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {
         throw_error(`Copied song to clipboard`, true);
     }).catch(err => {
-        throw_error('Failed to copy - is Audion allowed to access your clipboard?');
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });
 }));
 
@@ -310,7 +310,7 @@ document.getElementById('np2').addEventListener('click', debounce(() => {
     navigator.clipboard.writeText(metadata.title).then(() => {
         throw_error('Copied title to clipboard', true);
     }).catch(err => {
-        throw_error('Failed to copy - is Audion allowed to access your clipboard?');
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });
 }));
 
@@ -321,7 +321,7 @@ document.getElementById('artist').addEventListener('click', debounce(() => {
     navigator.clipboard.writeText(metadata.artist).then(() => {
         throw_error('Copied artist to clipboard', true);
     }).catch(err => {
-        throw_error('Failed to copy - is Audion allowed to access your clipboard?');
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });
 }));
 
@@ -332,7 +332,7 @@ document.getElementById('album').addEventListener('click', debounce(() => {
     navigator.clipboard.writeText(metadata.album).then(() => {
         throw_error('Copied album to clipboard', true);
     }).catch(err => {
-        throw_error('Failed to copy - is Audion allowed to access your clipboard?');
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });
 }));
 
@@ -588,5 +588,5 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
 }));
 
 function changelogmsg () {
-    msg(`<iframe src="https://i.exerinity.com/audion_update_log.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe>`, 'Release notes');
+    msg(`<iframe src="https://i.exerinity.com/voxrelnote.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe>`, 'Release notes');
 }

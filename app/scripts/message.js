@@ -38,7 +38,7 @@ async function msg(text, tbartext) {
     title.style.alignItems = 'center';
     title.style.height = '24px';
     title.style.userSelect = 'none';
-    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-colour); margin-right: 0.5em;"></i> ${tbartext || "Audion"}`
+    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-colour); margin-right: 0.5em;"></i> ${tbartext || "Voxity"}`
 
     const close = document.createElement('button');
     close.innerHTML = '<i class="fa-solid fa-xmark"></i>';

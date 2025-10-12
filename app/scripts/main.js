@@ -44,15 +44,15 @@ function stat_up(msg, ac = true) {
         }
         stat_out = setTimeout(() => {
             if (!elements.player.src) {
-                elements.status.innerHTML = `<i class="fa-solid fa-tower-broadcast bop"></i> Audion`;
+                elements.status.innerHTML = `<i class="fa-solid fa-tower-broadcast bop"></i> Voxity`;
                 elements.branding.innerHTML = null;
             } else if (elements.player.paused) {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
-                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Audion';
+                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Voxity';
             } else {
                 calqueue();
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> Now playing: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
-                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Audion';
+                elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Voxity';
             }
             stat_out = null;
         }, 2500);
@@ -417,7 +417,7 @@ function remq(idx) {
 function init() {
     if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent)) {
         throw_error("Mobile detected");
-        msg(`<h1>Mobile is not recommended</h1><p>Audion is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Audion is a "two panel" design, only one panel would realistically fit.`)
+        msg(`<h1>Mobile is not recommended</h1><p>Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.`)
     }
     document.getElementById('preemptive_warn').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -692,16 +692,16 @@ if (typeof localStorage !== 'undefined') {
     if (isFirstVisit) {
         try { localStorage.setItem('hai', '1'); } catch { null }
         setTimeout(() => {
-            msg(`<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
-<p>To learn more, visit Audion's page on my website: <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">https://exerinity.dev/projects/audion</a></p>
-<p><a href="https://exerinity.dev/projects/audion/screenshots" target="_blank" rel="noopener">View some screenshots of Audion here</a></p>
+            msg(`<p>Voxity (<a href="https://bsky.app/profile/exerinity.dev/post/3m2yswjoaes2l">fka "Audion"</a>) is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
+<p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.dev/projects/voxity" target="_blank" rel="noopener">https://exerinity.dev/projects/voxity</a></p>
+<p><a href="https://exerinity.dev/projects/voxity/screenshots" target="_blank" rel="noopener">View some screenshots of Voxity here</a></p>
 <p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.dev/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.dev/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
-`, "Welcome to Audion");
+`, "Welcome to Voxity");
         }, 2500);
 
-        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Audion!');
+        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Voxity!');
     } else {
-        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Audion!');
+        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Voxity!');
     }
 }
 

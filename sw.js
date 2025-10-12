@@ -1,4 +1,4 @@
-const CACHE_NAME = 'audion59';
+const CACHE_NAME = 'voxity60';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const FILES_TO_CACHE = [
