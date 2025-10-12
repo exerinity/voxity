@@ -1,6 +1,6 @@
 function getAbout() {
     return `Audion is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
-        <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a> - <a href="https://i.exerinity.com/audion_update_log.html" target="_blank" rel="noopener">Changelog</a>
+        <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a> - <a onclick="changelogmsg()" style="cursor: pointer">Release notes</a>
         <hr>
         <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Audion is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
         <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>`;
@@ -586,3 +586,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
         }
     }, 0);
 }));
+
+function changelogmsg () {
+    msg(`<iframe src="https://i.exerinity.com/audion_update_log.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe>`, 'Release notes');
+}
