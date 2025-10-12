@@ -59,6 +59,8 @@ function stat_up(msg, ac = true) {
     }
 }
 
+stat_up('<i class="fa-solid fa-circle-notch fa-spin bop"></i> Loading...')
+
 function debounce(fn) {
     return () => {
         const now = Date.now();
@@ -636,7 +638,15 @@ function form_time(t) {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
-function truncate(text, truncate_max = 50) {
+function maxtruncate() {
+    const w = window.innerWidth;
+    return Math.round(20 + (w / 1920) * 10);
+}
+
+
+function truncate(text) {
+    const truncate_max = maxtruncate();
+
     if (text.length <= truncate_max) {
         return `<span>${text}</span>`;
     }
@@ -647,12 +657,15 @@ function truncate(text, truncate_max = 50) {
     `;
 }
 
-function act_truncate(text, truncate_max = 30) {
+function act_truncate(text) {
+    const truncate_max = maxtruncate();
+
     if (text.length <= truncate_max) {
         return text;
     }
     return text.slice(0, truncate_max) + '...';
 }
+
 
 let inited = false;
 function ri() { if (inited) return; inited = true; init(); }
@@ -682,8 +695,7 @@ if (typeof localStorage !== 'undefined') {
             msg(`<p>Audion is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
 <p>To learn more, visit Audion's page on my website: <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">https://exerinity.dev/projects/audion</a></p>
 <p><a href="https://exerinity.dev/projects/audion/screenshots" target="_blank" rel="noopener">View some screenshots of Audion here</a></p>
-<p>Enjoy! <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></p>
-<small><i>You won't see this message again (unless you clear your local storage, lol)</i></small>
+<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.dev/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.dev/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
 `, "Welcome to Audion");
         }, 2500);
 

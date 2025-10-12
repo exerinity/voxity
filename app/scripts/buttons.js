@@ -2,7 +2,8 @@ function getAbout() {
     return `Audion is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
         <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Audion</a>
         <hr>
-        <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Audion is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}`;
+        <p>Audion uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Audion is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
+        <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>`;
 }
 
 
@@ -131,7 +132,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
                     if (ua.includes('Firefox')) {
                         window.open(globalart, '_blank');
                     } else if (ua.includes('Chrome')) {
-                        return msg(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chrome.<br><small>For some reason, on Chrome, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`, 'Hold up...');
+                        return msg(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chromium browsers.<br><small>For some reason, on Chromium, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`, 'Hold up...');
                     } else {
                         window.open(globalart, '_blank');
                     }
@@ -143,7 +144,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
 
 window.addEventListener('DOMContentLoaded', () => {
     (function theme() {
-        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'blue'];
+        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'blue', 'light', 'khaki', 'hacker', 'synthwave'];
         const key = 'au_theme';
 
         function apply(theme) {
@@ -189,7 +190,6 @@ window.addEventListener('DOMContentLoaded', () => {
                             const next = select.value;
                             apply(next);
                             const label = next.replace('-', ' ');
-                            throw_error(`Set theme: ${label}`, true);
                             btn.title = `Toggle theme (current: ${label})`;
                         });
                     }
@@ -509,6 +509,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
 
     setTimeout(() => {
         const sin = document.getElementById('lrcse');
+        sin.value = metadata.title || null;
         const sbt = document.getElementById('lrsea');
 
         if (sbt) {

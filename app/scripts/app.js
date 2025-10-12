@@ -30,7 +30,7 @@ if ('serviceWorker' in navigator) {
               uptodate = false;
             } else {
               if (typeof throw_error === 'function') {
-                throw_error('Ready to work offline', true);
+                throw_error('Service worker installed successfully', true);
               }
               uptodate = true;
             }
@@ -40,7 +40,7 @@ if ('serviceWorker' in navigator) {
     } catch (error) {
       console.error('SW registration failed:', error);
       if (typeof throw_error === 'function') {
-        throw_error("Service worker failed to start! Audion won't work offline.");
+        throw_error("Service worker failed to start: Audion won't work offline");
       }
     }
   });
