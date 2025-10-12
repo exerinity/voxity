@@ -81,4 +81,15 @@ document.addEventListener('keydown', (e) => {
             stat_up(`<i class="fa-solid fa-music"></i> Jumping to ${cerp.toFixed(0)}% (${form_time(elements.player.currentTime)} / ${form_time(dur)})`);
         }
     }
+    if (e.shiftKey && e.code.startsWith('Digit')) {
+        const num = parseInt(e.code.slice(5), 10);
+        if (!isNaN(num)) {
+            e.preventDefault();
+            const perc = num === 0 ? 0 : (num * 0.1) - 0.05;
+            const dur = elements.player.duration || 0;
+            elements.player.currentTime = dur * perc;
+            const cerp = dur ? (elements.player.currentTime / dur) * 100 : 0;
+            stat_up(`<i class="fa-solid fa-music"></i> Jumping to ${cerp.toFixed(0)}% (${form_time(elements.player.currentTime)} / ${form_time(dur)})`);
+        }
+    }
 });
