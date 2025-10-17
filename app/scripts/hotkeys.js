@@ -42,6 +42,9 @@ document.addEventListener('keydown', (e) => {
         stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${label})`);
     } else if (e.code === 'KeyT') {
         document.getElementById('loop').click();
+    } else if (e.code === 'KeyH') {
+        e.preventDefault();
+        document.getElementById('shuffle')?.click();
     } else if (e.code === 'KeyN') {
         if (typeof nextTrack === 'function') nextTrack();
     } else if (e.code === 'KeyP') {

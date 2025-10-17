@@ -1,10 +1,10 @@
 @keyframes s {
-    0% {
-        transform: translateX(0%);
+    from {
+        transform: translateX(0);
     }
 
-    100% {
-        transform: translateX(-100%);
+    to {
+        transform: translateX(var(--scroll-distance));
     }
 }
 
@@ -293,6 +293,80 @@
     --viz-bar-color: #ff66ff;
     --viz-peak-color: #66ffff;
     --viz-glow: 0.9;
+}
+
+:root[data-theme="paper"] {
+    --lyric-colour: #4a3a2a;
+    --link: #3366cc;
+
+    --bg: #faf8f3;
+    --fg: #2b2b2b;
+    --fg-strong: #000;
+    --muted: #555;
+    --muted-2: #777;
+    --panel-bg: #ffffff;
+    --header-bg: #f2ede3;
+    --control-bg: #ffffff;
+    --control-br: #d8d2c8;
+    --btn-bg: #f3efe7;
+    --btn-hover-bg: #e6dfd3;
+    --range-bg: #e0dacb;
+    --thumb-bg: #5a4a3a;
+    --visualizer-bg: #f9f6ef;
+    --lyrics-fg: #3a2f20;
+    --error-bg: #c45a5a;
+    --statusbox-bg: #f5f0e666;
+    --dialog-bg: #ffffff;
+    --overlay-bg: rgba(0, 0, 0, 0.2);
+    --spinner-trk: #e2dccf;
+    --shadow: #0001;
+    --shadow-strong: #0003;
+
+    --font-primary: 'Patrick Hand', 'Comic Neue', 'Caveat', cursive;
+
+    --panel-gradient: linear-gradient(145deg, #ffffff, #f7f3ea);
+    --control-gradient: linear-gradient(to bottom, #ffffff, #f2ede3);
+    --accent: #a67b5b;
+    --viz-bar-color: #a67b5b;
+    --viz-peak-color: #6b4e35;
+    --viz-glow: 0.4;
+}
+
+:root[data-theme="red"] {
+    --lyric-colour: #ff4d4d;
+    --link: #ff6666;
+
+    --bg: #150000;
+    --fg: #f2dada;
+    --fg-strong: #ffffff;
+    --muted: #d9a9a9;
+    --muted-2: #b57f7f;
+    --panel-bg: #200000;
+    --header-bg: #0f0000;
+    --control-bg: #2a0000;
+    --control-br: #440000;
+    --btn-bg: #330000;
+    --btn-hover-bg: #550000;
+    --range-bg: #440000;
+    --thumb-bg: #ffcccc;
+    --visualizer-bg: #0a0000;
+    --lyrics-fg: #f0c0c0;
+    --error-bg: #ff2222;
+    --statusbox-bg: #33000066;
+    --dialog-bg: #1a0000;
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+    --spinner-trk: #330000;
+    --shadow: #0006;
+    --shadow-strong: #0008;
+
+    --font-primary: 'Inter', sans-serif;
+
+    --panel-gradient: linear-gradient(145deg, #1a0000, #330000);
+    --control-gradient: linear-gradient(to bottom, #2a0000, #0f0000);
+    --accent: #cc3333;
+    --viz-bar-color: #ff3333;
+    --viz-peak-color: #ff6666;
+    --viz-glow: 0.7;
 }
 
 

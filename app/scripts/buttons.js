@@ -100,27 +100,53 @@ document.getElementById('stop').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
-    msg(`<ul style="list-style-type: none; padding: 0;">
-    <li><strong>Space / K</strong>: play/pause</li>
-    <li><strong>Left / J / A</strong>: rewind 10 seconds</li>
-    <li><strong>Right / L / D</strong>: forward 10 seconds</li>
-    <li><strong>Shift + Left</strong>: rewind 1 second</li>
-    <li><strong>Shift + Right</strong>: forward 1 second</li>
-    <li><strong>Ctrl + Left</strong>: rewind 5 seconds</li>
-    <li><strong>Ctrl + Right</strong>: forward 5 seconds</li>
-    <li><strong>W / Up</strong>: volume up</li>
-    <li><strong>S / Down</strong>: volume down</li>
-    <li><strong>R</strong>: restart track</li>
-    <li><strong>T</strong>: toggle loop</li>
-    <li><strong>Z</strong>: previous track</li>
-    <li><strong>X</strong>: next track</li>
-    <li><strong>Numeric keys (0-9)</strong>: jump to 0-90% of track</li>
-    <li><strong>Shift + Numeric keys (0-9)</strong>: jump to 5-95% of track</li>
-  </ul>
-  <i style="font-size:0.9rem; color:#888;">You can also scroll over bars like volume and speed to change them</i>
-`, 'Hotkeys');
+  msg(`
+  <ul style="list-style-type:none;padding:0;margin:0;">
+    <li>
+      <details open style="margin-bottom:0.5em;">
+        <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Playback</summary>
+        <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
+          <li><strong>Space / K</strong>: play/pause</li>
+          <li><strong>R</strong>: restart track</li>
+          <li><strong>T</strong>: toggle loop</li>
+          <li><strong>H</strong>: toggle shuffle</li>
+        </ul>
+      </details>
+    </li>
 
+    <li>
+      <details style="margin-bottom:0.5em;">
+        <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Seek</summary>
+        <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
+          <li><strong>Left / J / A</strong>: rewind 10s</li>
+          <li><strong>Right / L / D</strong>: forward 10s</li>
+          <li><strong>Shift + Left</strong>: rewind 1s</li>
+          <li><strong>Shift + Right</strong>: forward 1s</li>
+          <li><strong>Ctrl + Left</strong>: rewind 5s</li>
+          <li><strong>Ctrl + Right</strong>: forward 5s</li>
+          <li><strong>Numeric keys (0–9)</strong>: jump to 0–90%</li>
+          <li><strong>Shift + Numeric keys (0–9)</strong>: jump to 5–95%</li>
+        </ul>
+      </details>
+    </li>
+
+    <li>
+      <details>
+        <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Control</summary>
+        <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
+          <li><strong>W / Up</strong>: volume up</li>
+          <li><strong>S / Down</strong>: volume down</li>
+          <li><strong>Z</strong>: previous track</li>
+          <li><strong>X</strong>: next track</li>
+        </ul>
+      </details>
+    </li>
+  </ul>
+  <i style="font-size:0.9rem;color:#888;">You can also scroll over bars like volume and speed to change them</i>
+  `, 'Hotkeys');
 }));
+
+
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
     if (globalart) {
@@ -145,7 +171,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
 
 window.addEventListener('DOMContentLoaded', () => {
     (function theme() {
-        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'blue', 'light', 'khaki', 'hacker', 'synthwave'];
+        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'red', 'blue', 'light', 'khaki', 'hacker', 'synthwave', 'paper'];
         const key = 'au_theme';
 
         function apply(theme) {

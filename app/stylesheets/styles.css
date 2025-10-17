@@ -527,8 +527,20 @@ a:hover {
 
 .mqtext {
     display: inline-block;
-    padding-left: 100%;
-    animation: s 15s linear infinite;
+    white-space: nowrap;
+    --scroll-distance: 0px;
+    --scroll-duration: 15s;
+    transform: translateX(0);
+    animation: none;
+}
+
+.mqtext.is-scrolling {
+    animation: s var(--scroll-duration, 15s) linear infinite alternate;
+    animation-play-state: paused;
+}
+
+.mqtext.is-scrolling-active {
+    animation-play-state: running;
 }
 
 .mqcont:hover .mqtext {
@@ -536,12 +548,12 @@ a:hover {
 }
 
 @keyframes s {
-    0% {
-        transform: translateX(0%);
+    from {
+        transform: translateX(0);
     }
 
-    100% {
-        transform: translateX(-100%);
+    to {
+        transform: translateX(var(--scroll-distance));
     }
 }
 

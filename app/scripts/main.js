@@ -33,6 +33,12 @@ let stat_out = null;
 let currentObjectUrl = null;
 let pt = 0;
 let cph = null;
+let scrollRefreshQueued = false;
+let scrollResizeBound = false;
+let scrollRetryAttempts = 0;
+const SCROLL_HOLD_MS = 5000;
+const scrollTimers = new WeakMap();
+const scrollIterationHandlers = new WeakMap();
 
 function stat_up(msg, ac = true) {
     stat_calls++;
@@ -144,6 +150,125 @@ function play(file, name) {
 
 const queue = [];
 let currentIndex = -1;
+let queueIdCounter = 0;
+let shuffleMode = false;
+let shufflePool = [];
+let shuffleHistory = [];
+let shuffleButton = null;
+
+function getItemIdByIndex(idx) {
+    const item = queue[idx];
+    return item && typeof item.id === 'number' ? item.id : null;
+}
+
+function getCurrentItemId() {
+    return getItemIdByIndex(currentIndex);
+}
+
+function findIndexById(id) {
+    return queue.findIndex(item => item.id === id);
+}
+
+function pruneShuffleState() {
+    if (!shuffleMode) return;
+    const validIds = new Set(queue.map(item => item.id));
+    const currentId = getCurrentItemId();
+    shufflePool = shufflePool.filter((id) => validIds.has(id) && (currentId == null || id !== currentId));
+    shuffleHistory = shuffleHistory.filter((id) => validIds.has(id));
+}
+
+function resetShufflePool() {
+    if (!shuffleMode) {
+        shufflePool = [];
+        shuffleHistory = [];
+        return;
+    }
+    pruneShuffleState();
+    const currentId = getCurrentItemId();
+    const ids = queue.map(item => item.id);
+    if (ids.length <= 1) {
+        shufflePool = currentId == null ? ids.slice() : [];
+        return;
+    }
+    shufflePool = ids.filter(id => id !== currentId);
+}
+
+function ensureShufflePoolFilled() {
+    if (!shuffleMode) return;
+    pruneShuffleState();
+    if (shufflePool.length === 0 && queue.length > 1) {
+        resetShufflePool();
+    }
+}
+
+function removeFromShufflePool(id) {
+    if (id == null) return;
+    shufflePool = shufflePool.filter(existing => existing !== id);
+}
+
+function addToShufflePool(id) {
+    if (!shuffleMode) return;
+    if (id == null) return;
+    if (!queue.some(item => item.id === id)) return;
+    if (queue.length <= 1) return;
+    const currentId = getCurrentItemId();
+    if (currentId != null && id === currentId) return;
+    if (!shufflePool.includes(id)) {
+        shufflePool.push(id);
+    }
+}
+
+function onQueueItemAdded(item) {
+    if (!shuffleMode) return;
+    if (!item || item.id == null) return;
+    addToShufflePool(item.id);
+}
+
+function onQueueItemRemoved(item) {
+    if (!item || item.id == null) return;
+    removeFromShufflePool(item.id);
+    shuffleHistory = shuffleHistory.filter(id => id !== item.id);
+}
+
+function getNextShuffleIndex() {
+    if (!shuffleMode) return null;
+    pruneShuffleState();
+    if (queue.length === 0) return null;
+    if (queue.length === 1) {
+        return currentIndex === 0 ? null : 0;
+    }
+    ensureShufflePoolFilled();
+    while (shufflePool.length > 0) {
+        const randomIdx = Math.floor(Math.random() * shufflePool.length);
+        const targetId = shufflePool.splice(randomIdx, 1)[0];
+        const idx = findIndexById(targetId);
+        if (idx !== -1) {
+            return idx;
+        }
+    }
+    return null;
+}
+
+function updateShuffleButton() {
+    if (!shuffleButton) return;
+    shuffleButton.innerHTML = '<i class="fa-solid fa-shuffle"></i>';
+    shuffleButton.style.color = shuffleMode ? 'green' : 'red';
+    shuffleButton.setAttribute('aria-pressed', shuffleMode ? 'true' : 'false');
+}
+
+function toggleShuffle() {
+    shuffleMode = !shuffleMode;
+    if (shuffleMode) {
+        shuffleHistory = [];
+        resetShufflePool();
+        stat_up('<i class="fa-solid fa-shuffle" style="color: green;"></i> Shuffle ON');
+    } else {
+        shuffleHistory = [];
+        shufflePool = [];
+        stat_up('<i class="fa-solid fa-shuffle" style="color: red;"></i> Shuffle OFF');
+    }
+    updateShuffleButton();
+}
 
 function form_time_short(sec) {
     if (!isFinite(sec) || sec <= 0) return '--:--';
@@ -164,7 +289,7 @@ function rqueue() {
         const label = (title || artist) ? `${title || 'Unknown track'} by ${artist || 'Unknown artist'}` : (item.displayName || item.file.name);
         li.textContent = '';
         li.title = item.displayName || item.file.name || label || 'Unknown track';
-        li.addEventListener('dblclick', () => pindex(idx));
+        li.addEventListener('dblclick', () => pindex(idx, { manual: true }));
         li.addEventListener('click', () => {
             const cur = ul.querySelector('.queue-item.focus');
             if (cur) cur.classList.remove('focus');
@@ -319,8 +444,9 @@ function quf(fileList) {
 
     const isemp = queue.length === 0;
     for (const f of files) {
-        const item = { file: f, displayName: f.name };
+        const item = { id: ++queueIdCounter, file: f, displayName: f.name };
         queue.push(item);
+        onQueueItemAdded(item);
         try {
             jsmediatags.read(f, {
                 onSuccess: (tag) => {
@@ -344,26 +470,95 @@ function quf(fileList) {
     }
 }
 
-function pindex(idx) {
+function pindex(idx, options = {}) {
     if (idx < 0 || idx >= queue.length) return;
+    const opts = options && typeof options === 'object' ? options : {};
+    const { pushHistory = true, manual = false } = opts;
+    const previousId = getCurrentItemId();
     currentIndex = idx;
     const item = queue[idx];
+    const currentId = item && typeof item.id === 'number' ? item.id : null;
+
+    if (shuffleMode) {
+        pruneShuffleState();
+        if (manual) {
+            resetShufflePool();
+        }
+        if (pushHistory && previousId != null && previousId !== currentId && queue.some(entry => entry.id === previousId)) {
+            if (shuffleHistory[shuffleHistory.length - 1] !== previousId) {
+                shuffleHistory.push(previousId);
+            }
+        }
+        removeFromShufflePool(currentId);
+    }
+
     play(item.file, item.displayName || item.file.name);
     rqueue();
 }
 
-function contin() {
-    if (queue.length === 0) return;
+function contin(options = {}) {
+    const opts = options && typeof options === 'object' ? options : {};
+    const { silent = false } = opts;
+
+    if (queue.length === 0) {
+        if (!silent) {
+            throw_error('This is a dead end, add more tracks');
+        }
+        return false;
+    }
+    if (shuffleMode) {
+        const nextIdx = getNextShuffleIndex();
+        if (nextIdx === null) {
+            if (!silent) {
+                throw_error('This is a dead end, add more tracks');
+            }
+            return false;
+        }
+        const currentId = getCurrentItemId();
+        if (currentId != null) {
+            if (shuffleHistory[shuffleHistory.length - 1] !== currentId) {
+                shuffleHistory.push(currentId);
+            }
+        }
+        pindex(nextIdx, { pushHistory: false });
+        return true;
+    }
+
     const next = currentIndex + 1;
     if (next < queue.length) {
         pindex(next);
-    } else {
+        return true;
+    }
+    if (!silent) {
         throw_error('This is a dead end, add more tracks');
     }
+    return false;
 }
 
 function previ() {
     if (queue.length === 0) return;
+    if (shuffleMode) {
+        pruneShuffleState();
+        const previousId = shuffleHistory.pop();
+        if (previousId == null) {
+            elements.player.currentTime = 0;
+            stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
+            return;
+        }
+        const prevIndex = findIndexById(previousId);
+        if (prevIndex === -1) {
+            elements.player.currentTime = 0;
+            stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
+            return;
+        }
+        const currentId = getCurrentItemId();
+        if (currentId != null) {
+            addToShufflePool(currentId);
+        }
+        pindex(prevIndex, { pushHistory: false });
+        return;
+    }
+
     const prev = currentIndex - 1;
     if (prev >= 0) {
         pindex(prev);
@@ -391,13 +586,15 @@ function remq(idx) {
     }
     if (idx < 0 || idx >= queue.length) return;
     const wasCurrent = idx === currentIndex;
-    queue.splice(idx, 1);
+    const [removed] = queue.splice(idx, 1);
+    onQueueItemRemoved(removed);
+    pruneShuffleState();
     if (currentIndex > idx) currentIndex -= 1;
     if (wasCurrent) {
         if (idx < queue.length) {
-            pindex(idx);
+            pindex(idx, { pushHistory: false });
         } else if (queue.length > 0) {
-            pindex(queue.length - 1);
+            pindex(queue.length - 1, { pushHistory: false });
         } else {
             elements.player.pause();
             elements.player.src = '';
@@ -445,6 +642,12 @@ function init() {
         stat_up(onrepeat ? '<i class="fa-solid fa-repeat" style="color: green;"></i> Loop ON' : '<i class="fa-solid fa-repeat" style="color: red;"></i> Loop OFF');
     }));
 
+    shuffleButton = document.getElementById('shuffle');
+    updateShuffleButton();
+    shuffleButton?.addEventListener('click', debounce(() => {
+        toggleShuffle();
+    }));
+
     elements.player.addEventListener('play', () => {
         if (frame_id) {
             cancelAnimationFrame(frame_id);
@@ -477,20 +680,18 @@ function init() {
         if (elements.player.loop) {
             return;
         }
-        const hadNext = currentIndex + 1 < queue.length;
-        if (hadNext) {
-            contin();
-        } else {
-            elements.player.currentTime = 0;
-            elements.player.pause();
-            document.getElementById('donesound').currentTime = 0;
-            document.getElementById('donesound').play().catch(() => { });
-            throw_error('Finished playing queue', true);
-            document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
-            sfa('/favicon.ico');
-            if ('mediaSession' in navigator) {
-                try { navigator.mediaSession.playbackState = 'paused'; } catch { }
-            }
+        if (contin({ silent: true })) {
+            return;
+        }
+        elements.player.currentTime = 0;
+        elements.player.pause();
+        document.getElementById('donesound').currentTime = 0;
+        document.getElementById('donesound').play().catch(() => { });
+        throw_error('Finished playing queue', true);
+        document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
+        sfa('/favicon.ico');
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'paused'; } catch { }
         }
     });
 
@@ -643,6 +844,107 @@ function maxtruncate() {
     return Math.round(20 + (w / 1920) * 10);
 }
 
+function scheduleScrollResume(textEl, delay = SCROLL_HOLD_MS) {
+    const existing = scrollTimers.get(textEl);
+    if (existing) {
+        clearTimeout(existing);
+    }
+    textEl.classList.remove('is-scrolling-active');
+    if (delay <= 0) {
+        textEl.classList.add('is-scrolling-active');
+        scrollTimers.delete(textEl);
+        return;
+    }
+    const timer = setTimeout(() => {
+        textEl.classList.add('is-scrolling-active');
+        scrollTimers.delete(textEl);
+    }, delay);
+    scrollTimers.set(textEl, timer);
+}
+
+function handleScrollIteration(textEl) {
+    const direction = textEl.dataset.scrollDirection || 'forward';
+    if (direction === 'forward') {
+        textEl.dataset.scrollDirection = 'backward';
+        return;
+    }
+    textEl.dataset.scrollDirection = 'forward';
+    scheduleScrollResume(textEl, SCROLL_HOLD_MS);
+}
+
+function ensureScrollSetup(textEl) {
+    if (textEl.dataset.scrollSetup) {
+        return;
+    }
+    textEl.dataset.scrollSetup = '1';
+    textEl.dataset.scrollDirection = 'forward';
+    const handler = () => handleScrollIteration(textEl);
+    textEl.addEventListener('animationiteration', handler);
+    scrollIterationHandlers.set(textEl, handler);
+    scheduleScrollResume(textEl, SCROLL_HOLD_MS);
+}
+
+function clearScrollSetup(textEl) {
+    textEl.classList.remove('is-scrolling');
+    textEl.classList.remove('is-scrolling-active');
+    textEl.style.removeProperty('--scroll-distance');
+    textEl.style.removeProperty('--scroll-duration');
+    const handler = scrollIterationHandlers.get(textEl);
+    if (handler) {
+        textEl.removeEventListener('animationiteration', handler);
+        scrollIterationHandlers.delete(textEl);
+    }
+    const timer = scrollTimers.get(textEl);
+    if (timer) {
+        clearTimeout(timer);
+        scrollTimers.delete(textEl);
+    }
+    delete textEl.dataset.scrollSetup;
+    delete textEl.dataset.scrollDirection;
+}
+
+function queueScrollRefresh() {
+    if (scrollRefreshQueued) return;
+    scrollRefreshQueued = true;
+    requestAnimationFrame(() => {
+        scrollRefreshQueued = false;
+        const containers = document.querySelectorAll('.mqcont');
+        let needsRetry = false;
+        containers.forEach((container) => {
+            const textEl = container.querySelector('.mqtext');
+            if (!textEl) return;
+            const containerWidth = container.clientWidth;
+            if (containerWidth === 0) {
+                clearScrollSetup(textEl);
+                if (container.offsetParent !== null) {
+                    needsRetry = true;
+                }
+                return;
+            }
+            const textWidth = textEl.scrollWidth;
+            if (textWidth <= containerWidth) {
+                clearScrollSetup(textEl);
+                return;
+            }
+            const distance = containerWidth - textWidth;
+            textEl.classList.add('is-scrolling');
+            textEl.style.setProperty('--scroll-distance', `${distance}px`);
+            const duration = Math.min(20, Math.max(6, Math.abs(distance) / 40));
+            textEl.style.setProperty('--scroll-duration', `${duration.toFixed(2)}s`);
+            ensureScrollSetup(textEl);
+        });
+        if (needsRetry && scrollRetryAttempts < 5) {
+            scrollRetryAttempts += 1;
+            setTimeout(queueScrollRefresh, 200);
+        } else {
+            scrollRetryAttempts = 0;
+        }
+    });
+    if (!scrollResizeBound) {
+        scrollResizeBound = true;
+        window.addEventListener('resize', queueScrollRefresh);
+    }
+}
 
 function truncate(text) {
     const truncate_max = maxtruncate();
@@ -650,6 +952,7 @@ function truncate(text) {
     if (text.length <= truncate_max) {
         return `<span>${text}</span>`;
     }
+    queueScrollRefresh();
     return `
         <div class="mqcont">
             <div class="mqtext">${text}</div>
