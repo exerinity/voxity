@@ -1,6 +1,7 @@
 let now = 0;
+let titleTimer = null;
 
-function tabtitle() {
+function tabtitleOnce() {
     const scroll = [];
 
     if (typeof metadata === "object" && metadata) {
@@ -21,8 +22,35 @@ function tabtitle() {
     now = (now + 1) % scroll.length;
 }
 
-tabtitle();
-setInterval(tabtitle, 5000);
+function startTitleRotation() {
+    if (titleTimer) return; 
+    tabtitleOnce();
+    titleTimer = setInterval(tabtitleOnce, 5000);
+}
+
+function stopTitleRotation() {
+    if (titleTimer) {
+        clearInterval(titleTimer);
+        titleTimer = null;
+    }
+    try { document.title = "Voxity"; } catch { }
+    now = 0;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const player = elements && elements.player ? elements.player : document.getElementById('player');
+        if (!player) return;
+
+        player.addEventListener('play', startTitleRotation);
+        player.addEventListener('pause', stopTitleRotation);
+        player.addEventListener('ended', stopTitleRotation);
+
+        if (!player.paused && !player.ended && player.currentTime > 0) {
+            startTitleRotation();
+        }
+    } catch { 0 }
+});
 
 /* The goal of this is to make titles look better...
 if you have something like "Sometimes Things Get, Whatever / Random Album Title / deadmau5 / Voxity" all crammed into the title bar,

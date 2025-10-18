@@ -100,7 +100,7 @@ document.getElementById('stop').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
-  msg(`
+    msg(`
   <ul style="list-style-type:none;padding:0;margin:0;">
     <li>
       <details open style="margin-bottom:0.5em;">
@@ -171,7 +171,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
 
 window.addEventListener('DOMContentLoaded', () => {
     (function theme() {
-        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'red', 'blue', 'light', 'khaki', 'hacker', 'synthwave', 'paper'];
+        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'red', 'blue', 'light', 'khaki', 'hacker', 'synthwave', 'paper', 'neon-green', 'under-the-sea', 'frutiger-aero', 'twitter-dim'];
         const key = 'au_theme';
 
         function apply(theme) {
@@ -404,6 +404,7 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
 
                 throw_error(`Volume set to: ${value}% ${icon}`, true);
                 document.getElementById('footer').innerHTML = `current: ${value}%`;
+                elements.vol.value = elements.player.volume * 2;
             };
 
             btn.addEventListener('click', set_vol);
@@ -519,12 +520,12 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
     }, 0);
 }));
 
-document.getElementById('searchlrclib').addEventListener('click', debounce(() => {
+document.getElementById('searchlrclib').addEventListener('click', debounce(async () => {
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');
     }
 
-    msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+    const modal = await msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
             <input id="lrcse" placeholder="${metadata.title}" 
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
             <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
@@ -547,42 +548,118 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
                 }
 
                 try {
-                    throw_error('Searching...', true);
+                    modal.setTitle('Searching...');
                     const response = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
                     const results = await response.json();
 
                     if (results.length === 0) {
+                        modal.setTitle('Search for lyrics');
                         return throw_error('No results');
                     }
 
-                    msg(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                    modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
                             ${results.slice(0, 10).map((result, index) => `
                                 <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
                                     <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
                                 </p>
                             `).join('')}
                         </div>
-                    `, 'Results');
+                    `);
+                    modal.setTitle('Results');
+                    try { lastResults = results.slice(0, 10); } catch { lastResults = null; }
+                    try {
+                        modal.setContent(`<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                <button id="back_to_search" style="padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;">Back</button>
+                                <span style="color:#aaa; font-size:0.9rem;">${(lastResults||[]).length} result(s)</span>
+                            </div>
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                                ${(lastResults||results||[]).slice(0,10).map((result) => `
+                                    <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                        <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
+                                    </p>
+                                `).join('')}
+                            </div>
+                        `);
+                    } catch {}
 
                     setTimeout(() => {
+                        document.getElementById('back_to_search')?.addEventListener('click', () => {
+                            modal.setTitle('Search for lyrics');
+                            modal.setContent(`
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+                                    <input id="lrcse" placeholder="${metadata.title}" 
+                                        style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+                                    <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                                        <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+                                    </div><br>
+                                    <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
+                                </div>
+                            `);
+                            setTimeout(() => {
+                                const sin2 = document.getElementById('lrcse');
+                                if (sin2) sin2.value = metadata.title || '';
+                                document.getElementById('lrsea')?.addEventListener('click', async () => {
+                                    let query2 = (sin2?.value || '').trim();
+                                    if (!query2) query2 = metadata.title;
+                                    try {
+                                        modal.setTitle('Searching...');
+                                        const response2 = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query2)}`);
+                                        const results2 = await response2.json();
+                                        if (!Array.isArray(results2) || results2.length === 0) {
+                                            modal.setTitle('No results');
+                                            return;
+                                        }
+                                        try { lastResults = results2.slice(0,10); } catch {}
+                                        modal.setTitle('Results');
+                                        modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults||[]).length} result(s)</span>\n                                            </div>\n                                            <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                ${(lastResults||[]).map((result) => `\n                                                    <p data-id=\"${result.id}\" style=\"cursor: pointer; margin: 0.5rem 0;\">\n                                                        <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})\n                                                    </p>\n                                                `).join('')}\n                                            </div>`);
+                                    } catch (e) { throw_error(e); }
+                                });
+                            }, 0);
+                        });
                         document.querySelectorAll('[data-id]').forEach(p => {
                             p.addEventListener('click', async () => {
                                 const id = p.dataset.id;
                                 try {
-                                    throw_error('Loading...', true);
+                                    modal.setTitle('Loading...');
                                     const flrs = await fetch(`https://lrclib.net/api/get/${id}`);
                                     const flcd = await flrs.json();
 
                                     if (flcd.syncedLyrics || flcd.plainLyrics) {
-                                        msg(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                                        modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
                                                 <pre style="white-space: pre-wrap; color: white;">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
                                             </div>
                                             <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top: 1rem;">
                                                 <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
                                             </div>
-                                        `, 'Preview lyrics');
+                                        `);
+                                        modal.setTitle('Preview lyrics');
 
                                         setTimeout(() => {
+                                            try {
+                                                const cont = modal.overlay?.querySelector('#msg-content');
+                                                const foot = cont?.querySelector('div[style*="justify-content:flex-end"]');
+                                                if (foot) {
+                                                    const back = document.createElement('button');
+                                                    back.id = 'back_to_results';
+                                                    back.textContent = 'Back';
+                                                    back.style.padding = '10px 16px';
+                                                    back.style.background = '#333';
+                                                    back.style.color = 'white';
+                                                    back.style.border = 'none';
+                                                    back.style.borderRadius = '6px';
+                                                    back.style.cursor = 'pointer';
+                                                    foot.prepend(back);
+                                                    back.addEventListener('click', () => {
+                                                        modal.setTitle('Results');
+                                                        const listHtml = (lastResults||[]).map((r) => `
+                                                            <p data-id="${r.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                                                <strong>${r.trackName}</strong> by ${r.artistName} (${r.albumName})
+                                                            </p>
+                                                        `).join('');
+                                                        modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                                <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                                <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults||[]).length} result(s)</span>\n                                                            </div>\n                                                            <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                                ${listHtml}\n                                                            </div>`);
+                                                    });
+                                                }
+                                            } catch {}
                                             const insb = document.getElementById('insert_lyrics');
                                             if (insb) {
                                                 insb.addEventListener('click', () => {
@@ -592,7 +669,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
                                                         lrc_data = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
                                                     }
                                                     update_lyrics();
-                                                    throw_error('Inserted lyrics', true);
+                                                    modal.setTitle('Inserted lyrics');
                                                 });
                                             }
                                         }, 0);
@@ -613,6 +690,6 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(() =>
     }, 0);
 }));
 
-function changelogmsg () {
+function changelogmsg() {
     msg(`<iframe src="https://i.exerinity.com/voxrelnote.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe>`, 'Release notes');
 }

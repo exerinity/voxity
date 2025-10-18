@@ -116,19 +116,35 @@ async function msg(text, tbartext) {
     };
     window.addEventListener('resize', eiv);
 
-    const msg = document.createElement('div');
-    msg.style.marginTop = '0.5rem';
-    msg.style.fontSize = '1.08rem';
-    msg.style.lineHeight = '1.6';
-    msg.innerHTML = `
-    <div style="margin-bottom:1rem; cursor: default;">${text}</div>
-    <div class="pop" style="align-items: center"><button class="bu" style="background: var(--btn-bg); color: var(--fg);">Close</button></div>
-`;
-    msg.querySelector('.bu').addEventListener('click', removeOverlay);
+    const content = document.createElement('div');
+    content.id = 'msg-content';
+    content.style.marginTop = '0.5rem';
+    content.style.fontSize = '1.08rem';
+    content.style.lineHeight = '1.6';
+
+    const contentWrap = document.createElement('div');
+    contentWrap.style.marginBottom = '1rem';
+    contentWrap.style.cursor = 'default';
+    contentWrap.innerHTML = text;
+
+    const footer = document.createElement('div');
+    footer.className = 'pop';
+    footer.style.alignItems = 'center';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'bu';
+    closeBtn.textContent = 'Close';
+    closeBtn.style.background = 'var(--btn-bg)';
+    closeBtn.style.color = 'var(--fg)';
+    closeBtn.addEventListener('click', removeOverlay);
+
+    footer.appendChild(closeBtn);
+    content.appendChild(contentWrap);
+    content.appendChild(footer);
 
     box.appendChild(title);
     box.appendChild(close);
-    box.appendChild(msg);
+    box.appendChild(content);
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
@@ -162,4 +178,15 @@ async function msg(text, tbartext) {
         `;
         document.head.appendChild(style);
     }
+    return {
+        overlay,
+        close: removeOverlay,
+        setTitle: (text) => {
+            title.innerHTML = `<i class=\"fa-solid fa-tower-broadcast\" style=\"color: var(--lyric-colour); margin-right: 0.5em;\"></i> ${text || 'Voxity'}`;
+        },
+        setContent: (html) => {
+            contentWrap.innerHTML = html;
+            try { eiv(); } catch {}
+        }
+    };
 }

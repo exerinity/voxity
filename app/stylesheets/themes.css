@@ -247,7 +247,7 @@
     --link: #33ff33;
     --shadow: #00000066;
     --shadow-strong: #00000088;
-    
+
     --font-primary: 'IBM Plex Mono', monospace;
     --panel-gradient: linear-gradient(145deg, #002200, #003300);
     --control-gradient: linear-gradient(to bottom, #003300, #001a00);
@@ -369,7 +369,222 @@
     --viz-glow: 0.7;
 }
 
+:root[data-theme="neon-green"] {
+    --lyric-colour: #39ff14;
+    --link: #66ff66;
+
+    --bg: #010a00;
+    --fg: #d8ffd8;
+    --fg-strong: #ffffff;
+    --muted: #aaffaa;
+    --muted-2: #88cc88;
+    --panel-bg: #031a00;
+    --header-bg: #010f00;
+    --control-bg: #042200;
+    --control-br: #066600;
+    --btn-bg: #053300;
+    --btn-hover-bg: #077700;
+    --range-bg: #044400;
+    --thumb-bg: #b8ffb8;
+    --visualizer-bg: #000800;
+    --lyrics-fg: #aaffaa;
+    --error-bg: #ff3333;
+    --statusbox-bg: #00330088;
+    --dialog-bg: #021800;
+    --overlay-bg: rgba(0, 255, 0, 0.1);
+    --spinner-trk: #002200;
+    --shadow: #00ff0066;
+    --shadow-strong: #00ff0099;
+
+    --font-primary: 'Orbitron', 'Rajdhani', sans-serif;
+
+    --panel-gradient: linear-gradient(145deg, #001a00, #033300);
+    --control-gradient: linear-gradient(to bottom, #044400, #001a00);
+    --accent: #39ff14;
+    --accent-glow: 0 0 15px #39ff14;
+    --viz-bar-color: #39ff14;
+    --viz-peak-color: #99ff66;
+    --viz-glow: 1;
+
+    --transition-fast: 0.15s;
+    --transition-medium: 0.3s;
+    --transition-slow: 0.6s;
+}
+
+:root[data-theme="under-the-sea"] {
+    --lyric-colour: #5cff8d;
+    --link: #66d9a3;
+
+    --bg: #00140e;
+    --fg: #d2f0e0;
+    --fg-strong: #ffffff;
+    --muted: #a2c4b0;
+    --muted-2: #7da58f;
+    --panel-bg: #002018;
+    --header-bg: #00120b;
+    --control-bg: #002d22;
+    --control-br: #004d3a;
+    --btn-bg: #003828;
+    --btn-hover-bg: #00543e;
+    --range-bg: #003b2b;
+    --thumb-bg: #b6f5c9;
+    --visualizer-bg: #000c08;
+    --lyrics-fg: #b8e6d0;
+    --error-bg: #ff4444;
+    --statusbox-bg: #00332288;
+    --dialog-bg: #001f17;
+    --overlay-bg: rgba(0, 50, 30, 0.4);
+    --spinner-trk: #003322;
+    --shadow: #0006;
+    --shadow-strong: #0009;
+
+    --font-primary: 'Inter', sans-serif;
+
+    --panel-gradient: linear-gradient(145deg, #001c13, #003322);
+    --control-gradient: linear-gradient(to bottom, #002d22, #001a12);
+    --accent: #2aff88;
+    --accent-glow: 0 0 15px #2aff88;
+    --viz-bar-color: #2aff88;
+    --viz-peak-color: #88ffcc;
+    --viz-glow: 0.8;
+
+    --transition-fast: 0.15s;
+    --transition-medium: 0.3s;
+    --transition-slow: 0.6s;
+}
+
+:root[data-theme="frutiger-aero"] {
+    --lyric-colour: #00aaff;
+    --link: #009cff;
+
+    --bg: radial-gradient(circle at 50% 20%, #c8eeff 0%, #a6e0ff 40%, #7dcfff 75%, #66b8ff 100%);
+    --fg: #08324a;
+    --fg-strong: #001622;
+    --muted: #24536a;
+    --muted-2: #4a7d93;
+    --panel-bg: #e8f7ff;
+    --header-bg: linear-gradient(to bottom, #d0f1ff 0%, #b2e0ff 100%);
+    --control-bg: linear-gradient(180deg, #d6f3ff 0%, #bde6ff 100%);
+    --control-br: #a3d9f7;
+    --btn-bg: linear-gradient(180deg, #d8f3ff 0%, #a8e4ff 100%);
+    --btn-hover-bg: linear-gradient(180deg, #c4ecff 0%, #91daff 100%);
+    --range-bg: linear-gradient(90deg, #a8e4ff 0%, #91daff 100%);
+    --thumb-bg: #0078ff;
+    --visualizer-bg: radial-gradient(circle at 50% 70%, #e5faff 0%, #c4edff 40%, #a3ddff 100%);
+    --lyrics-fg: #114055;
+    --error-bg: #e85b5b;
+    --statusbox-bg: #bde4ff88;
+    --dialog-bg: linear-gradient(145deg, #e8f9ff, #bde7ff);
+    --overlay-bg: rgba(100, 200, 255, 0.25);
+    --spinner-trk: #b3e4ff;
+    --shadow: #0078ff33;
+    --shadow-strong: #0078ff66;
+
+    --font-primary: 'Segoe UI', 'Inter', sans-serif;
+
+    --panel-gradient: linear-gradient(145deg, #f0fbff, #bde7ff);
+    --control-gradient: linear-gradient(to bottom, #d6f3ff, #9edaff);
+    --accent: #00aaff;
+    --accent-glow: 0 0 20px #00c6ff;
+    --viz-bar-color: #00cfff;
+    --viz-peak-color: #33ffee;
+    --viz-glow: 1;
+
+    --transition-fast: 0.15s;
+    --transition-medium: 0.3s;
+    --transition-slow: 0.6s;
+
+    --panel-glass: linear-gradient(to bottom, #ffffff66 0%, #ffffff11 100%);
+    --btn-glass: linear-gradient(to bottom, #ffffff99 0%, #ffffff22 100%);
+    --aero-shine: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.6), transparent 70%);
+    --highlight-ring: 0 0 25px #00c6ffcc;
+
+    --bubble-gradient: radial-gradient(circle at 30% 30%, #ffffff55, transparent 60%);
+    --sky-reflection: linear-gradient(180deg, #e0f8ff00 0%, #e0f8ff33 40%, #a3ddff55 100%);
+}
+
+@font-face {
+    font-family: 'Chirp';
+    src: url('https://exerinity.com/files/fonts/twitter/chirp/chirp-regular-web.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Chirp';
+    src: url('https://exerinity.com/files/fonts/twitter/chirp/chirp-medium-web.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Chirp';
+    src: url('https://exerinity.com/files/fonts/twitter/chirp/chirp-bold-web.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Chirp';
+    src: url('https://exerinity.com/files/fonts/twitter/chirp/chirp-heavy-web.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+}
+
+:root[data-theme="twitter-dim"] {
+    --lyric-colour: #1d9bf0;
+    --link: #1d9bf0;
+
+    --bg: #15202b;
+    --fg: #f7f9f9;
+    --fg-strong: #ffffff;
+    --muted: #cfd9de;
+    --muted-2: #8899a6;
+    --panel-bg: #192734;
+    --header-bg: #192734;
+    --control-bg: #1e2d3a;
+    --control-br: #38444d;
+    --btn-bg: #22303c;
+    --btn-hover-bg: #2c3e4f;
+    --range-bg: #22303c;
+    --thumb-bg: #f7f9f9;
+    --visualizer-bg: #0f1419;
+    --lyrics-fg: #e6e9ea;
+    --error-bg: #d9534f;
+    --statusbox-bg: #192734aa;
+    --dialog-bg: #1e2732;
+    --overlay-bg: rgba(21, 32, 43, 0.8);
+    --spinner-trk: #1e2732;
+    --shadow: #0006;
+    --shadow-strong: #0008;
+
+    --font-primary: 'Chirp', 'Inter', 'Segoe UI', sans-serif;
+
+    --panel-gradient: linear-gradient(145deg, #1b2836, #15202b);
+    --control-gradient: linear-gradient(to bottom, #22303c, #1a2733);
+    --accent: #1d9bf0;
+    --accent-glow: 0 0 12px #1d9bf088;
+    --viz-bar-color: #1d9bf0;
+    --viz-peak-color: #66c7ff;
+    --viz-glow: 0.7;
+
+    --transition-fast: 0.15s;
+    --transition-medium: 0.3s;
+    --transition-slow: 0.6s;
+
+    --focus-ring: #1d9bf0;
+}
 
 body, .panel, .header, .control, .lyrics {
+    font-family: var(--font-primary);
+    font-feature-settings: "calt", "kern", "liga";
+}
+
+
+body,
+.panel,
+.header,
+.control,
+.lyrics {
     font-family: var(--font-primary);
 }
