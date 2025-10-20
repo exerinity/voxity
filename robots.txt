@@ -11,3 +11,4 @@ Disallow: /error.ogg
 Disallow: /welcome.ogg
 
 # The first three files are useful for crawlers; the rest are not. Well, at least I don't think they are~
+# Humans, to learn more about this stupid thing, see https://exerinity.dev/projects/audion

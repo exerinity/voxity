@@ -9,7 +9,7 @@
 }
 
 :root {
-    --lyric-colour: #8000ff;
+    --lyric-color: #8000ff;
     --link: #1d9bf0;
 
     --bg: #1a1a1a;
@@ -116,7 +116,7 @@
 }
 
 :root[data-theme="high-contrast"] {
-    --lyric-colour: #ffff00;
+    --lyric-color: #ffff00;
     --link: #00ffff;
 
     --bg: #000000;
@@ -222,7 +222,7 @@
 }
 
 :root[data-theme="hacker"] {
-    --lyric-colour: white;
+    --lyric-color: white;
 
     --bg: #001a00;
     --fg: #00ff00;
@@ -296,7 +296,7 @@
 }
 
 :root[data-theme="paper"] {
-    --lyric-colour: #4a3a2a;
+    --lyric-color: #4a3a2a;
     --link: #3366cc;
 
     --bg: #faf8f3;
@@ -333,7 +333,7 @@
 }
 
 :root[data-theme="red"] {
-    --lyric-colour: #ff4d4d;
+    --lyric-color: #ff4d4d;
     --link: #ff6666;
 
     --bg: #150000;
@@ -370,7 +370,7 @@
 }
 
 :root[data-theme="neon-green"] {
-    --lyric-colour: #39ff14;
+    --lyric-color: #39ff14;
     --link: #66ff66;
 
     --bg: #010a00;
@@ -412,7 +412,7 @@
 }
 
 :root[data-theme="under-the-sea"] {
-    --lyric-colour: #5cff8d;
+    --lyric-color: #5cff8d;
     --link: #66d9a3;
 
     --bg: #00140e;
@@ -454,7 +454,7 @@
 }
 
 :root[data-theme="frutiger-aero"] {
-    --lyric-colour: #00aaff;
+    --lyric-color: #00aaff;
     --link: #009cff;
 
     --bg: radial-gradient(circle at 50% 20%, #c8eeff 0%, #a6e0ff 40%, #7dcfff 75%, #66b8ff 100%);
@@ -532,7 +532,7 @@
 }
 
 :root[data-theme="twitter-dim"] {
-    --lyric-colour: #1d9bf0;
+    --lyric-color: #1d9bf0;
     --link: #1d9bf0;
 
     --bg: #15202b;

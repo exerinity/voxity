@@ -1,8 +1,8 @@
 function getAbout() {
-    return `Voxity (<a href="https://bsky.app/profile/exerinity.dev/post/3m2yswjoaes2l">fka "Audion"</a>) is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
+    return `Voxity (<a href="https://bsky.app/profile/exerinity.dev/post/3m2yswjoaes2l" target="_blank">fka "Audion"</a>) is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
         <a href="https://exerinity.dev/projects/audion" target="_blank" rel="noopener">Learn more about Voxity</a> - <a onclick="changelogmsg()" style="cursor: pointer">Release notes</a>
         <hr>
-        <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRC Library</a> for fetching lyrics.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
+        <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a> for fetching lyrics.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
         <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>`;
 }
 
@@ -38,7 +38,7 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
-    msg(getAbout(), 'About Voxity');
+    msg(getAbout(), 'About');
 }));
 
 document.getElementById('queuehead').addEventListener('click', debounce(() => {
@@ -100,10 +100,9 @@ document.getElementById('stop').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
-    msg(`
-  <ul style="list-style-type:none;padding:0;margin:0;">
+    msg(`<ul style="list-style-type:none;padding:0;margin:0;">
     <li>
-      <details open style="margin-bottom:0.5em;">
+      <details style="margin-bottom:0.5em;">
         <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Playback</summary>
         <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
           <li><strong>Space / K</strong>: play/pause</li>
@@ -171,7 +170,24 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
 
 window.addEventListener('DOMContentLoaded', () => {
     (function theme() {
-        const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'red', 'blue', 'light', 'khaki', 'hacker', 'synthwave', 'paper', 'neon-green', 'under-the-sea', 'frutiger-aero', 'twitter-dim'];
+        //const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'red', 'blue', 'light', 'khaki', 'hacker', 'synthwave', 'paper', 'neon-green', 'under-the-sea', 'frutiger-aero', 'twitter-dim'];
+        const THEMES = [
+            { 'grey': true, 'label': 'Grey' },
+            { 'dim': true, 'label': 'Dim' },
+            { 'lights-out': true, 'label': 'Lights out' },
+            { 'high-contrast': true, 'label': 'High contrast' },
+            { 'red': true, 'label': 'Red' },
+            { 'blue': true, 'label': 'Blue' },
+            { 'light': true, 'label': 'Light' },
+            { 'khaki': true, 'label': 'Khaki' },
+            { 'hacker': true, 'label': 'Hacker' },
+            { 'synthwave': true, 'label': 'Synthwave' },
+            { 'paper': true, 'label': 'Paper' },
+            { 'neon-green': true, 'label': 'Neon green' },
+            { 'under-the-sea': true, 'label': 'Under the sea' },
+            { 'frutiger-aero': true, 'label': 'Frutiger Aero' },
+            { 'twitter-dim': true, 'label': 'Twitter dim' }
+        ]
         const key = 'au_theme';
 
         function apply(theme) {
@@ -194,15 +210,16 @@ window.addEventListener('DOMContentLoaded', () => {
                 msg(`<div style="margin: 1rem 0;">
                         <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
                             ${THEMES.map(t => {
-                    const label = t.replace('-', ' ');
-                    const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === t ? 'selected' : '';
-                    return `<option value="${t}" ${selected}>${label}</option>`;
+                    const themeName = Object.keys(t)[0];
+                    const label = t.label;
+                    const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === themeName ? 'selected' : '';
+                    return `<option value="${themeName}" ${selected}>${label}</option>`;
                 }).join('')}
                         </select>
                     </div>
                     <div>
                         <abbr title="This changes the color of highlighted lyrics, the visualizer, and the Voxity icon in these modals and top-right corner" style="margin: 0 0 0.5rem 0;">Accent color:</abbr>
-                        <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-colour') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
+                        <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
                     </div><br>
                     <p style="font-size: 0.9rem; color: #888; margin: 0;">To change the visualizer mode, click on the visualizer itself or <strong><i class="fa-solid fa-chart-simple"></i> Visualizer</strong></p>
                 `, 'Theme settings');
@@ -224,7 +241,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     if (acin) {
                         acin.addEventListener('input', () => {
                             const color = acin.value;
-                            document.documentElement.style.setProperty('--lyric-colour', color);
+                            document.documentElement.style.setProperty('--lyric-color', color);
                             viz_color = color;
                             uvzc(color);
                             stat_up(`<i class='fa-solid fa-palette'></i> Accent color set to: <span style='color: ${color};'>${color}</span>`);
@@ -319,7 +336,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        return msg(getAbout(), 'About Voxity');
+        return msg(getAbout(), 'About');
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {

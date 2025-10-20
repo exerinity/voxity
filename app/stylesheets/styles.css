@@ -304,12 +304,12 @@ strong {
 
 .queue-item:hover,
 .queue-item.focus {
-    background: color-mix(in srgb, var(--lyric-colour) 12%, transparent);
+    background: color-mix(in srgb, var(--lyric-color) 12%, transparent);
 }
 
 .queue-item.active {
-    background: color-mix(in srgb, var(--lyric-colour) 22%, transparent);
-    border-left: 3px solid var(--lyric-colour);
+    background: color-mix(in srgb, var(--lyric-color) 22%, transparent);
+    border-left: 3px solid var(--lyric-color);
 }
 
 .queue-item .qi-remove {
@@ -357,12 +357,12 @@ strong {
 }
 
 .lyrics-container .active {
-    color: var(--lyric-colour);
+    color: var(--lyric-color);
     font-weight: bold;
 }
 
 .bop {
-    color: var(--lyric-colour);
+    color: var(--lyric-color);
 }
 
 .error-box {
@@ -558,7 +558,7 @@ a:hover {
 }
 
 :root {
-    --lyric-colour: #8000ff;
+    --lyric-color: #8000ff;
     --link: #1d9bf0;
 
     --bg: #1a1a1a;
@@ -690,7 +690,7 @@ a:hover {
 }
 
 :root[data-theme="high-contrast"] {
-    --lyric-colour: #ffff00;
+    --lyric-color: #ffff00;
     --link: #00ffff;
 
     --bg: #000000;
