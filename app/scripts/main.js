@@ -21,6 +21,7 @@ const elements = {
     err_tab: document.getElementById('error'),
     pnow: document.getElementById('play-now'),
     stopnow: document.getElementById('cancel'),
+    welcomesound: document.getElementById('welcomesound'),
     success_sound: document.getElementById('sucsound'),
     error_sound: document.getElementById('errsound'),
     message_sound: document.getElementById('msgsound'),
@@ -101,8 +102,8 @@ function play(file, name) {
     const t = ++pt;
     try { elements.player.pause(); } catch { }
     lrc_wipe();
-    if (!elements.success_sound.paused) {
-        elements.success_sound.pause();
+    if (!elements.welcomesound.paused) {
+        elements.welcomesound.pause();
     }
     if (cph) {
         try { elements.player.removeEventListener('canplaythrough', cph); } catch { }
@@ -613,9 +614,10 @@ function remq(idx) {
 
 function init() {
     if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent)) {
-        throw_error("Mobile detected");
-        msg(`<h1>Mobile is not recommended</h1><p>Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.`)
+        msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.<br><br>Also, clean that dirty fucking screen.`, 'Mobile')
     }
+
+    elements.welcomesound.play().catch(() => { });
     document.getElementById('preemptive_warn').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
 
@@ -774,8 +776,8 @@ function init() {
         elements.player.playbackRate = elements.speed.value;
         elements.speed_min.innerHTML = '0.1x';
         elements.speed_max.innerHTML = '2.0x';
-        if (parseFloat(elements.speed.value) === 2.0) throw_error('To go higher than 2x, click the "speed" text above the slider!', true);
         stat_up(`${icon} Speed: ${elements.speed.value}x`);
+        if (parseFloat(elements.speed.value) === 2.0) stat_up(`${icon} Speed: ${elements.speed.value}x - to go higher, click "Speed" above the slider!`);
     });
 
     elements.index.addEventListener('input', () => {

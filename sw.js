@@ -1,6 +1,7 @@
-const CACHE_NAME = 'audion63';
+const CACHE_NAME = 'audion64';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
+const ms = '/app/media/';
 const FILES_TO_CACHE = [
   '/',                // root
   '/index.html',
@@ -12,10 +13,10 @@ const FILES_TO_CACHE = [
   '/sw.js',
 
   // media 
-  '/welcome.ogg',
-  '/error.ogg',
-  '/message.ogg',
-  '/done.ogg',
+  ms+'/welcome.ogg',
+  ms+'/error.ogg',
+  ms+'/message.ogg',
+  ms+'/done.ogg',
 
   // stylesheets
   cs+'controls.css',
