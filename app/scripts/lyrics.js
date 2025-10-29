@@ -3,6 +3,8 @@ let lrc_data = [];
 let globalart = '';
 let _ms_art_url = null;
 let activeLyricsKey = null;
+let skipLyricsUpdate = false;
+let isLyricsLoading = false;
 
 const metadata = {};
 
@@ -72,7 +74,7 @@ function get_meta(file) {
             document.getElementById('artist').innerHTML = '';
             document.getElementById('album').innerHTML = '';
             document.getElementById('np2').innerHTML = truncate(file.name || 'Unknown track');
-            document.getElementById('aod').innerHTML = '';
+            document.title = '';
             document.getElementById('cover-art').classList.add('hidden');
             globalart = ''; 
             if ('mediaSession' in navigator) set_media_session_metadata();
@@ -81,36 +83,44 @@ function get_meta(file) {
 }
 
 async function get_lyrics(trackName, artistName, albumName, duration) {
+    skipLyricsUpdate = false;
+    isLyricsLoading = true;
     lrc_wipe();
     stat_up(`<i class="fa-solid fa-magnifying-glass"></i> Searching lyrics...`);
     const lrc_con = document.getElementById('lyrics');
-    lrc_con.innerHTML = 'Loading...';
+    lrc_con.innerHTML = '<div class="spinner"></div>';
     try {
         const response = await fetch(
             `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artistName)}&track_name=${encodeURIComponent(trackName)}&album_name=${encodeURIComponent(albumName)}&duration=${duration}`,
         );
         const data = await response.json();
         if (response.ok && data.instrumental) {
+            skipLyricsUpdate = true;
+            isLyricsLoading = false;
             stat_up(`<i class="fa-solid fa-microphone-lines-slash"></i> This song is an instrumental`);
             lrc_con.innerHTML = '';
             return lrc_data = [lrc_parse(`Instrumental`)[0]];
         } else if (response.ok && data.syncedLyrics) {
             lrc_data = lrc_parse(data.syncedLyrics);
             stat_up(`<i class="fa-solid fa-check"></i> Found lyrics!`);
+            isLyricsLoading = false;
             update_lyrics();
         } else if (response.ok && data.plainLyrics) {
             lrc_data = data.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
+            isLyricsLoading = false;
             update_lyrics();
             stat_up(`<i class="fa-solid fa-minus"></i> No timed lyrics found`);
         } else {
             stat_up(`<i class="fa-solid fa-xmark"></i> No lyrics found`);
             lrc_con.innerHTML = '';
             lrc_data = [];
+            isLyricsLoading = false;
         }
     } catch (e) {
         stat_up(`<i class="fa-solid fa-xmark"></i> Error loading lyrics`);
         lrc_con.innerHTML = '';
         lrc_data = [];
+        isLyricsLoading = false;
         throw_error(`Lyrics could not load:<br>${e}<br>You are likely offline.`);
     }
 }
@@ -177,6 +187,7 @@ function lrc_play(lrc_currents, act_index) {
 }
 
 function update_lyrics() {
+    if (skipLyricsUpdate || isLyricsLoading) return;
     const player = document.getElementById('player');
     const lrc_con = document.getElementById('lyrics');
     const cur_time = player.currentTime;
