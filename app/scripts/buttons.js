@@ -149,7 +149,7 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
     if (globalart) {
-        msg(`<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart"><small><a href="${globalart}" target="_blank"><i>Open in new tab</i></a></small>`, `${act_truncate(metadata.album || metadata.title || "Cover art")}`);
+        msg(`<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart">`, `${act_truncate(metadata.album || metadata.title || "Cover art")}`);
         setTimeout(() => {
             const img = document.getElementById('msgart');
             if (img) {
@@ -184,6 +184,7 @@ window.addEventListener('DOMContentLoaded', () => {
             { 'synthwave': true, 'label': 'Synthwave' },
             { 'paper': true, 'label': 'Paper' },
             { 'neon-green': true, 'label': 'Neon green' },
+            { 'neon-blue': true, 'label': 'Neon blue' },
             { 'under-the-sea': true, 'label': 'Under the sea' },
             { 'frutiger-aero': true, 'label': 'Frutiger Aero' },
             { 'twitter-dim': true, 'label': 'Twitter dim' }
@@ -314,6 +315,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
                     if (parsed.length === 0) {
                         return throw_error('No usable lines found!');
                     }
+                    skipLyricsUpdate = false;
                     lrc_wipe();
                     lrc_data = parsed;
                     update_lyrics();
@@ -751,8 +753,10 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                                                 if (insb2) {
                                                                                     insb2.addEventListener('click', () => {
                                                                                         if (flcd.syncedLyrics) {
+                                                                                            skipLyricsUpdate = false;
                                                                                             lrc_data = lrc_parse(flcd.syncedLyrics);
                                                                                         } else {
+                                                                                            skipLyricsUpdate = false;
                                                                                             lrc_data = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
                                                                                         }
                                                                                         update_lyrics();

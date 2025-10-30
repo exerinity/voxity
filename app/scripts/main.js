@@ -435,7 +435,7 @@ function quf(fileList) {
                     return;
                 }
 
-                try { update_lyrics(); } catch { null }
+                try { skipLyricsUpdate = false; update_lyrics(); } catch { null }
                 throw_error('Lyrics parsed successfully!', true);
             };
             reader.readAsText(files[0]);

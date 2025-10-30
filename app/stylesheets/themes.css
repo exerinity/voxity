@@ -411,6 +411,49 @@
     --transition-slow: 0.6s;
 }
 
+:root[data-theme="neon-blue"] {
+    --lyric-color: #00b7ff;
+    --link: #33ccff;
+
+    --bg: #000511;
+    --fg: #d4e9ff;
+    --fg-strong: #ffffff;
+    --muted: #a0c8ff;
+    --muted-2: #7ab0ff;
+    --panel-bg: #00152b;
+    --header-bg: #000b1a;
+    --control-bg: #001f3d;
+    --control-br: #003366;
+    --btn-bg: #002a55;
+    --btn-hover-bg: #004080;
+    --range-bg: #003355;
+    --thumb-bg: #c8e8ff;
+    --visualizer-bg: #00030a;
+    --lyrics-fg: #b8d9ff;
+    --error-bg: #ff3355;
+    --statusbox-bg: #002a5577;
+    --dialog-bg: #001a33;
+    --overlay-bg: rgba(0, 80, 255, 0.2);
+    --spinner-trk: #002244;
+    --shadow: #0080ff66;
+    --shadow-strong: #00aaff99;
+
+    --font-primary: 'Orbitron', 'Rajdhani', 'Inter', sans-serif;
+
+    --panel-gradient: linear-gradient(145deg, #00152b, #002a55);
+    --control-gradient: linear-gradient(to bottom, #003366, #000b1a);
+    --accent: #00b7ff;
+    --accent-glow: 0 0 15px #00b7ff;
+    --viz-bar-color: #00b7ff;
+    --viz-peak-color: #66e0ff;
+    --viz-glow: 0.9;
+
+    --transition-fast: 0.15s;
+    --transition-medium: 0.3s;
+    --transition-slow: 0.6s;
+}
+
+
 :root[data-theme="under-the-sea"] {
     --lyric-color: #5cff8d;
     --link: #66d9a3;
