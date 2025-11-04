@@ -262,11 +262,11 @@ function toggleShuffle() {
     if (shuffleMode) {
         shuffleHistory = [];
         resetShufflePool();
-        stat_up('<i class="fa-solid fa-shuffle" style="color: green;"></i> Shuffle ON');
+        stat_up('<i class="fa-solid fa-shuffle" style="color: green;"></i> Now shuffling...');
     } else {
         shuffleHistory = [];
         shufflePool = [];
-        stat_up('<i class="fa-solid fa-shuffle" style="color: red;"></i> Shuffle OFF');
+        stat_up('<i class="fa-solid fa-shuffle" style="color: red;"></i> No longer shuffling...');
     }
     updateShuffleButton();
 }
@@ -287,9 +287,13 @@ function rqueue() {
         li.className = 'queue-item' + (idx === currentIndex ? ' active' : '');
         const title = item.meta?.title;
         const artist = item.meta?.artist;
-        const label = (title || artist) ? `${title || 'Unknown track'} by ${artist || 'Unknown artist'}` : (item.displayName || item.file.name);
+        const fullLabel = (title || artist) ? `${title || 'Unknown track'} by ${artist || 'Unknown artist'}` : (item.displayName || item.file.name);
+        const displayTitle = title ? act_truncate(title) : null;
+        const displayArtist = artist ? act_truncate(artist) : null;
+        const label = (displayTitle || displayArtist) ? `${displayTitle || 'Unknown track'} by ${displayArtist || 'Unknown artist'}` : (item.displayName || item.file.name);
+
         li.textContent = '';
-        li.title = item.displayName || item.file.name || label || 'Unknown track';
+        li.title = fullLabel || 'Unknown track';
         li.addEventListener('dblclick', () => pindex(idx, { manual: true }));
         li.addEventListener('click', () => {
             const cur = ul.querySelector('.queue-item.focus');
