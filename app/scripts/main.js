@@ -573,15 +573,77 @@ function previ() {
     }
 }
 
-function clea() {
-    if (!metadata.title && !metadata.artist) {
-        return throw_error('No track playing!');
+function resetPlayerState() {
+    try { elements.player.pause(); } catch { }
+    elements.player.currentTime = 0;
+    if (cph) {
+        try { elements.player.removeEventListener('canplaythrough', cph); } catch { }
+        cph = null;
     }
+    if (currentObjectUrl) {
+        try { URL.revokeObjectURL(currentObjectUrl); } catch { }
+        currentObjectUrl = null;
+    }
+    elements.player.src = '';
+    try { elements.player.load(); } catch { }
+    elements.player.classList.add('hidden');
+    document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
+    lrc_wipe();
+    if (typeof setCurrentFile === 'function') {
+        try { setCurrentFile(null); } catch { }
+    }
+    metadata.title = '';
+    metadata.artist = '';
+    metadata.album = '';
+    metadata.picture = null;
+    elements.title2.innerHTML = '';
+    const artistEl = document.getElementById('artist');
+    const albumEl = document.getElementById('album');
+    if (artistEl) artistEl.innerHTML = '';
+    if (albumEl) albumEl.innerHTML = '';
+    elements.timeCurrent.innerHTML = '--:--';
+    elements.timeDuration.innerHTML = '--:--';
+    elements.index.value = 0;
+    elements.index.max = 100;
+    if (typeof globalart !== 'undefined') {
+        globalart = '';
+    }
+    if (typeof _ms_art_url !== 'undefined' && _ms_art_url) {
+        try { URL.revokeObjectURL(_ms_art_url); } catch { }
+        _ms_art_url = null;
+    }
+    const cover = document.getElementById('cover-art');
+    if (cover) {
+        cover.classList.add('hidden');
+        cover.removeAttribute('src');
+        cover.removeAttribute('alt');
+        cover.removeAttribute('title');
+    }
+    sfa('/favicon.ico');
+    if ('mediaSession' in navigator) {
+        try { navigator.mediaSession.playbackState = 'none'; } catch { }
+    }
+    if (typeof set_media_session_metadata === 'function') {
+        try { set_media_session_metadata(); } catch { }
+    }
+}
+
+function clea() {
     if (queue.length === 0) {
         return throw_error('Queue is already empty');
     }
-    window.location.reload();
-    // this is scrappy but whatever xD
+    const removed = queue.splice(0);
+    removed.forEach(onQueueItemRemoved);
+    currentIndex = -1;
+    queueIdCounter = 0;
+    shufflePool = [];
+    shuffleHistory = [];
+    pt++;
+    resetPlayerState();
+    rqueue();
+    calqueue();
+    stat_up('<i class="fa-solid fa-broom"></i> Queue cleared');
+    throw_error('Cleared', true);
 }
 
 function remq(idx) {
@@ -601,15 +663,7 @@ function remq(idx) {
         } else if (queue.length > 0) {
             pindex(queue.length - 1, { pushHistory: false });
         } else {
-            elements.player.pause();
-            elements.player.src = '';
-            lrc_wipe();
-            metadata.title = '';
-            metadata.artist = '';
-            metadata.album = '';
-            document.getElementById('np2').innerHTML = '';
-            document.getElementById('artist').innerHTML = '';
-            document.getElementById('album').innerHTML = '';
+            resetPlayerState();
         }
     }
     stat_up('<i class="fa-solid fa-trash"></i> Removed from queue');
@@ -1001,7 +1055,7 @@ if (typeof localStorage !== 'undefined') {
     if (isFirstVisit) {
         try { localStorage.setItem('hai', '1'); } catch { null }
         setTimeout(() => {
-            msg(`<p>Voxity (<a href="https://bsky.app/profile/exerinity.dev/post/3m2yswjoaes2l">fka "Audion"</a>) is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
+            msg(`<p>Voxity is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
 <p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.dev/projects/voxity" target="_blank" rel="noopener">https://exerinity.dev/projects/voxity</a></p>
 <p><a href="https://exerinity.dev/projects/voxity/screenshots" target="_blank" rel="noopener">View some screenshots of Voxity here</a></p>
 <p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.dev/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.dev/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>

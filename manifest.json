@@ -8,7 +8,7 @@
   "display": "standalone",
   "description": "A semi-advanced music player that supports any audio file your browser does.",
   "background_color": "#000000",
-  "packaged": "com.exerinity.audion",
+  "packaged": "com.exerinity.vox",
   "theme_color": "#8000ff",
   "icons": [
     {
