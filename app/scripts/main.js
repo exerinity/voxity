@@ -1,3 +1,4 @@
+console.log('meow');
 const deb_ms = 500;
 let lastact = 0;
 const elements = {
@@ -1055,10 +1056,10 @@ if (typeof localStorage !== 'undefined') {
     if (isFirstVisit) {
         try { localStorage.setItem('hai', '1'); } catch { null }
         setTimeout(() => {
-            msg(`<p>Voxity is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files or use the upload button to get started!</p>
+            msg(`<p>Voxity is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files to get started!</p>
 <p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.dev/projects/voxity" target="_blank" rel="noopener">https://exerinity.dev/projects/voxity</a></p>
 <p><a href="https://exerinity.dev/projects/voxity/screenshots" target="_blank" rel="noopener">View some screenshots of Voxity here</a></p>
-<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.dev/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.dev/bluesky" target="_blank"><i class="fa-brands fa-bluesky" style="color:#03a9f4;"></i> Bluesky</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
+<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
 `, "Welcome to Voxity");
         }, 2500);
 
