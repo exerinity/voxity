@@ -332,6 +332,10 @@ function processNextDurationLoad() {
     }
 
     function handleLoaded() {
+        const idx = findIndexById(nextItem.id);
+        const pos = idx !== -1 ? idx + 1 : (queue.length ? queue.length : 1);
+        const total = queue.length || 1;
+        stat_up(`<i class="fa-solid fa-people-carry-box"></i> Loading ${nextItem.displayName || nextItem.file.name} (${pos} of ${total})...`);
         const durationValue = Number.isFinite(audio.duration) ? audio.duration : 0;
         nextItem.duration = durationValue;
         const targetEl = nextItem._pendingDurationEl;
