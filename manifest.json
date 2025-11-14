@@ -1,5 +1,5 @@
 {
-  "name": "Voxity",
+  "name": "Voxity - PWA Music Player",
   "short_name": "Voxity",
   "start_url": "index.html",
   "lang": "en-AU",
@@ -8,7 +8,7 @@
   "display": "standalone",
   "description": "A semi-advanced music player that supports any audio file your browser does.",
   "background_color": "#000000",
-  "packaged": "com.exerinity.vox",
+  "packaged": "com.exerinity.audion",
   "theme_color": "#8000ff",
   "icons": [
     {

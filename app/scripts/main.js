@@ -1,4 +1,3 @@
-console.log('meow');
 const deb_ms = 500;
 let lastact = 0;
 const elements = {
@@ -157,6 +156,9 @@ let shuffleMode = false;
 let shufflePool = [];
 let shuffleHistory = [];
 let shuffleButton = null;
+const durationLoadQueue = [];
+let durationLoadInProgress = false;
+let durationAudio = null;
 
 function getItemIdByIndex(idx) {
     const item = queue[idx];
@@ -279,6 +281,84 @@ function form_time_short(sec) {
     return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
+function ensureDurationAudioElement() {
+    if (durationAudio) return durationAudio;
+    durationAudio = document.createElement('audio');
+    durationAudio.preload = 'metadata';
+    durationAudio.style.display = 'none';
+    try {
+        if (document.body && !durationAudio.isConnected) {
+            document.body.appendChild(durationAudio);
+        }
+    } catch { null }
+    return durationAudio;
+}
+
+function enqueueDurationLoad(item, durEl) {
+    if (!item || item.duration != null || !item.file) return;
+    item._pendingDurationEl = durEl || null;
+    if (item._durationLoading) {
+        return;
+    }
+    item._durationLoading = true;
+    durationLoadQueue.push(item);
+    processNextDurationLoad();
+}
+
+function processNextDurationLoad() {
+    if (durationLoadInProgress) return;
+    const nextItem = durationLoadQueue.shift();
+    if (!nextItem) return;
+    durationLoadInProgress = true;
+    const audio = ensureDurationAudioElement();
+    let objectUrl = null;
+
+    function cleanup() {
+        delete nextItem._durationLoading;
+        delete nextItem._pendingDurationEl;
+        durationLoadInProgress = false;
+        audio.removeEventListener('loadedmetadata', handleLoaded);
+        audio.removeEventListener('error', handleError);
+        if (objectUrl) {
+            try { URL.revokeObjectURL(objectUrl); } catch { null }
+            objectUrl = null;
+        }
+        try {
+            audio.pause();
+            audio.removeAttribute('src');
+            audio.load();
+        } catch { null }
+        processNextDurationLoad();
+    }
+
+    function handleLoaded() {
+        const durationValue = Number.isFinite(audio.duration) ? audio.duration : 0;
+        nextItem.duration = durationValue;
+        const targetEl = nextItem._pendingDurationEl;
+        const textValue = form_time_short(durationValue);
+        if (targetEl && targetEl.isConnected) {
+            targetEl.textContent = textValue;
+        } else {
+            rqueue();
+        }
+        cleanup();
+    }
+
+    function handleError() {
+        cleanup();
+    }
+
+    audio.addEventListener('loadedmetadata', handleLoaded, { once: true });
+    audio.addEventListener('error', handleError, { once: true });
+    try {
+        objectUrl = URL.createObjectURL(nextItem.file);
+        audio.src = objectUrl;
+        audio.load();
+    } catch {
+        cleanup();
+    }
+}
+
 function rqueue() {
     const ul = elements.queueList;
     if (!ul) return;
@@ -325,17 +405,8 @@ function rqueue() {
         const dur = document.createElement('span');
         dur.className = 'qi-dur qi-num';
         dur.textContent = form_time_short(item.duration);
-        if (!item.duration && item.file) {
-            try {
-                const a = document.createElement('audio');
-                a.preload = 'metadata';
-                a.src = URL.createObjectURL(item.file);
-                a.addEventListener('loadedmetadata', () => {
-                    item.duration = a.duration;
-                    dur.textContent = form_time_short(item.duration);
-                    URL.revokeObjectURL(a.src);
-                }, { once: true });
-            } catch { null }
+        if (item.duration == null && item.file) {
+            enqueueDurationLoad(item, dur);
         }
 
         li.appendChild(lf);
