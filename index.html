@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="/app/stylesheets/themes.css">
     <script src="/app/scripts/jsmediatags.js"></script>
     <script src="/app/scripts/app.js"></script>
-    <script src="/app/scripts/twemoji.js"></script>   <!-- this is not all of the scripts, some are in the body -->
+    <script src="/app/scripts/twemoji.js"></script> <!-- this is not all of the scripts, some are in the body -->
     <link rel="stylesheet" href="/app/stylesheets/fontawesome.css">
     <script src="/app/scripts/message.js"></script>
     <meta name="description" content="A semi-advanced music player that supports any audio file your browser does">
@@ -147,10 +147,11 @@
             </div>
             <div class="right" id="droppedzone">
                 <div id="lyrics" class="lyrics-container"></div>
-                <div id="queue-container" class="queue-container" style="height: 300px; overflow: auto;">
-                    <div class="queue-header" style="position: sticky; top: 0; background: #00000000; z-index: 2;">
-                        <h3 style="margin:0;" id="queuehead">Queue</h3>
-                    </div>
+                <div class="queue-header"
+                    style="position: sticky; top: 0; background: #00000000; z-index: 2; backdrop-filter: blur(2px);">
+                    <h3 style="margin:0;" id="queuehead">Queue</h3>
+                </div>
+                <div id="queue-container" class="queue-container">
                     <ul id="queue-list" class="queue-list">
                         <li class="queue-item placeholder">Standby... <i
                                 class="fa-solid fa-tower-broadcast fa-beat bop"></i></li>

@@ -201,7 +201,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (stored) {
                 apply(stored);
             } else {
-                apply('lights-out');
+                apply('high-contrast');
             }
         } catch { }
 

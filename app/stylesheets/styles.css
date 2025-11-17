@@ -271,8 +271,10 @@ strong {
     background: var(--panel-bg);
     border-radius: 8px;
     padding: 10px;
-    max-height: 200px;
+    max-height: 500px;
     overflow-y: auto;
+    height: 350px;
+    overflow: auto;
 }
 
 .queue-container::-webkit-scrollbar {
