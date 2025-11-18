@@ -87,72 +87,43 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
     isLyricsLoading = true;
     lrc_wipe();
     stat_up(`<i class="fa-solid fa-magnifying-glass"></i> Searching lyrics...`);
-
     const lrc_con = document.getElementById('lyrics');
     lrc_con.innerHTML = '<div class="spinner"></div>';
-
     try {
-        const searchUrl = `https://lyrics.exerinity.com/search?` +
-            `artist=${encodeURIComponent(artistName)}` +
-            `&title=${encodeURIComponent(trackName)}` +
-            `&album=${encodeURIComponent(albumName)}`;
-
-        const searchRes = await fetch(searchUrl);
-        const results = await searchRes.json();
-
-        if (!Array.isArray(results) || results.length === 0) {
-            stat_up(`<i class="fa-solid fa-xmark"></i> No lyrics found`);
-            lrc_con.innerHTML = '';
+        const response = await fetch(
+            `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artistName)}&track_name=${encodeURIComponent(trackName)}&album_name=${encodeURIComponent(albumName)}&duration=${duration}`,
+        );
+        const data = await response.json();
+        if (response.ok && data.instrumental) {
+            skipLyricsUpdate = true;
             isLyricsLoading = false;
-            return;
-        }
-
-        const best = results.find(r => r.type === "Synced") || results[0];
-
-        if (!best) {
-            stat_up(`<i class="fa-solid fa-xmark"></i> No lyrics found`);
+            stat_up(`<i class="fa-solid fa-microphone-lines-slash"></i> This song is an instrumental`);
             lrc_con.innerHTML = '';
+            return lrc_data = [lrc_parse(`Instrumental`)[0]];
+        } else if (response.ok && data.syncedLyrics) {
+            lrc_data = lrc_parse(data.syncedLyrics);
+            stat_up(`<i class="fa-solid fa-check"></i> Found lyrics!`);
             isLyricsLoading = false;
-            return;
-        }
-
-        const lookupUrl = `https://lyrics.exerinity.com/lookup?` +
-            `lookup_id=${best.lookup_id}&type=${best.type}`;
-
-        const lookupRes = await fetch(lookupUrl);
-        const lookup = await lookupRes.json();
-        const lyricsText = lookup?.lyrics;
-
-        if (!lyricsText) {
-            stat_up(`<i class="fa-solid fa-xmark"></i> No lyrics found`);
-            lrc_con.innerHTML = '';
+            update_lyrics();
+        } else if (response.ok && data.plainLyrics) {
+            lrc_data = data.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
             isLyricsLoading = false;
-            return;
-        }
-
-        if (best.type === "Synced") {
-            lrc_data = lrc_parse(lyricsText);
-            stat_up(`<i class="fa-solid fa-check"></i> Found synced lyrics!`);
+            update_lyrics();
+            stat_up(`<i class="fa-solid fa-minus"></i> No timed lyrics found`);
         } else {
-            lrc_data = lyricsText
-                .split('\n')
-                .map(line => ({ time: 0, text: line }));
-            stat_up(`<i class="fa-solid fa-minus"></i> Found plain lyrics`);
+            stat_up(`<i class="fa-solid fa-xmark"></i> No lyrics found`);
+            lrc_con.innerHTML = '';
+            lrc_data = [];
+            isLyricsLoading = false;
         }
-
-        isLyricsLoading = false;
-        update_lyrics();
-
     } catch (e) {
-        console.error("Lyrics error:", e);
         stat_up(`<i class="fa-solid fa-xmark"></i> Error loading lyrics`);
         lrc_con.innerHTML = '';
         lrc_data = [];
         isLyricsLoading = false;
-        throw_error(`Lyrics could not load:<br>${e}<br>Server may be unreachable.`);
+        throw_error(`Lyrics could not load:<br>${e}<br>You are likely offline.`);
     }
 }
-
 
 function lrc_parse(syncedLyrics) {
     const lines = syncedLyrics.split('\n');
