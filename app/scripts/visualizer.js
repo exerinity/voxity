@@ -5,7 +5,7 @@ let viz_y = 100;
 let viz_tx = 0.3;
 let viz_ty = 0.3;
 let viz_col = viz_ranco();
-let viz_color = '#ffff00';
+let viz_color = '#8000ff';
 
 function viz_ranco() {
     return `hsl(${Math.floor(Math.random() * 360)}, 100%, 50%)`;

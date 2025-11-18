@@ -201,7 +201,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (stored) {
                 apply(stored);
             } else {
-                apply('high-contrast');
+                apply('dim');
             }
         } catch { }
 
