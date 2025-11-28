@@ -5,6 +5,9 @@ function getAbout() {
         <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, <a href="https://lrclib.net" target="_blank">LRCLIB</a> as a lyrics source.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
         <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>`;
 }
+function changelogmsg() {
+    msg(`<iframe src="https://i.exerinity.com/voxrelnote.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}`, 'Release notes');
+}
 
 
 document.getElementById('plps').addEventListener('click', debounce(() => {
@@ -170,12 +173,12 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
 
 window.addEventListener('DOMContentLoaded', () => {
     (function theme() {
-        //const THEMES = ['grey', 'dim', 'lights-out', 'high-contrast', 'red', 'blue', 'light', 'khaki', 'hacker', 'synthwave', 'paper', 'neon-green', 'under-the-sea', 'frutiger-aero', 'twitter-dim'];
         const THEMES = [
             { 'grey': true, 'label': 'Grey' },
             { 'dim': true, 'label': 'Dim' },
             { 'lights-out': true, 'label': 'Lights out' },
             { 'high-contrast': true, 'label': 'High contrast' },
+            { 'very-high-contrast': true, 'label': 'Very high contrast'},
             { 'red': true, 'label': 'Red' },
             { 'blue': true, 'label': 'Blue' },
             { 'light': true, 'label': 'Light' },
@@ -807,7 +810,3 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
         }
     }, 0);
 }));
-
-function changelogmsg() {
-    msg(`<iframe src="https://i.exerinity.com/voxrelnote.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}`, 'Release notes');
-}

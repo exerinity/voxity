@@ -143,6 +143,92 @@
     --shadow-strong: #0008;
 }
 
+:root[data-theme="very-high-contrast"] {
+    --lyric-color: #ffff00;
+    --link: #00ffff;
+
+    --bg: #000;
+    --fg: #fff;
+    --fg-strong: #fff;
+    --muted: #fff;
+    --muted-2: #fff;
+
+    --panel-bg: #000;
+    --header-bg: #000;
+    --dialog-bg: #000;
+    --visualizer-bg: #000;
+
+    --control-bg: #000;
+    --control-br: #fff;
+
+    --btn-bg: #000;
+    --btn-hover-bg: #111;
+
+    --range-bg: #000;
+    --thumb-bg: #fff;
+
+    --lyrics-fg: #fff;
+    --error-bg: #ff0000;
+    --statusbox-bg: #000000aa;
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+    --spinner-trk: #fff;
+
+    --shadow: #fff2;
+    --shadow-strong: #fff4;
+
+    --font-primary: 'Inter', sans-serif;
+}
+
+:root[data-theme="very-high-contrast"] .panel,
+:root[data-theme="very-high-contrast"] .header,
+:root[data-theme="very-high-contrast"] .lyrics {
+    border: 2px solid #fff !important;
+    outline: none !important;
+}
+
+:root[data-theme="very-high-contrast"] button,
+:root[data-theme="very-high-contrast"] input,
+:root[data-theme="very-high-contrast"] select,
+:root[data-theme="very-high-contrast"] textarea {
+    border: 2px solid #fff !important;
+    background: #000 !important;
+    color: #fff !important;
+}
+
+:root[data-theme="very-high-contrast"] button:hover,
+:root[data-theme="very-high-contrast"] input:hover,
+:root[data-theme="very-high-contrast"] select:hover,
+:root[data-theme="very-high-contrast"] textarea:hover {
+    background: #111 !important;
+}
+
+:root[data-theme="very-high-contrast"] button:focus,
+:root[data-theme="very-high-contrast"] input:focus,
+:root[data-theme="very-high-contrast"] select:focus,
+:root[data-theme="very-high-contrast"] textarea:focus {
+    outline: 3px solid #00ffff !important;
+    outline-offset: 1px !important;
+}
+
+:root[data-theme="very-high-contrast"] input[type=range]::-webkit-slider-runnable-track {
+    background: #fff !important;
+}
+
+:root[data-theme="very-high-contrast"] input[type=range]::-webkit-slider-thumb {
+    background: #000 !important;
+    border: 2px solid #fff !important;
+}
+
+:root[data-theme="very-high-contrast"] ::-webkit-scrollbar {
+    width: 12px;
+    background: #000;
+}
+
+:root[data-theme="very-high-contrast"] ::-webkit-scrollbar-thumb {
+    background: #fff;
+}
+
+
 :root[data-theme="blue"] {
     --bg: #15202b;
     --fg: #f2f2f2;
@@ -496,56 +582,6 @@
     --transition-slow: 0.6s;
 }
 
-:root[data-theme="frutiger-aero"] {
-    --lyric-color: #00aaff;
-    --link: #009cff;
-
-    --bg: radial-gradient(circle at 50% 20%, #c8eeff 0%, #a6e0ff 40%, #7dcfff 75%, #66b8ff 100%);
-    --fg: #08324a;
-    --fg-strong: #001622;
-    --muted: #24536a;
-    --muted-2: #4a7d93;
-    --panel-bg: #e8f7ff;
-    --header-bg: linear-gradient(to bottom, #d0f1ff 0%, #b2e0ff 100%);
-    --control-bg: linear-gradient(180deg, #d6f3ff 0%, #bde6ff 100%);
-    --control-br: #a3d9f7;
-    --btn-bg: linear-gradient(180deg, #d8f3ff 0%, #a8e4ff 100%);
-    --btn-hover-bg: linear-gradient(180deg, #c4ecff 0%, #91daff 100%);
-    --range-bg: linear-gradient(90deg, #a8e4ff 0%, #91daff 100%);
-    --thumb-bg: #0078ff;
-    --visualizer-bg: radial-gradient(circle at 50% 70%, #e5faff 0%, #c4edff 40%, #a3ddff 100%);
-    --lyrics-fg: #114055;
-    --error-bg: #e85b5b;
-    --statusbox-bg: #bde4ff88;
-    --dialog-bg: linear-gradient(145deg, #e8f9ff, #bde7ff);
-    --overlay-bg: rgba(100, 200, 255, 0.25);
-    --spinner-trk: #b3e4ff;
-    --shadow: #0078ff33;
-    --shadow-strong: #0078ff66;
-
-    --font-primary: 'Segoe UI', 'Inter', sans-serif;
-
-    --panel-gradient: linear-gradient(145deg, #f0fbff, #bde7ff);
-    --control-gradient: linear-gradient(to bottom, #d6f3ff, #9edaff);
-    --accent: #00aaff;
-    --accent-glow: 0 0 20px #00c6ff;
-    --viz-bar-color: #00cfff;
-    --viz-peak-color: #33ffee;
-    --viz-glow: 1;
-
-    --transition-fast: 0.15s;
-    --transition-medium: 0.3s;
-    --transition-slow: 0.6s;
-
-    --panel-glass: linear-gradient(to bottom, #ffffff66 0%, #ffffff11 100%);
-    --btn-glass: linear-gradient(to bottom, #ffffff99 0%, #ffffff22 100%);
-    --aero-shine: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.6), transparent 70%);
-    --highlight-ring: 0 0 25px #00c6ffcc;
-
-    --bubble-gradient: radial-gradient(circle at 30% 30%, #ffffff55, transparent 60%);
-    --sky-reflection: linear-gradient(180deg, #e0f8ff00 0%, #e0f8ff33 40%, #a3ddff55 100%);
-}
-
 @font-face {
     font-family: 'Chirp';
     src: url('https://exerinity.com/files/fonts/twitter/chirp/chirp-regular-web.woff') format('woff');
@@ -618,7 +654,11 @@
     --focus-ring: #1d9bf0;
 }
 
-body, .panel, .header, .control, .lyrics {
+body,
+.panel,
+.header,
+.control,
+.lyrics {
     font-family: var(--font-primary);
     font-feature-settings: "calt", "kern", "liga";
 }

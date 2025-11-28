@@ -1,9 +1,9 @@
-const CACHE_NAME = 'voxity725a';
+const CACHE_NAME = 'voxity73';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';
 const FILES_TO_CACHE = [
-  '/',                // root
+  '/', // root
   '/index.html',
   '/entry.html',
   '/404.html',
