@@ -1,4 +1,4 @@
-const CACHE_NAME = 'voxity73';
+const CACHE_NAME = 'voxity74';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';

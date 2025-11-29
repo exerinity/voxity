@@ -497,6 +497,49 @@
     --transition-slow: 0.6s;
 }
 
+:root[data-theme="neon-purple"] {
+    --lyric-color: #c400ff;
+    --link: #e066ff;
+
+    --bg: #0a0011;
+    --fg: #f0d4ff;
+    --fg-strong: #ffffff;
+    --muted: #d6a0ff;
+    --muted-2: #c07aff;
+    --panel-bg: #1b0033;
+    --header-bg: #12001f;
+    --control-bg: #2d0055;
+    --control-br: #4c0080;
+    --btn-bg: #3d0091;
+    --btn-hover-bg: #5e00c7;
+    --range-bg: #2a0055;
+    --thumb-bg: #f5d4ff;
+    --visualizer-bg: #07000a;
+    --lyrics-fg: #ebc8ff;
+    --error-bg: #ff33aa;
+    --statusbox-bg: #3d009177;
+    --dialog-bg: #1e0033;
+    --overlay-bg: rgba(170, 0, 255, 0.2);
+    --spinner-trk: #2e0055;
+    --shadow: #bf00ff66;
+    --shadow-strong: #d400ff99;
+
+    --font-primary: 'Orbitron', 'Rajdhani', 'Inter', sans-serif;
+
+    --panel-gradient: linear-gradient(145deg, #1b0033, #3d0091);
+    --control-gradient: linear-gradient(to bottom, #4c0080, #12001f);
+    --accent: #c400ff;
+    --accent-glow: 0 0 15px #c400ff;
+    --viz-bar-color: #c400ff;
+    --viz-peak-color: #f066ff;
+    --viz-glow: 0.9;
+
+    --transition-fast: 0.15s;
+    --transition-medium: 0.3s;
+    --transition-slow: 0.6s;
+}
+
+
 :root[data-theme="neon-blue"] {
     --lyric-color: #00b7ff;
     --link: #33ccff;

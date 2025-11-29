@@ -178,7 +178,7 @@ window.addEventListener('DOMContentLoaded', () => {
             { 'dim': true, 'label': 'Dim' },
             { 'lights-out': true, 'label': 'Lights out' },
             { 'high-contrast': true, 'label': 'High contrast' },
-            { 'very-high-contrast': true, 'label': 'Very high contrast'},
+            { 'very-high-contrast': true, 'label': 'Very high contrast' },
             { 'red': true, 'label': 'Red' },
             { 'blue': true, 'label': 'Blue' },
             { 'light': true, 'label': 'Light' },
@@ -188,8 +188,8 @@ window.addEventListener('DOMContentLoaded', () => {
             { 'paper': true, 'label': 'Paper' },
             { 'neon-green': true, 'label': 'Neon green' },
             { 'neon-blue': true, 'label': 'Neon blue' },
+            { 'neon-purple': true, 'label': 'Neon purple' },
             { 'under-the-sea': true, 'label': 'Under the sea' },
-            { 'frutiger-aero': true, 'label': 'Frutiger Aero' },
             { 'twitter-dim': true, 'label': 'Twitter dim' }
         ]
         const key = 'au_theme';
@@ -755,13 +755,20 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                                                 const insb2 = document.getElementById('insert_lyrics');
                                                                                 if (insb2) {
                                                                                     insb2.addEventListener('click', () => {
-                                                                                        if (flcd.syncedLyrics) {
-                                                                                            skipLyricsUpdate = false;
-                                                                                            lrc_data = lrc_parse(flcd.syncedLyrics);
-                                                                                        } else {
-                                                                                            skipLyricsUpdate = false;
-                                                                                            lrc_data = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
+                                                                                        let parsed = [];
+                                                                                        if (flcd?.syncedLyrics && typeof flcd.syncedLyrics === 'string') {
+                                                                                            parsed = lrc_parse(flcd.syncedLyrics);
+                                                                                        } else if (flcd?.plainLyrics && typeof flcd.plainLyrics === 'string') {
+                                                                                            parsed = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
                                                                                         }
+                                                                                        parsed = (parsed || []).filter(l => l && typeof l.text === 'string').sort((a, b) => a.time - b.time);
+                                                                                        if (!parsed || parsed.length === 0) {
+                                                                                            return throw_error('No usable lines found!');
+                                                                                        }
+                                                                                        skipLyricsUpdate = false;
+                                                                                        try { isLyricsLoading = false; } catch {}
+                                                                                        lrc_wipe();
+                                                                                        lrc_data = parsed;
                                                                                         update_lyrics();
                                                                                         modal.setTitle('Inserted lyrics');
                                                                                     });
@@ -780,14 +787,23 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                     });
                                                 }
                                             } catch { }
-                                            const insb = document.getElementById('insert_lyrics');
-                                            if (insb) {
-                                                insb.addEventListener('click', () => {
-                                                    if (flcd.syncedLyrics) {
-                                                        lrc_data = lrc_parse(flcd.syncedLyrics);
-                                                    } else {
-                                                        lrc_data = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
+                                            const insbA = document.getElementById('insert_lyrics');
+                                            if (insbA) {
+                                                insbA.addEventListener('click', () => {
+                                                    let parsed = [];
+                                                    if (flcd?.syncedLyrics && typeof flcd.syncedLyrics === 'string') {
+                                                        parsed = lrc_parse(flcd.syncedLyrics);
+                                                    } else if (flcd?.plainLyrics && typeof flcd.plainLyrics === 'string') {
+                                                        parsed = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
                                                     }
+                                                    parsed = (parsed || []).filter(l => l && typeof l.text === 'string').sort((a, b) => a.time - b.time);
+                                                    if (!parsed || parsed.length === 0) {
+                                                        return throw_error('No usable lines found!');
+                                                    }
+                                                    skipLyricsUpdate = false;
+                                                    try { isLyricsLoading = false; } catch {}
+                                                    lrc_wipe();
+                                                    lrc_data = parsed;
                                                     update_lyrics();
                                                     modal.setTitle('Inserted lyrics');
                                                 });
