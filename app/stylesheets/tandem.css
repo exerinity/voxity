@@ -199,7 +199,7 @@
     margin: 0 0 6px 0;
     letter-spacing: 0.04em;
     text-shadow: 0 1px 4px var(--shadow-strong);
-    cursor: pointer;
+    cursor: copy;
 }
 
 .track-artist {
@@ -208,7 +208,7 @@
     margin: 0 0 4px 0;
     font-weight: 500;
     text-shadow: 0 1px 2px var(--shadow);
-    cursor: pointer;
+    cursor: copy;
 }
 
 .track-album {
@@ -217,7 +217,7 @@
     margin: 0;
     font-style: italic;
     opacity: 0.85;
-    cursor: pointer;
+    cursor: copy;
 }
 
 * {

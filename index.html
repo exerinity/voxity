@@ -12,6 +12,8 @@
 
    If you have any questions, please message me on Twitter! My DMs are open, I would love to hear what you think; good or bad :3
    https://exerinity.com/twitter or email me: https://exerinity.com/email
+
+   Also, if you want an old version, also message me! Tell me which date (view the release notes first) and I will send you the build URL!
 -->
 
 <head>
@@ -24,11 +26,11 @@
     <link rel="stylesheet" href="/app/stylesheets/structure.css">
     <link rel="stylesheet" href="/app/stylesheets/tandem.css">
     <link rel="stylesheet" href="/app/stylesheets/themes.css">
-    <script src="/app/scripts/jsmediatags.js"></script>
-    <script src="/app/scripts/app.js"></script>
-    <script src="/app/scripts/twemoji.js"></script> <!-- this is not all of the scripts, some are in the body -->
+    <script src="/app/scripts/jsmediatags.js" defer></script>
+    <script src="/app/scripts/app.js" defer></script>
+    <script src="/app/scripts/twemoji.js" defer></script> <!-- this is not all of the scripts, some are in the body -->
     <link rel="stylesheet" href="/app/stylesheets/fontawesome.css">
-    <script src="/app/scripts/message.js"></script>
+    <script src="/app/scripts/message.js" defer></script>
     <meta name="description" content="A semi-advanced music player that supports any audio file your browser does">
     <meta name="keywords" content="music, player, audio, web audio api, visualizer, lyrics, jsmediatags">
     <meta name="author" content="exerinity.dev">
@@ -60,7 +62,7 @@
     <div id="app" class="hidden">
         <div class="header">
             <h3 id="status"></h3>
-            <div id="branding"></div>
+            <div id="branding" style="cursor: help"></div>
         </div>
         <div class="main">
             <div class="left" id="dropzone">
@@ -90,28 +92,28 @@
                     <button id="fwd" title="Forward 10s" class="bop"><i class="fa-solid fa-forward"></i></button>
                     <button id="nexttrack" title="Next track" class="bop"><i
                             class="fa-solid fa-step-forward"></i></button>
-                    <button id="stop" title="Go back to 0" class="bop"><i
+                    <button id="stop" title="Restart the track at 0:00" class="bop"><i
                             class="fa-solid fa-arrow-rotate-left"></i></button>
                     <button id="shuffle" title="Toggle shuffle"><i class="fa-solid fa-shuffle"></i></button>
                     <button id="loop" title="Toggle loop"><i class="fa-solid fa-repeat"></i></button>
                     <button id="clearqueue" title="Clear queue"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <div class="controls">
-                    <button id="theme" title="Toggle theme"><i class="fa-solid fa-gear"></i>
+                    <button id="theme" title="Change theme settings"><i class="fa-solid fa-gear"></i>
                         Theme</button>
                     <button id="searchlrclib" title="Search LRCLIB for lyrics" class="bop"><i
                             class="fa-solid fa-search"></i> Search lyrics</button>
                     <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i
                             class="fa-solid fa-paste"></i> Paste lyrics</button>
-                    <button id="hotkeys" class="bop"><i class="fa-solid fa-keyboard"></i> Hotkeys</button>
-                    <button id="vizmode" class="bop" title="Visualizer mode"><i class="fa-solid fa-chart-simple"></i>
+                    <button id="hotkeys" class="bop" title="View a list of hotkeys / keyboard shortcuts"><i class="fa-solid fa-keyboard"></i> Hotkeys</button>
+                    <button id="vizmode" class="bop" title="Change visualizer mode"><i class="fa-solid fa-chart-simple"></i>
                         Visualizer</button>
-                    <button onclick="changelogmsg()" class="bop"><i class="fa-solid fa-scroll"></i> Release
+                    <button onclick="changelogmsg()" class="bop" title="See what's new and what's changed"><i class="fa-solid fa-scroll"></i> Release
                         notes</button>
                 </div>
                 <div class="sliders">
                     <div class="slidez">
-                        <label for="volume" id="volc">Volume</label>
+                        <label for="volume" id="volc" title="Click to open a modal for precise input">Volume</label>
                         <div class="main_slide">
                             <span id="vol-min">0</span>
                             <input id="volume" type="range" min="0" max="2" step="0.01" value="2">
@@ -119,7 +121,7 @@
                         </div>
                     </div>
                     <div class="slidez">
-                        <label for="speed" id="speedc">Speed</label>
+                        <label for="speed" id="speedc" title="Click to open a modal for precise input">Speed</label>
                         <div class="main_slide">
                             <span id="spd-min">0.1x</span>
                             <input id="speed" type="range" min="0.1" max="2" step="0.1" value="1">
@@ -129,7 +131,7 @@
                 </div>
                 <div class="sliders">
                     <div class="slidez">
-                        <label for="index" id="prog">Scrubber</label>
+                        <label for="index" id="prog" title="Click to open a modal for precise input">Scrubber</label>
                         <div class="main_slide">
                             <span id="time-current">--:--</span>
                             <div class="range-wrapper">
@@ -141,7 +143,7 @@
                     </div>
                 </div>
                 <div class="viz_sec">
-                    <canvas id="visualizer"></canvas>
+                    <canvas id="visualizer" style="cursor: pointer;" title="Click to change mode..."></canvas>
                     <input id="viz-mode" type="hidden" value="spectrum">
                 </div>
             </div>
@@ -149,7 +151,7 @@
                 <div id="lyrics" class="lyrics-container"></div>
                 <div class="queue-header"
                     style="position: sticky; top: 0; background: #00000000; z-index: 2; backdrop-filter: blur(2px);">
-                    <h3 style="margin:0;" id="queuehead">Queue</h3>
+                    <h3 style="margin:0; cursor:pointer;" title="Click to recalculate queue if it is wrong" id="queuehead">Queue</h3>
                 </div>
                 <div id="queue-container" class="queue-container">
                     <ul id="queue-list" class="queue-list">
@@ -161,15 +163,15 @@
         </div>
         <div id="error" class="hidden"></div>
     </div>
-    <script src="/app/scripts/main.js"></script>
-    <script src="/app/scripts/audio.js"></script>
-    <script src="/app/scripts/visualizer.js"></script>
-    <script src="/app/scripts/lyrics.js"></script>
-    <script src="/app/scripts/error.js"></script>
-    <script src="/app/scripts/hotkeys.js"></script>
-    <script src="/app/scripts/buttons.js"></script>
-    <script src="/app/scripts/title.js"></script>
-    <script src="/app/scripts/api.js"></script>
+    <script src="/app/scripts/main.js" defer></script>
+    <script src="/app/scripts/audio.js" defer></script>
+    <script src="/app/scripts/visualizer.js" defer></script>
+    <script src="/app/scripts/lyrics.js" defer></script>
+    <script src="/app/scripts/error.js" defer></script>
+    <script src="/app/scripts/hotkeys.js" defer></script>
+    <script src="/app/scripts/buttons.js" defer></script>
+    <script src="/app/scripts/title.js" defer></script>
+    <script src="/app/scripts/api.js" defer></script>
     <!-- this is not all of the scripts, some are in the head -->
 </body>
 

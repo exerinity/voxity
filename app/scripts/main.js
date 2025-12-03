@@ -1159,3 +1159,8 @@ function calqueue() {
         qh.innerHTML = `Queue (${queue.length} track${queue.length !== 1 ? 's' : ''}, ${timeStr}${hourStr})`;
     }
 }
+
+document.addEventListener('DOMContentLoaded', init) || init();
+document.getElementById('dropzone').addEventListener('contextmenu', (e) => e.preventDefault());
+document.getElementById('droppedzone').addEventListener('contextmenu', (e) => e.preventDefault());
+// intentionally, i am leaving the top status bar right-clickable, but to keep it cleaner, no right-click on the rest of the app
