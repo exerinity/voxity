@@ -423,6 +423,38 @@ function rqueue() {
     });
 }
 
+async function handleEntry(entry) {
+    if (!entry) return;
+
+    if (entry.isFile) {
+        await new Promise(resolve => {
+            entry.file(file => {
+                quf([file]);
+                resolve();
+            });
+        });
+
+    } else if (entry.isDirectory) {
+        const reader = entry.createReader();
+
+        async function readBatch() {
+            return new Promise(resolve => {
+                reader.readEntries(async entries => {
+                    if (entries.length === 0) return resolve();
+
+                    for (const e of entries) {
+                        await handleEntry(e);
+                    }
+
+                    resolve(await readBatch());
+                });
+            });
+        }
+
+        await readBatch();
+    }
+}
+
 function quf(fileList) {
     const files = Array.from(fileList);
     if (files.length === 0) {
@@ -545,7 +577,6 @@ function quf(fileList) {
     }
     rqueue();
     calqueue();
-    throw_error(`Added ${files.length} file${files.length > 1 ? 's' : ''} to queue`, true);
     if (isemp && queue.length > 0) {
         pindex(0);
     }
@@ -948,13 +979,27 @@ function init() {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'copy';
         });
-        dropTarget.addEventListener('drop', (e) => {
+        dropTarget.addEventListener('drop', async (e) => {
             e.preventDefault();
             const dt = e.dataTransfer;
+
+            if (dt.items) {
+                let foundDir = false;
+                for (const item of dt.items) {
+                    const entry = item.webkitGetAsEntry?.();
+                    if (entry) {
+                        foundDir = true;
+                        await handleEntry(entry);
+                    }
+                }
+                if (foundDir) return;
+            }
+
             if (dt?.files && dt.files.length > 0) {
                 quf(dt.files);
             }
         });
+
     }
 
     document.getElementById('nexttrack')?.addEventListener('click', debounce(() => contin()));
