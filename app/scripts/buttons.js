@@ -96,11 +96,15 @@ document.getElementById('fwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('stop').addEventListener('click', debounce(() => {
+    restr();
+}));
+
+function restr() {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     elements.player.currentTime = 0;
     elements.index.value = 0;
     stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
-}));
+}
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     msg(`<ul style="list-style-type:none;padding:0;margin:0;">
@@ -120,12 +124,12 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
       <details style="margin-bottom:0.5em;">
         <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Seek</summary>
         <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
-          <li><strong>Left / J / A</strong>: rewind 10s</li>
-          <li><strong>Right / L / D</strong>: forward 10s</li>
-          <li><strong>Shift + Left</strong>: rewind 1s</li>
-          <li><strong>Shift + Right</strong>: forward 1s</li>
-          <li><strong>Ctrl + Left</strong>: rewind 5s</li>
-          <li><strong>Ctrl + Right</strong>: forward 5s</li>
+
+          <li><strong>Left / Right / J / L / A / D</strong>: scrub ±10s</li>
+          <li><strong>Shift + Left/Right</strong>: scrub ±1s</li>
+          <li><strong>Ctrl + Left/Right</strong>: scrub ±5s</li>
+          <li><strong>Alt + Left/Right</strong>: scrub ±30s</li>
+
           <li><strong>Numeric keys (0–9)</strong>: jump to 0–90%</li>
           <li><strong>Shift + Numeric keys (0–9)</strong>: jump to 5–95%</li>
         </ul>
@@ -147,7 +151,6 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
   <i style="font-size:0.9rem;color:#888;">You can also scroll over bars like volume and speed to change them</i>
   `, 'Hotkeys');
 }));
-
 
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
@@ -766,7 +769,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                                                             return throw_error('No usable lines found!');
                                                                                         }
                                                                                         skipLyricsUpdate = false;
-                                                                                        try { isLyricsLoading = false; } catch {}
+                                                                                        try { isLyricsLoading = false; } catch { }
                                                                                         lrc_wipe();
                                                                                         lrc_data = parsed;
                                                                                         update_lyrics();
@@ -801,7 +804,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                         return throw_error('No usable lines found!');
                                                     }
                                                     skipLyricsUpdate = false;
-                                                    try { isLyricsLoading = false; } catch {}
+                                                    try { isLyricsLoading = false; } catch { }
                                                     lrc_wipe();
                                                     lrc_data = parsed;
                                                     update_lyrics();

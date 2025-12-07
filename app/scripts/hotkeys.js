@@ -1,98 +1,119 @@
 document.addEventListener('keydown', (e) => {
     const t = e.target;
     const tag = t && t.tagName ? t.tagName.toLowerCase() : '';
+
     if (
         (t && t.isContentEditable) ||
-        tag === 'input' || tag === 'textarea' || tag === 'select' || tag === 'button' ||
+        tag === 'input' || tag === 'textarea' || tag === 'select' ||
         (t && t.closest && t.closest('[role="textbox"], [contenteditable="true"]'))
-    ) {
-        return;
-    }
+    ) return;
 
-    let hi = '<i class="fa-solid fa-volume-high"></i>';
-    let med = '<i class="fa-solid fa-volume-low"></i>';
-    let low = '<i class="fa-solid fa-volume-off"></i>';
-    let mute = '<i class="fa-solid fa-volume-xmark"></i>';
+    const player = elements.player;
+    if (!player) return;
 
-    let icon;
-    if (elements.player.volume === 0) {
-        icon = mute;
-    } else if (elements.player.volume < 0.33) {
-        icon = low;
-    } else if (elements.player.volume < 0.66) {
-        icon = med;
-    } else {
-        icon = hi;
-    }
+    const volSlider = elements.vol;
 
-    if (e.code === 'Space' || e.code === 'KeyK') {
-        e.preventDefault();
-        document.getElementById('plps').click();
-    } else if (e.code === 'ArrowLeft' || e.code === 'KeyJ' || e.code === 'KeyA') {
-        e.preventDefault();
-        const seekAmount = e.ctrlKey ? 5 : (e.shiftKey ? 1 : 10);
-        elements.player.currentTime -= seekAmount;
-        const label = e.ctrlKey ? '5 seconds' : (e.shiftKey ? '1 second' : '10 seconds');
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${label})`);
-    } else if (e.code === 'ArrowRight' || e.code === 'KeyL' || e.code === 'KeyD') {
-        e.preventDefault();
-        const seekAmount = e.ctrlKey ? 5 : (e.shiftKey ? 1 : 10);
-        elements.player.currentTime += seekAmount;
-        const label = e.ctrlKey ? '5 seconds' : (e.shiftKey ? '1 second' : '10 seconds');
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)} (${label})`);
-    } else if (e.code === 'KeyT') {
-        document.getElementById('loop').click();
-    } else if (e.code === 'KeyH') {
-        e.preventDefault();
-        document.getElementById('shuffle')?.click();
-    } else if (e.code === 'KeyN') {
-        if (typeof nextTrack === 'function') nextTrack();
-    } else if (e.code === 'KeyP') {
-        if (typeof prevTrack === 'function') prevTrack();
-    }
-    else if (e.code === 'KeyR' && !e.ctrlKey) {
-        e.preventDefault();
-        elements.player.currentTime = 0;
-        stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
-    }
-    else if (e.code === 'ArrowUp' || e.code === 'KeyW') {
-        e.preventDefault();
-        elements.vol.value = Math.min(2, parseFloat(elements.vol.value) + 0.02);
-        elements.player.volume = elements.vol.value / 2;
-        stat_up(`${icon} Volume: ${(elements.player.volume * 100).toFixed(0)}%`);
-    } else if (e.code === 'ArrowDown' || e.code === 'KeyS') {
-        e.preventDefault();
-        elements.vol.value = Math.max(0, parseFloat(elements.vol.value) - 0.02);
-        elements.player.volume = elements.vol.value / 2;
-        stat_up(`${icon} Volume: ${(elements.player.volume * 100).toFixed(0)}%`);
-    }
-    else if (e.code === 'KeyZ') {
-        if (typeof prevTrack === 'function') previ();
-    }
-    else if (e.code === 'KeyX') {
-        if (typeof nextTrack === 'function') contin();
-    }
+    const getVolumeIcon = () => {
+        const v = player.volume;
+        if (v === 0) return '<i class="fa-solid fa-volume-xmark"></i>';
+        if (v < 0.33) return '<i class="fa-solid fa-volume-off"></i>';
+        if (v < 0.66) return '<i class="fa-solid fa-volume-low"></i>';
+        return '<i class="fa-solid fa-volume-high"></i>';
+    };
 
-    else if (e.code.startsWith('Digit')) {
-        const num = parseInt(e.code.slice(5), 10);
-        if (!isNaN(num)) {
+    const scrub = (amount) => {
+        player.currentTime = Math.max(0, Math.min(player.duration, player.currentTime + amount));
+        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(player.currentTime)} / ${form_time(player.duration)} (${amount >= 0 ? '+' : ''}${amount}s)`);
+    };
+
+    const jumpToPercent = (percent) => {
+        const dur = player.duration || 0;
+        player.currentTime = dur * percent;
+        const actual = (player.currentTime / dur) * 100 || 0;
+        stat_up(`<i class="fa-solid fa-music"></i> Jumping to ${actual.toFixed(0)}% (${form_time(player.currentTime)} / ${form_time(dur)})`);
+    };
+
+    const changeVolume = (delta) => {
+        volSlider.value = Math.max(0, Math.min(2, parseFloat(volSlider.value) + delta));
+        player.volume = volSlider.value / 2;
+        stat_up(`${getVolumeIcon()} Volume: ${(player.volume * 100).toFixed(0)}%`);
+    };
+
+    switch (e.code) {
+
+        case 'Space':
+        case 'KeyK':
             e.preventDefault();
-            const perc = num === 0 ? 0 : num * 0.1;
-            const dur = elements.player.duration || 0;
-            elements.player.currentTime = dur * perc;
-            const cerp = dur ? (elements.player.currentTime / dur) * 100 : 0;
-            stat_up(`<i class="fa-solid fa-music"></i> Jumping to ${cerp.toFixed(0)}% (${form_time(elements.player.currentTime)} / ${form_time(dur)})`);
-        }
-    }
-    if (e.shiftKey && e.code.startsWith('Digit')) {
-        const num = parseInt(e.code.slice(5), 10);
-        if (!isNaN(num)) {
+            document.getElementById('plps')?.click();
+            break;
+
+        case 'KeyR':
+            if (!e.ctrlKey) {
+                e.preventDefault();
+                player.currentTime = 0;
+                stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
+            }
+            break;
+
+        case 'KeyT':
+            document.getElementById('loop')?.click();
+            break;
+
+        case 'KeyH':
             e.preventDefault();
-            const perc = num === 0 ? 0 : (num * 0.1) - 0.05;
-            const dur = elements.player.duration || 0;
-            elements.player.currentTime = dur * perc;
-            const cerp = dur ? (elements.player.currentTime / dur) * 100 : 0;
-            stat_up(`<i class="fa-solid fa-music"></i> Jumping to ${cerp.toFixed(0)}% (${form_time(elements.player.currentTime)} / ${form_time(dur)})`);
-        }
+            document.getElementById('shuffle')?.click();
+            break;
+
+        case 'ArrowLeft':
+        case 'KeyJ':
+        case 'KeyA':
+            e.preventDefault();
+            if (e.altKey) scrub(-30);
+            else if (e.shiftKey) scrub(-1);
+            else if (e.ctrlKey) scrub(-5);
+            else scrub(-10);
+            break;
+
+        case 'ArrowRight':
+        case 'KeyL':
+        case 'KeyD':
+            e.preventDefault();
+            if (e.altKey) scrub(30);
+            else if (e.shiftKey) scrub(1);
+            else if (e.ctrlKey) scrub(5);
+            else scrub(10);
+            break;
+
+        case 'KeyW':
+        case 'ArrowUp':
+            e.preventDefault();
+            changeVolume(0.02);
+            break;
+
+        case 'KeyS':
+        case 'ArrowDown':
+            e.preventDefault();
+            changeVolume(-0.02);
+            break;
+
+        case 'KeyZ':
+            if (typeof previ === 'function') previ();
+            break;
+
+        case 'KeyX':
+            if (typeof contin === 'function') contin();
+            break;
+
+        default:
+            if (e.code.startsWith('Digit')) {
+                const num = parseInt(e.code.slice(5), 10);
+                if (!isNaN(num)) {
+                    e.preventDefault();
+                    let perc = num === 0 ? 0 : num * 0.1;
+                    if (e.shiftKey) perc = Math.max(0, perc - 0.05);
+                    jumpToPercent(perc);
+                }
+            }
+            break;
     }
 });

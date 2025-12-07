@@ -16,21 +16,29 @@ function set_media_session_metadata(artUrl) {
             album: metadata.album || 'Unknown album',
             artwork: art,
         });
-    } catch {}
+    } catch { }
 }
 
 if ('mediaSession' in navigator) {
     navigator.mediaSession.setActionHandler('play', () => {
-        audio.play().catch(() => {
+        elements.player.play().catch(() => {
             throw_error('Unable to play the audio!');
         });
     });
+
     navigator.mediaSession.setActionHandler('pause', () => {
-        audio.pause();
+        elements.player.pause();
     });
+
     navigator.mediaSession.setActionHandler('previoustrack', () => {
-        prevTrack();
+        if (elements.player.currentTime < 1.5) {
+            prevTrack();
+        } else {
+            restr();
+        }
     });
+
+
     navigator.mediaSession.setActionHandler('nexttrack', () => {
         nextTrack();
     });
