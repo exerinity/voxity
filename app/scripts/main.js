@@ -1,6 +1,7 @@
 const deb_ms = 500;
 let lastact = 0;
 const elements = {
+    app: document.getElementById('app'),
     player: document.getElementById('player'),
     upload: document.getElementById('upload'),
     status: document.getElementById('status'),
