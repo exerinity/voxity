@@ -58,11 +58,20 @@ async function msg(text, tbartext) {
     const removeOverlay = () => {
         box.style.animation = 'zout 0.15s ease forwards';
         overlay.style.animation = 'fout 0.15s ease forwards';
+        window.removeEventListener('resize', eiv);
+        document.removeEventListener('keydown', handleKeydown);
         setTimeout(() => {
             if (document.body.contains(overlay)) {
                 document.body.removeChild(overlay);
             }
         }, 250);
+    };
+
+    const handleKeydown = (event) => {
+        if (event.key === 'Escape' || event.key === 'Esc') {
+            event.preventDefault();
+            removeOverlay();
+        }
     };
 
     close.onclick = removeOverlay;
@@ -115,6 +124,7 @@ async function msg(text, tbartext) {
         box.style.top = `${top}px`;
     };
     window.addEventListener('resize', eiv);
+    document.addEventListener('keydown', handleKeydown, { passive: false });
 
     const content = document.createElement('div');
     content.id = 'msg-content';
