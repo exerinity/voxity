@@ -79,7 +79,7 @@ function maybeNotifySongStart(file) {
     const title = meta.title || file?.name || 'Unknown title';
     const artist = meta.artist || '';
     const album = meta.album || '';
-    let body = `Now playing: ${title}`;
+    let body = `${title}`;
     if (artist) {
         body += ` by ${artist}`;
     }
@@ -89,7 +89,7 @@ function maybeNotifySongStart(file) {
     const icon = (typeof globalart !== 'undefined' && globalart) ? globalart : '/favicon.ico';
     try {
         songNotificationCounter += 1;
-        new Notification('Voxity', {
+        new Notification('Now playing', {
             body,
             icon,
             tag: `voxity-song-${songNotificationCounter}`,
