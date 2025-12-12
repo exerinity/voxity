@@ -1,3 +1,17 @@
+function closeTopModal() {
+    const stack = window.__voxityModals;
+    if (!stack || stack.length === 0) return false;
+    const lastModal = stack[stack.length - 1];
+    try {
+        lastModal.close();
+    } catch {
+        try {
+            lastModal.overlay?.dispatchEvent(new CustomEvent('voxity:modal-close'));
+        } catch { }
+    }
+    return true;
+}
+
 document.addEventListener('keydown', (e) => {
     const t = e.target;
     const tag = t && t.tagName ? t.tagName.toLowerCase() : '';
@@ -40,6 +54,12 @@ document.addEventListener('keydown', (e) => {
     };
 
     switch (e.code) {
+        case 'Escape':
+            if (closeTopModal()) {
+                e.preventDefault();
+                return;
+            }
+            break;
 
         case 'Space':
         case 'KeyK':
@@ -92,8 +112,10 @@ document.addEventListener('keydown', (e) => {
 
         case 'KeyS':
         case 'ArrowDown':
-            e.preventDefault();
-            changeVolume(-0.02);
+            if (!e.ctrlKey) {
+                e.preventDefault();
+                changeVolume(-0.02);
+            }
             break;
 
         case 'KeyZ':

@@ -7,7 +7,7 @@
    On a side note, considering I am the only one working on it purely for fun, please don't expect any perfect corporate-grade polished code; that's not what this is about.
    This is my passion project; I made it because I like JavaScript and FLACs. Simple enough, right? Well...
 
-   Have fun wrangling!~
+   Have fun wrangling~
    (If you prefer navigating in an IDE, simply press CTRL+S, almost everything will be saved, probably excluding webfonts)
 
    If you have any questions, please message me on Twitter! My DMs are open, I would love to hear what you think; good or bad :3
@@ -99,15 +99,13 @@
                     <button id="clearqueue" title="Clear queue"><i class="fa-solid fa-trash"></i></button>
                 </div>
                 <div class="controls">
-                    <button id="theme" title="Change theme settings"><i class="fa-solid fa-gear"></i>
-                        Theme</button>
+                    <button id="settings" title="Open settings"><i class="fa-solid fa-gear"></i>
+                        Settings</button>
                     <button id="searchlrclib" title="Search LRCLIB for lyrics" class="bop"><i
                             class="fa-solid fa-search"></i> Search lyrics</button>
                     <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i
                             class="fa-solid fa-paste"></i> Paste lyrics</button>
                     <button id="hotkeys" class="bop" title="View a list of hotkeys / keyboard shortcuts"><i class="fa-solid fa-keyboard"></i> Hotkeys</button>
-                    <button id="vizmode" class="bop" title="Change visualizer mode"><i class="fa-solid fa-chart-simple"></i>
-                        Visualizer</button>
                     <button onclick="changelogmsg()" class="bop" title="See what's new and what's changed"><i class="fa-solid fa-scroll"></i> Release
                         notes</button>
                 </div>
@@ -163,6 +161,7 @@
         </div>
         <div id="error" class="hidden"></div>
     </div>
+    <script src="/app/scripts/settings.js" defer></script>
     <script src="/app/scripts/main.js" defer></script>
     <script src="/app/scripts/audio.js" defer></script>
     <script src="/app/scripts/visualizer.js" defer></script>
@@ -172,6 +171,7 @@
     <script src="/app/scripts/buttons.js" defer></script>
     <script src="/app/scripts/title.js" defer></script>
     <script src="/app/scripts/api.js" defer></script>
+    <script src="/app/scripts/text.js" defer></script>
     <!-- this is not all of the scripts, some are in the head -->
 </body>
 

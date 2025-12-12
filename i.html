@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Chirp', sans-serif;
+            background: #000000;
+            background-size: 300% 300%;
+            background-attachment: fixed;
+            background-position: 0% 50%;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            cursor: default
+        }
+
+        .container a {
+            cursor: pointer
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background-color: #111111;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid grey;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .navbar .brand img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .navbar .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar .nav-links li {
+            display: inline;
+        }
+
+        .navbar .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s;
+            cursor: pointer
+        }
+
+        .navbar .nav-links a:hover,
+        a:visited:hover {
+            color: #6865ff;
+        }
+
+        a,
+        a:visited {
+            color: #bcc0ff;
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: default
+        }
+
+        a:hover {
+            color: #e4e4e4;
+            text-decoration: underline;
+        }
+
+        a:visited {
+            color: #acacac;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            cursor: default;
+            color: #FFFFFF;
+            font-weight: 1000;
+
+        }
+
+        strong {
+            font-weight: 700;
+        }
+
+        .medium-text {
+            font-weight: 500;
+        }
+
+        @keyframes cool {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 50% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes rave {
+
+            0%,
+            100% {
+                color: rgba(255, 0, 0, 1);
+            }
+
+            14% {
+                color: rgba(255, 165, 0, 1);
+            }
+
+            28% {
+                color: rgba(255, 255, 0, 1);
+            }
+
+            42% {
+                color: rgba(0, 128, 0, 1);
+            }
+
+            57% {
+                color: rgba(0, 0, 255, 1);
+            }
+
+            71% {
+                color: rgba(75, 0, 130, 1);
+            }
+
+            85% {
+                color: rgba(128, 0, 128, 1);
+            }
+        }
+
+        .rave-animation {
+            animation: rave 5s infinite alternate;
+        }
+
+        .here {
+            color: #b3b3b3;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 4px solid #061f30;
+            border-top-color: #1d9bf0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @font-face {
+            font-family: 'Chirp';
+            src: url('https://exerinity.com//files/fonts/twitter/chirp/chirp-regular-web.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Chirp';
+            src: url('https://exerinity.com//files/fonts/twitter/chirp/chirp-medium-web.woff') format('woff');
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Chirp';
+            src: url('https://exerinity.com//files/fonts/twitter/chirp/chirp-bold-web.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Chirp';
+            src: url('https://exerinity.com//files/fonts/twitter/chirp/chirp-heavy-web.woff') format('woff');
+            font-weight: 900;
+            font-style: normal;
+        }
+
+        .button {
+            background-color: #0b0047;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            display: inline-block;
+            margin: 0 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Chirp', sans-serif;
+        }
+
+        .button:hover {
+            background-color: #171e6d;
+            color: white;
+        }
+    </style>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a class="brand" href="/">Return to Voxity</a>
+        </div>
+    </nav>
+    <div class="container" id="i">
+        <h1>Install Voxity as a PWA</h1>
+        <p>Voxity will work fine in your browser as normal, but for the best experience, you should install it. Here is how:</p>
+        <ul>
+            <li><a href="#chrome">Chrome / Chrome Canary / Brave / Helium</a></li>
+            <li><a href="#vivaldi">Vivaldi</a></li>
+            <li><a href="#firefox">Firefox</a></li>
+        </ul>
+        <h2 id="chrome">Chrome / Chrome Canary / Brave / Helium</h2>
+        <ol>
+            <li>Click on the 3-dotted menu in the omnibox:</li><br>
+            <img src="https://vienna.exerinity.dev/1iTNa6H40S.png" style="width: 20%; max-width: 100%">
+            <li>Go to "Cast, save and share" / "Save and share" then press "Install page as app..."</li><br>
+            <img src="https://vienna.exerinity.dev/jaAmFd6Prz.png" style="width: 30%; max-width: 100%"><br>
+            <li>Name the app whatever you want, then press Install.</li><br>
+            <img src="https://vienna.exerinity.dev/cuzd03yVss.png" style="width: 50%; max-width: 100%"><br>
+        </ol>
+        <h2 id="vivaldi">Vivaldi</h2>
+        <ol>
+            <li>Right-click on the tab, go to "Progressive Web Apps" then click "Install page as app..."</li><br>
+            <img src="https://vienna.exerinity.dev/D0vF6MHaLv.png" style="width: 30%; max-width: 100%;">
+            <li>Name the app whatever you want, then press Install.</li><br>
+            <img src="https://vienna.exerinity.dev/db6K6ImiZt.png" style="width: 50%; max-width: 100%"><br>
+        </ol>
+        <h2 id="firefox">Firefox</h2>
+        <p>PWAs are a bit different in Firefox, but...</p>
+        <ol>
+            <li>Press "Add tab to taskbar" in the omnibox</li><br>
+            <img src="https://vienna.exerinity.dev/1w2iLQqi6X.png" style="width: 80%; max-width: 100%;">
+        </ol>
+        <h1><a href="#i">Back to top</a></h1>
+    </div>
+</body>

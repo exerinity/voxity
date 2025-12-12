@@ -1,4 +1,4 @@
-const CACHE_NAME = 'voxity77';
+const CACHE_NAME = 'voxity78';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';
@@ -41,6 +41,8 @@ const FILES_TO_CACHE = [
   sc+'visualizer.js',
   sc+'api.js',
   sc+'twemoji.js',
+  sc+'text.js',
+  sc+'settings.js',
 
   // fonts
   '/app/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf',
@@ -50,11 +52,7 @@ const FILES_TO_CACHE = [
   '/app/webfonts/fa-brands-400.woff2',
   '/app/webfonts/fa-regular-400.woff2',
   '/app/webfonts/fa-solid-900.woff2',
-  '/app/webfonts/fa-v4compatibility.woff2',
-
-  // root misc
-  '/robots.txt',
-  '/README.md'
+  '/app/webfonts/fa-v4compatibility.woff2'
 ];
 console.log('Service worker initializing...');
 

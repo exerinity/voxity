@@ -144,8 +144,14 @@ function throw_error(msg, ok = false) {
     }
 
     if (!ok) {
-        elements.error_sound.currentTime = 0;
-        elements.error_sound.play();
+        if (typeof playUiSound === 'function') {
+            playUiSound(elements.error_sound);
+        } else {
+            try {
+                elements.error_sound.currentTime = 0;
+                elements.error_sound.play();
+            } catch { }
+        }
         console.error(msg)
     }
 }

@@ -1,6 +1,10 @@
 let now = 0;
 let titleTimer = null;
 
+function isTitleRotationEnabled() {
+    return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('titleRotation');
+}
+
 function tabtitleOnce() {
     const scroll = [];
 
@@ -23,6 +27,7 @@ function tabtitleOnce() {
 }
 
 function startTitleRotation() {
+    if (!isTitleRotationEnabled()) return;
     if (titleTimer) return; 
     tabtitleOnce();
     titleTimer = setInterval(tabtitleOnce, 5000);
@@ -50,6 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
             startTitleRotation();
         }
     } catch { 0 }
+});
+
+document.addEventListener('voxity:settings-changed', (event) => {
+    if (!event || (event.detail?.key !== 'titleRotation')) return;
+    const player = (typeof elements !== 'undefined' && elements?.player) ? elements.player : document.getElementById('player');
+    if (!player) return;
+    if (event.detail.value) {
+        if (!player.paused && !player.ended) {
+            startTitleRotation();
+        }
+    } else {
+        stopTitleRotation();
+    }
 });
 
 /* The goal of this is to make titles look better...

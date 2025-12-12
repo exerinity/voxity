@@ -1,10 +1,3 @@
-function getAbout() {
-    return `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
-        <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a onclick="changelogmsg()" style="cursor: pointer">Release notes</a>
-        <hr>
-        <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, <a href="https://lrclib.net" target="_blank">LRCLIB</a> as a lyrics source.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
-        <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>`;
-}
 function changelogmsg() {
     msg(`<iframe src="https://i.exerinity.com/voxrelnote.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}`, 'Release notes');
 }
@@ -41,50 +34,12 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
-    msg(getAbout(), 'About');
+    msg(about_content, 'About');
 }));
 
 document.getElementById('queuehead').addEventListener('click', debounce(() => {
     calqueue();
 }));
-
-['vizmode', 'visualizer'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-        el.addEventListener('click', debounce(() => {
-            const current = (document.getElementById('viz-mode')?.value) || 'spectrum';
-            const options = [
-                { v: 'spectrum', l: 'Spectrum' },
-                { v: 'waveform', l: 'Waveform' },
-                { v: 'bars', l: 'Bars' },
-                { v: 'circular', l: 'Circular' },
-                { v: 'none', l: 'None (off)' },
-                { v: 'nonefr', l: 'Actually none' },
-            ];
-            msg(`<div style="margin:1rem 0;">
-                    <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
-                        ${options.map(o => `<option value="${o.v}" ${o.v === current ? 'selected' : ''}>${o.l}</option>`).join('')}
-                    </select>
-                    <br><i style="font-size:0.9rem; color:#888;">To change its color, press the <strong><i class="fa-solid fa-gear"></i> Theme</strong> button</i>
-                </div>
-            `, 'Select visualizer mode');
-
-            setTimeout(() => {
-                const sel = document.getElementById('vizmode_select');
-                const hise = document.getElementById('viz-mode');
-                const applyChange = () => {
-                    if (hise && sel) {
-                        hise.value = sel.value;
-                        hise.dispatchEvent(new Event('change', { bubbles: true }));
-                        throw_error(`Visualizer: ${sel.options[sel.selectedIndex]?.text || sel.value}`, true);
-                    }
-                };
-                sel?.addEventListener('change', applyChange);
-                sel?.focus();
-            }, 0);
-        }));
-    }
-});
 
 document.getElementById('fwd').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
@@ -107,49 +62,7 @@ function restr() {
 }
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
-    msg(`<ul style="list-style-type:none;padding:0;margin:0;">
-    <li>
-      <details style="margin-bottom:0.5em;">
-        <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Playback</summary>
-        <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
-          <li><strong>Space / K</strong>: play/pause</li>
-          <li><strong>R</strong>: restart track</li>
-          <li><strong>T</strong>: toggle loop</li>
-          <li><strong>H</strong>: toggle shuffle</li>
-        </ul>
-      </details>
-    </li>
-
-    <li>
-      <details style="margin-bottom:0.5em;">
-        <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Seek</summary>
-        <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
-
-          <li><strong>Left / Right / J / L / A / D</strong>: scrub ±10s</li>
-          <li><strong>Shift + Left/Right</strong>: scrub ±1s</li>
-          <li><strong>Ctrl + Left/Right</strong>: scrub ±5s</li>
-          <li><strong>Alt + Left/Right</strong>: scrub ±30s</li>
-
-          <li><strong>Numeric keys (0–9)</strong>: jump to 0–90%</li>
-          <li><strong>Shift + Numeric keys (0–9)</strong>: jump to 5–95%</li>
-        </ul>
-      </details>
-    </li>
-
-    <li>
-      <details>
-        <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Control</summary>
-        <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
-          <li><strong>W / Up</strong>: volume up</li>
-          <li><strong>S / Down</strong>: volume down</li>
-          <li><strong>Z</strong>: previous track</li>
-          <li><strong>X</strong>: next track</li>
-        </ul>
-      </details>
-    </li>
-  </ul>
-  <i style="font-size:0.9rem;color:#888;">You can also scroll over bars like volume and speed to change them</i>
-  `, 'Hotkeys');
+    msg(hotkeys_content, 'Hotkeys');
 }));
 
 
@@ -175,7 +88,7 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
 }));
 
 window.addEventListener('DOMContentLoaded', () => {
-    (function theme() {
+    (function settingsModal() {
         const THEMES = [
             { 'grey': true, 'label': 'Grey' },
             { 'dim': true, 'label': 'Dim' },
@@ -194,12 +107,198 @@ window.addEventListener('DOMContentLoaded', () => {
             { 'neon-purple': true, 'label': 'Neon purple' },
             { 'under-the-sea': true, 'label': 'Under the sea' },
             { 'twitter-dim': true, 'label': 'Twitter dim' }
-        ]
+        ];
+        const VIZ_OPTIONS = [
+            { v: 'spectrum', l: 'Spectrum' },
+            { v: 'waveform', l: 'Waveform' },
+            { v: 'bars', l: 'Bars' },
+            { v: 'circular', l: 'Circular' },
+            { v: 'none', l: 'None (off)' },
+            { v: 'nonefr', l: 'Actually none' },
+        ];
+        const PREFERENCE_TOGGLES = [
+            {
+                key: 'soundEffects',
+                label: 'Enable sound effects',
+                description: 'For loading the app, error messages, and finished notifications',
+            },
+            {
+                key: 'titleRotation',
+                label: 'Enable title rotation',
+                description: 'Rotate the tab title with current song metadata',
+            },
+            {
+                key: 'autoLyrics',
+                label: 'Load lyrics automatically',
+                description: 'Automatically query LRCLIB when a track starts',
+            },
+            {
+                key: 'songNotifications',
+                label: 'System song notifications',
+                description: 'Send a desktop notification when a new track begins playing',
+                requiresPermission: 'notification',
+            },
+        ];
         const key = 'au_theme';
+        const btn = document.getElementById('settings');
+        let currentTheme = 'dim';
+
+        const getThemeName = (themeObj) => Object.keys(themeObj).find(key => key !== 'label') || '';
+        const getThemeLabel = (themeName) => {
+            const found = THEMES.find(themeObj => getThemeName(themeObj) === themeName);
+            return found?.label || themeName.replace(/-/g, ' ');
+        };
 
         function apply(theme) {
             document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem(key, theme);
+            try {
+                localStorage.setItem(key, theme);
+            } catch { }
+            currentTheme = theme;
+        }
+
+        function updateSettingsTooltip(theme) {
+            if (!btn) return;
+            const label = getThemeLabel(theme);
+            btn.title = `Open settings (theme: ${label})`;
+        }
+
+        function openSettingsModal({ focusViz = false } = {}) {
+            const current = document.documentElement.getAttribute('data-theme') || currentTheme;
+            const currentViz = (document.getElementById('viz-mode')?.value) || 'spectrum';
+            const accentValue = (document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff').trim() || '#8000ff';
+            const preferenceSection = typeof window.VoxitySettings === 'undefined' ? '' : `
+                    <div style="margin-top: 1.5rem;">
+                        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                            ${PREFERENCE_TOGGLES.map(toggle => {
+                                const checked = window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
+                                return `<div style="display:flex;gap:0.75rem;align-items:flex-start;">
+                                            <input type="checkbox" id="pref_${toggle.key}" ${checked} style="margin-top:0.3rem;accent-color:var(--lyric-color,#8000ff);">
+                                            <div>
+                                                <label for="pref_${toggle.key}" style="font-weight:600;cursor:pointer;">${toggle.label}</label>
+                                                <p style="margin:0.2rem 0 0;font-size:0.9rem;color:#aaa;">${toggle.description}</p>
+                                            </div>
+                                        </div>`;
+                            }).join('')}
+                        </div>
+                    </div>`;
+            msg(`<div style="margin: 1rem 0;">
+                        <label for="theme_select" style="display:block;margin-bottom:0.4rem;color:#bbb;">Theme</label>
+                        <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
+                            ${THEMES.map(t => {
+                const themeName = getThemeName(t);
+                if (!themeName) return '';
+                const label = t.label;
+                const selected = current === themeName ? 'selected' : '';
+                return `<option value="${themeName}" ${selected}>${label}</option>`;
+            }).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="accent_color"  style="display:block;margin-bottom:0.4rem;color:#bbb;">Accent color</label>
+                        <input id="accent_color" type="color" value="${accentValue}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <label for="vizmode_select" style="display:block;margin-bottom:0.4rem;color:#bbb;">Visualizer mode</label>
+                        <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                            ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
+                        </select>
+                        <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">Tip: click the visualizer to open this</p>
+                    </div>
+                    ${preferenceSection}
+                `, 'Settings');
+
+            setTimeout(() => {
+                const select = document.getElementById('theme_select');
+                const acin = document.getElementById('accent_color');
+                const vizSelect = document.getElementById('vizmode_select');
+                const hiddenViz = document.getElementById('viz-mode');
+                const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
+
+                const requestNotificationPermission = async () => {
+                    if (typeof window === 'undefined' || typeof Notification === 'undefined') {
+                        throw_error('This browser does not seem to support notifications');
+                        return false;
+                    }
+                    if (Notification.permission === 'granted') {
+                        return true;
+                    }
+                    if (Notification.permission === 'denied') {
+                        throw_error('You blocked notifications!');
+                        return false;
+                    }
+                    try {
+                        const result = await Notification.requestPermission();
+                        if (result !== 'granted') {
+                            throw_error('You disallowed notifications!', false);
+                        }
+                        return result === 'granted';
+                    } catch {
+                        throw_error('Something failed enabling notifications, why not try again?');
+                        return false;
+                    }
+                };
+
+                if (select) {
+                    if (!focusViz) {
+                        select.focus();
+                    }
+                    select.addEventListener('change', () => {
+                        const next = select.value;
+                        apply(next);
+                        updateSettingsTooltip(next);
+                    });
+                }
+
+                if (acin) {
+                    acin.addEventListener('input', () => {
+                        const color = acin.value;
+                        document.documentElement.style.setProperty('--lyric-color', color);
+                        viz_color = color;
+                        uvzc(color);
+                        stat_up(`<span style='color: ${color};'><i class='fa-solid fa-palette'></i> Accent color set to ${color}</span>`);
+                    });
+                }
+
+                if (vizSelect) {
+                    if (focusViz || !select) {
+                        vizSelect.focus();
+                    }
+                    const applyChange = () => {
+                        if (!hiddenViz) return;
+                        hiddenViz.value = vizSelect.value;
+                        hiddenViz.dispatchEvent(new Event('change', { bubbles: true }));
+                        throw_error(`Visualizer: ${vizSelect.options[vizSelect.selectedIndex]?.text || vizSelect.value}`, true);
+                    };
+                    vizSelect.addEventListener('change', applyChange);
+                }
+
+                if (settingsApi) {
+                    PREFERENCE_TOGGLES.forEach(toggle => {
+                        const input = document.getElementById(`pref_${toggle.key}`);
+                        if (input) {
+                            input.checked = settingsApi.isEnabled(toggle.key);
+                            input.addEventListener('change', async () => {
+                                if (toggle.requiresPermission === 'notification' && input.checked) {
+                                    const granted = await requestNotificationPermission();
+                                    if (!granted) {
+                                        input.checked = false;
+                                        return;
+                                    }
+                                }
+                                settingsApi.set(toggle.key, input.checked);
+                            });
+                        }
+                    });
+                }
+
+                function uvzc(color) {
+                    const visualizer = document.getElementById('visualizer');
+                    if (visualizer) {
+                        visualizer.style.backgroundColor = color;
+                    }
+                }
+            }, 0);
         }
 
         try {
@@ -207,63 +306,28 @@ window.addEventListener('DOMContentLoaded', () => {
             if (stored) {
                 apply(stored);
             } else {
-                apply('dim');
+                apply(currentTheme);
             }
-        } catch { }
+        } catch {
+            apply(currentTheme);
+        }
 
-        const btn = document.getElementById('theme');
+        updateSettingsTooltip(document.documentElement.getAttribute('data-theme') || currentTheme);
+
         if (btn) {
             btn.addEventListener('click', debounce(() => {
-                msg(`<div style="margin: 1rem 0;">
-                        <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
-                            ${THEMES.map(t => {
-                    const themeName = Object.keys(t)[0];
-                    const label = t.label;
-                    const selected = (document.documentElement.getAttribute('data-theme') || 'dim') === themeName ? 'selected' : '';
-                    return `<option value="${themeName}" ${selected}>${label}</option>`;
-                }).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <abbr title="This changes the color of highlighted lyrics, the visualizer, and the Voxity icon in these modals and top-right corner" style="margin: 0 0 0.5rem 0;">Accent color:</abbr>
-                        <input id="accent_color" type="color" value="${document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff'}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
-                    </div><br>
-                    <p style="font-size: 0.9rem; color: #888; margin: 0;">To change the visualizer mode, click on the visualizer itself or <strong><i class="fa-solid fa-chart-simple"></i> Visualizer</strong></p>
-                `, 'Theme settings');
-
-                setTimeout(() => {
-                    const select = document.getElementById('theme_select');
-                    const acin = document.getElementById('accent_color');
-
-                    if (select) {
-                        select.focus();
-                        select.addEventListener('change', () => {
-                            const next = select.value;
-                            apply(next);
-                            const label = next.replace('-', ' ');
-                            btn.title = `Toggle theme (current: ${label})`;
-                        });
-                    }
-
-                    if (acin) {
-                        acin.addEventListener('input', () => {
-                            const color = acin.value;
-                            document.documentElement.style.setProperty('--lyric-color', color);
-                            viz_color = color;
-                            uvzc(color);
-                            stat_up(`<i class='fa-solid fa-palette'></i> Accent color set to: <span style='color: ${color};'>${color}</span>`);
-                        });
-                    }
-
-                    function uvzc(color) {
-                        const visualizer = document.getElementById('visualizer');
-                        if (visualizer) {
-                            visualizer.style.backgroundColor = color;
-                        }
-                    }
-                }, 0);
+                openSettingsModal();
             }));
         }
+
+        ['vizmode', 'visualizer'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('click', debounce(() => {
+                    openSettingsModal({ focusViz: true });
+                }));
+            }
+        });
     })();
 });
 
@@ -344,7 +408,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        return msg(getAbout(), 'About');
+        return msg(about_content, 'About');
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {

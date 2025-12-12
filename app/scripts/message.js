@@ -1,5 +1,6 @@
 async function msg(text, tbartext) {
     const overlay = document.createElement('div');
+    overlay.classList.add('voxity-modal');
     overlay.style.position = 'fixed';
     overlay.style.top = 0;
     overlay.style.left = 0;
@@ -55,11 +56,24 @@ async function msg(text, tbartext) {
     close.onmouseenter = () => close.style.color = 'var(--fg)';
     close.onmouseleave = () => close.style.color = 'var(--error-bg)';
 
-    const removeOverlay = () => {
+    let modalApi = null;
+    let isClosed = false;
+
+    const unregisterModal = () => {
+        const stack = window.__voxityModals;
+        if (!stack || !modalApi) return;
+        const idx = stack.indexOf(modalApi);
+        if (idx >= 0) stack.splice(idx, 1);
+    };
+
+    const closeModal = () => {
+        if (isClosed) return;
+        isClosed = true;
+        unregisterModal();
         box.style.animation = 'zout 0.15s ease forwards';
         overlay.style.animation = 'fout 0.15s ease forwards';
         window.removeEventListener('resize', eiv);
-        document.removeEventListener('keydown', handleKeydown);
+        overlay.removeEventListener('voxity:modal-close', closeModal);
         setTimeout(() => {
             if (document.body.contains(overlay)) {
                 document.body.removeChild(overlay);
@@ -67,14 +81,7 @@ async function msg(text, tbartext) {
         }, 250);
     };
 
-    const handleKeydown = (event) => {
-        if (event.key === 'Escape' || event.key === 'Esc') {
-            event.preventDefault();
-            removeOverlay();
-        }
-    };
-
-    close.onclick = removeOverlay;
+    close.onclick = closeModal;
 
     let isDragging = false;
     let offsetX = 0;
@@ -124,7 +131,7 @@ async function msg(text, tbartext) {
         box.style.top = `${top}px`;
     };
     window.addEventListener('resize', eiv);
-    document.addEventListener('keydown', handleKeydown, { passive: false });
+    overlay.addEventListener('voxity:modal-close', closeModal);
 
     const content = document.createElement('div');
     content.id = 'msg-content';
@@ -146,7 +153,7 @@ async function msg(text, tbartext) {
     closeBtn.textContent = 'Close';
     closeBtn.style.background = 'var(--btn-bg)';
     closeBtn.style.color = 'var(--fg)';
-    closeBtn.addEventListener('click', removeOverlay);
+    closeBtn.addEventListener('click', closeModal);
 
     footer.appendChild(closeBtn);
     content.appendChild(contentWrap);
@@ -159,7 +166,7 @@ async function msg(text, tbartext) {
     document.body.appendChild(overlay);
 
     overlay.addEventListener('click', e => {
-        if (e.target === overlay) removeOverlay();
+        if (e.target === overlay) closeModal();
     });
 
     if (!document.getElementById('msg-modal-animations')) {
@@ -188,9 +195,9 @@ async function msg(text, tbartext) {
         `;
         document.head.appendChild(style);
     }
-    return {
+    modalApi = {
         overlay,
-        close: removeOverlay,
+        close: () => closeModal(),
         setTitle: (text) => {
             title.innerHTML = `<i class=\"fa-solid fa-tower-broadcast\" style=\"color: var(--lyric-color); margin-right: 0.5em;\"></i> ${text || 'Voxity'}`;
         },
@@ -199,4 +206,7 @@ async function msg(text, tbartext) {
             try { eiv(); } catch {}
         }
     };
+    window.__voxityModals = window.__voxityModals || [];
+    window.__voxityModals.push(modalApi);
+    return modalApi;
 }

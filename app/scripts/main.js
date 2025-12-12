@@ -30,6 +30,73 @@ const elements = {
     queueList: document.getElementById('queue-list'),
 };
 
+function shouldPlaySoundEffects() {
+    return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('soundEffects');
+}
+
+function playUiSound(audioEl, { reset = true } = {}) {
+    if (!audioEl || !shouldPlaySoundEffects()) return;
+    try {
+        if (reset) {
+            audioEl.currentTime = 0;
+        }
+        const maybePromise = audioEl.play();
+        if (maybePromise && typeof maybePromise.catch === 'function') {
+            maybePromise.catch(() => { });
+        }
+    } catch { }
+}
+
+let songNotificationCounter = 0;
+let lastSongNotificationKey = null;
+
+function shouldSendSongNotifications() {
+    if (typeof window === 'undefined') return false;
+    if (typeof Notification === 'undefined') return false;
+    if (Notification.permission !== 'granted') return false;
+    if (typeof window.VoxitySettings === 'undefined') return false;
+    return !!window.VoxitySettings.isEnabled('songNotifications');
+}
+
+function buildSongNotificationKey(file) {
+    const parts = [
+        file?.name || '',
+        file?.size || 0,
+        file?.lastModified || 0,
+        metadata.title || '',
+        metadata.artist || '',
+        metadata.album || '',
+    ];
+    return parts.join('|');
+}
+
+function maybeNotifySongStart(file) {
+    if (!shouldSendSongNotifications()) return;
+    const key = buildSongNotificationKey(file);
+    if (lastSongNotificationKey && key === lastSongNotificationKey) return;
+    lastSongNotificationKey = key;
+    const meta = typeof metadata !== 'undefined' ? metadata : {};
+    const title = meta.title || file?.name || 'Unknown title';
+    const artist = meta.artist || '';
+    const album = meta.album || '';
+    let body = `Now playing: ${title}`;
+    if (artist) {
+        body += ` by ${artist}`;
+    }
+    if (album) {
+        body += ` from ${album}`;
+    }
+    const icon = (typeof globalart !== 'undefined' && globalart) ? globalart : '/favicon.ico';
+    try {
+        songNotificationCounter += 1;
+        new Notification('Voxity', {
+            body,
+            icon,
+            tag: `voxity-song-${songNotificationCounter}`,
+        });
+    } catch { }
+}
+
 let stat_calls = 0;
 let stat_out = null;
 let currentObjectUrl = null;
@@ -424,13 +491,15 @@ function rqueue() {
     });
 }
 
-async function handleEntry(entry) {
+async function handleEntry(entry, options = {}) {
     if (!entry) return;
+    const opts = options && typeof options === 'object' ? options : {};
+    const { fromDirectory = false } = opts;
 
     if (entry.isFile) {
         await new Promise(resolve => {
             entry.file(file => {
-                quf([file]);
+                quf([file], { ignoreInvalid: fromDirectory });
                 resolve();
             });
         });
@@ -444,7 +513,7 @@ async function handleEntry(entry) {
                     if (entries.length === 0) return resolve();
 
                     for (const e of entries) {
-                        await handleEntry(e);
+                        await handleEntry(e, { fromDirectory: true });
                     }
 
                     resolve(await readBatch());
@@ -456,108 +525,162 @@ async function handleEntry(entry) {
     }
 }
 
-function quf(fileList) {
-    const files = Array.from(fileList);
+const AUDIO_EXTENSIONS = new Set([
+  'mp3',
+  'aac',
+  'm4a',
+  'wav',
+  'ogg',
+  'opus',
+  'flac',
+  'webm',
+
+  // video is cool too
+  'mp4',
+  'm4v',
+  'webm',
+  'ogv'
+]);
+
+const LYRIC_EXTENSIONS = new Set(['lrc', 'srt', 'vtt']);
+
+function getFileExtension(name) {
+    if (!name || typeof name !== 'string') return '';
+    const parts = name.split('.');
+    if (parts.length < 2) return '';
+    return parts.pop().toLowerCase();
+}
+
+function isLyricsFile(file) {
+    if (!file) return false;
+    const ext = getFileExtension(file.name);
+    return LYRIC_EXTENSIONS.has(ext);
+}
+
+function isAudioFile(file) {
+    if (!file) return false;
+    if (file.type && file.type.startsWith('audio/')) return true;
+    const ext = getFileExtension(file.name);
+    return AUDIO_EXTENSIONS.has(ext);
+}
+
+function quf(fileList, options = {}) {
+    const opts = options && typeof options === 'object' ? options : {};
+    const { ignoreInvalid = false } = opts;
+    const files = Array.from(fileList).filter(Boolean);
     if (files.length === 0) {
-        throw_error('No files selected');
+        if (!ignoreInvalid) {
+            throw_error('No files selected');
+        }
         return;
     }
-    if (files.length === 1) {
+    if (!ignoreInvalid && files.length === 1 && isLyricsFile(files[0])) {
         const name = files[0].name || '';
         const lower = name.toLowerCase();
-        if (lower.endsWith('.lrc') || lower.endsWith('.srt') || lower.endsWith('.vtt')) {
-            function padTwo(n) { return String(n).padStart(2, '0'); }
-            function secondsFromHms(hms) {
-                const v = hms.replace(',', '.').trim();
-                const parts = v.split(':').map(Number);
-                if (parts.length === 3) {
-                    return parts[0] * 3600 + parts[1] * 60 + parts[2];
-                } else if (parts.length === 2) {
-                    return parts[0] * 60 + parts[1];
-                }
-                return parseFloat(v) || 0;
+        function padTwo(n) { return String(n).padStart(2, '0'); }
+        function secondsFromHms(hms) {
+            const v = hms.replace(',', '.').trim();
+            const parts = v.split(':').map(Number);
+            if (parts.length === 3) {
+                return parts[0] * 3600 + parts[1] * 60 + parts[2];
+            } else if (parts.length === 2) {
+                return parts[0] * 60 + parts[1];
             }
-            function formatLrcTimestamp(secs) {
-                const mm = Math.floor(secs / 60);
-                const ssFloat = secs % 60;
-                const ss = ssFloat.toFixed(2);
-                return `${padTwo(mm)}:${ss.padStart(5, '0')}`;
-            }
-            function srt_to_lrc(srt) {
-                const blocks = srt.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
-                const out = [];
-                for (const block of blocks) {
-                    const timeMatch = block.match(/(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})\s*-->\s*(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})/);
-                    if (!timeMatch) continue;
-                    const start = timeMatch[1];
-                    const text = block.split(/\r?\n/).slice(1).join(' ').replace(/<[^>]+>/g, '').trim();
-                    if (!text) continue;
-                    const secs = secondsFromHms(start);
-                    out.push(`[${formatLrcTimestamp(secs)}]${text}`);
-                }
-                return out.join('\n');
-            }
-            function vtt_to_lrc(vtt) {
-                const content = vtt.replace(/^WEBVTT[\s\S]*?\n\n/, '');
-                const blocks = content.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
-                const out = [];
-                for (const block of blocks) {
-                    const timeMatch = block.match(/(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}\s*-->\s*(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}/);
-                    const tsLine = (block.split(/\r?\n/).find(l => /-->/.test(l)) || '').trim();
-                    if (!tsLine) continue;
-                    const startMatch = tsLine.match(/(\d{1,2}:)?\d{1,2}:\d{2}[\.,]\d{1,3}/);
-                    if (!startMatch) continue;
-                    const start = startMatch[0];
-                    const text = block.split(/\r?\n/).filter(l => !/-->/.test(l)).slice(1).join(' ').replace(/<[^>]+>/g, '').trim() || block.split(/\r?\n/).filter(l => !/-->/.test(l)).join(' ').replace(/<[^>]+>/g, '').trim();
-                    if (!text) continue;
-                    const secs = secondsFromHms(start);
-                    out.push(`[${formatLrcTimestamp(secs)}]${text}`);
-                }
-                return out.join('\n');
-            }
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const text = e.target.result || '';
-                const ext = lower.split('.').pop();
-                try {
-                    if (ext === 'lrc') {
-                        if (typeof lrc_parse === 'function') {
-                            lrc_data = lrc_parse(text);
-                        } else if (typeof parse_lyrics === 'function') {
-                            lrc_data = parse_lyrics(text);
-                        } else {
-                            throw new Error('LRC parser is missing');
-                        }
-                    } else if (ext === 'srt') {
-                        if (typeof lrc_parse !== 'function') throw new Error('LRC parser is missing');
-                        const lrcText = srt_to_lrc(text);
-                        lrc_data = lrc_parse(lrcText);
-                    } else if (ext === 'vtt') {
-                        if (typeof lrc_parse !== 'function') throw new Error('LRC parser is missing');
-                        const lrcText = vtt_to_lrc(text);
-                        lrc_data = lrc_parse(lrcText);
-                    }
-                } catch (err) {
-                    throw_error('Lyrics file could not be loaded: ' + (err && err.message ? err.message : err), false);
-                    return;
-                }
-
-                if (!elements.player || !elements.player.src) {
-                    throw_error('Play something first!');
-                    return;
-                }
-
-                try { skipLyricsUpdate = false; update_lyrics(); } catch { null }
-                throw_error('Lyrics parsed successfully!', true);
-            };
-            reader.readAsText(files[0]);
-            return;
+            return parseFloat(v) || 0;
         }
+        function formatLrcTimestamp(secs) {
+            const mm = Math.floor(secs / 60);
+            const ssFloat = secs % 60;
+            const ss = ssFloat.toFixed(2);
+            return `${padTwo(mm)}:${ss.padStart(5, '0')}`;
+        }
+        function srt_to_lrc(srt) {
+            const blocks = srt.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
+            const out = [];
+            for (const block of blocks) {
+                const timeMatch = block.match(/(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})\s*-->\s*(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})/);
+                if (!timeMatch) continue;
+                const start = timeMatch[1];
+                const text = block.split(/\r?\n/).slice(1).join(' ').replace(/<[^>]+>/g, '').trim();
+                if (!text) continue;
+                const secs = secondsFromHms(start);
+                out.push(`[${formatLrcTimestamp(secs)}]${text}`);
+            }
+            return out.join('\n');
+        }
+        function vtt_to_lrc(vtt) {
+            const content = vtt.replace(/^WEBVTT[\s\S]*?\n\n/, '');
+            const blocks = content.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
+            const out = [];
+            for (const block of blocks) {
+                const timeMatch = block.match(/(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}\s*-->\s*(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}/);
+                const tsLine = (block.split(/\r?\n/).find(l => /-->/.test(l)) || '').trim();
+                if (!tsLine) continue;
+                const startMatch = tsLine.match(/(\d{1,2}:)?\d{1,2}:\d{2}[\.,]\d{1,3}/);
+                if (!startMatch) continue;
+                const start = startMatch[0];
+                const text = block.split(/\r?\n/).filter(l => !/-->/.test(l)).slice(1).join(' ').replace(/<[^>]+>/g, '').trim() || block.split(/\r?\n/).filter(l => !/-->/.test(l)).join(' ').replace(/<[^>]+>/g, '').trim();
+                if (!text) continue;
+                const secs = secondsFromHms(start);
+                out.push(`[${formatLrcTimestamp(secs)}]${text}`);
+            }
+            return out.join('\n');
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const text = e.target.result || '';
+            const ext = lower.split('.').pop();
+            try {
+                if (ext === 'lrc') {
+                    if (typeof lrc_parse === 'function') {
+                        lrc_data = lrc_parse(text);
+                    } else if (typeof parse_lyrics === 'function') {
+                        lrc_data = parse_lyrics(text);
+                    } else {
+                        throw new Error('LRC parser is missing');
+                    }
+                } else if (ext === 'srt') {
+                    if (typeof lrc_parse !== 'function') throw new Error('LRC parser is missing');
+                    const lrcText = srt_to_lrc(text);
+                    lrc_data = lrc_parse(lrcText);
+                } else if (ext === 'vtt') {
+                    if (typeof lrc_parse !== 'function') throw new Error('LRC parser is missing');
+                    const lrcText = vtt_to_lrc(text);
+                    lrc_data = lrc_parse(lrcText);
+                }
+            } catch (err) {
+                throw_error('Parse failed: ' + (err && err.message ? err.message : err), false);
+                return;
+            }
+
+            if (!elements.player || !elements.player.src) {
+                throw_error('Play something first!');
+                return;
+            }
+
+            try { skipLyricsUpdate = false; update_lyrics(); } catch { null }
+            throw_error('Lyrics parsed successfully!', true);
+        };
+        reader.readAsText(files[0]);
+        return;
+    }
+
+    const audioFiles = files.filter(isAudioFile);
+    const hasInvalidFiles = files.length !== audioFiles.length;
+    if (!ignoreInvalid && hasInvalidFiles) {
+        throw_error('This is not an audio file or subtitle track');
+        return;
+    }
+    if (audioFiles.length === 0) {
+        if (!ignoreInvalid) {
+            throw_error('Not supported');
+        }
+        return;
     }
 
     const isemp = queue.length === 0;
-    for (const f of files) {
+    for (const f of audioFiles) {
         const item = { id: ++queueIdCounter, file: f, displayName: f.name };
         queue.push(item);
         onQueueItemAdded(item);
@@ -783,7 +906,7 @@ function init() {
         msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.<br><br>Also, clean that dirty fucking screen.`, 'Mobile')
     }
 
-    elements.welcomesound.play().catch(() => { });
+    playUiSound(elements.welcomesound);
     document.getElementById('preemptive_warn').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
 
@@ -853,8 +976,7 @@ function init() {
         }
         elements.player.currentTime = 0;
         elements.player.pause();
-        document.getElementById('donesound').currentTime = 0;
-        document.getElementById('donesound').play().catch(() => { });
+        playUiSound(document.getElementById('donesound'));
         throw_error('Finished playing queue', true);
         document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
         sfa('/favicon.ico');
@@ -984,16 +1106,34 @@ function init() {
             e.preventDefault();
             const dt = e.dataTransfer;
 
-            if (dt.items) {
-                let foundDir = false;
+            if (dt?.items && dt.items.length > 0) {
+                const directFiles = [];
+                let processed = false;
+
                 for (const item of dt.items) {
                     const entry = item.webkitGetAsEntry?.();
-                    if (entry) {
-                        foundDir = true;
+                    if (!entry) continue;
+
+                    if (entry.isDirectory) {
+                        processed = true;
                         await handleEntry(entry);
+                        continue;
+                    }
+
+                    if (entry.isFile) {
+                        const file = item.getAsFile?.();
+                        if (file) {
+                            directFiles.push(file);
+                        }
                     }
                 }
-                if (foundDir) return;
+
+                if (directFiles.length > 0) {
+                    processed = true;
+                    quf(directFiles);
+                }
+
+                if (processed) return;
             }
 
             if (dt?.files && dt.files.length > 0) {
@@ -1151,14 +1291,15 @@ function act_truncate(text) {
     return text.slice(0, truncate_max) + '...';
 }
 
-
-let inited = false;
+// i commented this shit out because it seemed extremely overcomplicated
+/*let inited = false;
 function ri() { if (inited) return; inited = true; init(); }
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', ri, { once: true });
 } else {
     ri();
-}
+}*/
+init();
 
 const link = document.createElement('link');
 link.rel = 'icon';

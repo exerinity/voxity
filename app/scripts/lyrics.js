@@ -5,8 +5,34 @@ let _ms_art_url = null;
 let activeLyricsKey = null;
 let skipLyricsUpdate = false;
 let isLyricsLoading = false;
+let lastLyricsRequest = null;
 
 const metadata = {};
+
+function shouldAutoSearchLyrics() {
+    return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('autoLyrics');
+}
+
+function buildLyricsRequestKey(file, duration) {
+    return [
+        file?.name || '',
+        file?.size || 0,
+        file?.lastModified || 0,
+        metadata.title || '',
+        metadata.artist || '',
+        metadata.album || '',
+        duration || 0,
+    ].join('|');
+}
+
+function maybeExecuteAutoLyrics({ force = false } = {}) {
+    if (!lastLyricsRequest) return;
+    if (!force && !shouldAutoSearchLyrics()) return;
+    const { key, duration } = lastLyricsRequest;
+    if (!force && activeLyricsKey === key) return;
+    activeLyricsKey = key;
+    get_lyrics(metadata.title, metadata.artist, metadata.album, duration);
+}
 
 function get_meta(file) {
     jsmediatags.read(file, {
@@ -15,9 +41,10 @@ function get_meta(file) {
             metadata.title = tags.title || file.name || 'Unknown title';
             metadata.artist = tags.artist || 'Unknown artist';
             metadata.album = tags.album || 'Unknown album';
+            const hasCompleteMetadata = Boolean(tags.title && tags.artist && tags.album);
             metadata.picture = tags.picture || null;
 
-            if (!metadata.title || !metadata.artist || !metadata.album) {
+            if (!hasCompleteMetadata) {
                 throw_error("There is missing metadata, lyrics may not work");
             }
 
@@ -57,12 +84,23 @@ function get_meta(file) {
             }
 
             try {
+                if (typeof maybeNotifySongStart === 'function') {
+                    maybeNotifySongStart(file);
+                }
+            } catch { }
+
+            try {
                 const player = document.getElementById('player');
                 const duration = Math.floor(player?.duration || 0) || 0;
-                const key = `${file?.name || ''}|${file?.size || 0}|${file?.lastModified || 0}|${metadata.title}|${metadata.artist}|${metadata.album}|${duration}`;
-                if (activeLyricsKey !== key) {
-                    activeLyricsKey = key;
-                    get_lyrics(metadata.title, metadata.artist, metadata.album, duration);
+                if (hasCompleteMetadata) {
+                    lastLyricsRequest = {
+                        file,
+                        duration,
+                        key: buildLyricsRequestKey(file, duration),
+                    };
+                    maybeExecuteAutoLyrics();
+                } else {
+                    lastLyricsRequest = null;
                 }
             } catch { null }
         },
@@ -78,6 +116,12 @@ function get_meta(file) {
             document.getElementById('cover-art').classList.add('hidden');
             globalart = ''; 
             if ('mediaSession' in navigator) set_media_session_metadata();
+            lastLyricsRequest = null;
+            try {
+                if (typeof maybeNotifySongStart === 'function') {
+                    maybeNotifySongStart(file);
+                }
+            } catch { }
         }
     });
 }
@@ -253,6 +297,7 @@ function lrc_wipe() {
 function setCurrentFile(file) {
     cur_file = file;
     activeLyricsKey = null;
+    lastLyricsRequest = null;
 }
 
 function force() {
@@ -261,3 +306,10 @@ function force() {
 }
 
 document.addEventListener('DOMContentLoaded', force);
+
+document.addEventListener('voxity:settings-changed', (event) => {
+    if (!event || event.detail?.key !== 'autoLyrics') return;
+    if (event.detail.value) {
+        maybeExecuteAutoLyrics({ force: true });
+    }
+});
