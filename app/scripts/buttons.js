@@ -1,5 +1,8 @@
 function changelogmsg() {
-    msg(`<iframe src="https://i.exerinity.com/voxrelnote.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}`, 'Release notes');
+    msg(`<iframe src="/releasenotes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/releasenotes" target="_blank">Open this in new tab</a>'}`, 'Release notes');
+}
+function pwamsg() {
+    msg(`<iframe src="/howpwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr><a href="/howpwa" target="_blank">Open this in new tab</a>`, 'How to install Voxity');
 }
 
 
@@ -34,7 +37,7 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
-    msg(about_content, 'About');
+    return msg(about_content);
 }));
 
 document.getElementById('queuehead').addEventListener('click', debounce(() => {
@@ -171,15 +174,15 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div style="margin-top: 1.5rem;">
                         <div style="display:flex;flex-direction:column;gap:0.75rem;">
                             ${PREFERENCE_TOGGLES.map(toggle => {
-                                const checked = window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
-                                return `<div style="display:flex;gap:0.75rem;align-items:flex-start;">
+                const checked = window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
+                return `<div style="display:flex;gap:0.75rem;align-items:flex-start;">
                                             <input type="checkbox" id="pref_${toggle.key}" ${checked} style="margin-top:0.3rem;accent-color:var(--lyric-color,#8000ff);">
                                             <div>
                                                 <label for="pref_${toggle.key}" style="font-weight:600;cursor:pointer;">${toggle.label}</label>
                                                 <p style="margin:0.2rem 0 0;font-size:0.9rem;color:#aaa;">${toggle.description}</p>
                                             </div>
                                         </div>`;
-                            }).join('')}
+            }).join('')}
                         </div>
                     </div>`;
             msg(`<div style="margin: 1rem 0;">
@@ -408,7 +411,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        return msg(about_content, 'About');
+        return msg(about_content);
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {
