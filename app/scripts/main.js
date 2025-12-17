@@ -1323,6 +1323,7 @@ if (typeof localStorage !== 'undefined') {
 <p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.dev/projects/voxity" target="_blank" rel="noopener">https://exerinity.dev/projects/voxity</a></p>
 <p><a href="https://exerinity.dev/projects/voxity/screenshots" target="_blank" rel="noopener">View some screenshots of Voxity here</a></p>
 <p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
+<br><small><a onclick="loadFA()">(if you do not see any icons, click here)</a></small>
 `, "Welcome to Voxity");
         }, 2500);
 
@@ -1350,3 +1351,18 @@ function calqueue() {
 document.getElementById('dropzone').addEventListener('contextmenu', (e) => e.preventDefault());
 document.getElementById('droppedzone').addEventListener('contextmenu', (e) => e.preventDefault());
 // intentionally, i am leaving the top status bar right-clickable, but to keep it cleaner, no right-click on the rest of the app
+
+function loadFA() {
+    closeTopModal(); // for if in settings or welcome lolz
+    stat_up("Attempting to inject Font Awesome manually...");
+    const fl = document.createElement('link');
+    fl.rel = 'stylesheet';
+    fl.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
+    fl.crossOrigin = 'anonymous';
+    fl.referrerPolicy = 'no-referrer';
+
+    document.head.appendChild(fl);
+
+    fl.onload = () => stat_up('<i class="fa-solid fa-font-awesome"></i> Testing, testing, 1 2 3'); throw_error("Icons should have loaded", true)
+    fl.onerror = () => throw_error("Could not load icons");
+}
