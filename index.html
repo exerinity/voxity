@@ -46,16 +46,19 @@
     <audio src="/app/media/message.ogg" id="msgsound" preload="auto"></audio>
     <audio src="/app/media/done.ogg" id="donesound" preload="auto"></audio>
     <div id="preemptive_warn"
-        style="background: var(--dialog-bg); color: var(--fg); border-radius: 16px; box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 32px; padding: 2rem 2.5rem 1.5rem; max-width: 420px; width: 90vw; position: absolute; font-family: inherit; text-align: center; animation: 0.2s ease 0s 1 normal none running zin; left: 400.5px; top: 422.672px;">
+        style="background: var(--dialog-bg);    color: var(--fg);    border-radius: 16px;    box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 32px;    padding: 2rem 2.5rem 1.5rem;    max-width: 720px;    width: 90vw;    position: absolute;    font-family: inherit;    text-align: center;    animation: 0.2s ease 0s 1 normal none running zin;    left: 500px;    top: 500px;">
         <div
             style="position: absolute; top: 12px; left: 16px; font-size: 1.2rem; font-weight: bold; color: var(--fg); cursor: move; display: flex; align-items: center; height: 24px; user-select: none;">
             <i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> Voxity
         </div>
         <div style="margin-top: 0.5rem; font-size: 1.08rem; line-height: 1.6;">
-            <div style="margin-bottom:1rem; cursor: default;">Something is preventing Voxity from loading! Please ensure
-                you are not blocking any scripts or resources and that JavaScript is enabled on a modern browser.<br>
-                <strong>main.js</strong> failing will show this message, but does not necessarily mean everything is
-                A-OK.
+            <div style="margin-bottom:1rem; cursor: default;">Something broke trying to load Voxity. Make sure
+                JavaScript is enabled and that "main.js" can be accessed (i.e., you are not blocking it) before
+                refreshing. If that still fails, perform a hard refresh with CTRL/Command+Shift+R or <a
+                    href="/?cachebuster=9999999999999999999999">try a cache buster</a>.
+                <br><small>PS: Even if you don't see this, everything might still be broken. Good luck, comrade. This
+                    message is only removed by main.js once the page loads. More can go wrong and this box won't catch
+                    it.</small>
             </div>
         </div>
     </div>
@@ -105,8 +108,10 @@
                             class="fa-solid fa-search"></i> Search lyrics</button>
                     <button id="pastelrc" title="Paste your own LRC lyrics" class="bop"><i
                             class="fa-solid fa-paste"></i> Paste lyrics</button>
-                    <button id="hotkeys" class="bop" title="View a list of hotkeys / keyboard shortcuts"><i class="fa-solid fa-keyboard"></i> Hotkeys</button>
-                    <button onclick="changelogmsg()" class="bop" title="See what's new and what's changed"><i class="fa-solid fa-scroll"></i> Release
+                    <button id="hotkeys" class="bop" title="View a list of hotkeys / keyboard shortcuts"><i
+                            class="fa-solid fa-keyboard"></i> Hotkeys</button>
+                    <button onclick="changelogmsg()" class="bop" title="See what's new and what's changed"><i
+                            class="fa-solid fa-scroll"></i> Release
                         notes</button>
                 </div>
                 <div class="sliders">
@@ -149,7 +154,8 @@
                 <div id="lyrics" class="lyrics-container"></div>
                 <div class="queue-header"
                     style="position: sticky; top: 0; background: #00000000; z-index: 2; backdrop-filter: blur(2px);">
-                    <h3 style="margin:0; cursor:pointer;" title="Click to recalculate queue if it is wrong" id="queuehead">Queue</h3>
+                    <h3 style="margin:0; cursor:pointer;" title="Click to recalculate queue if it is wrong"
+                        id="queuehead">Queue</h3>
                 </div>
                 <div id="queue-container" class="queue-container">
                     <ul id="queue-list" class="queue-list">

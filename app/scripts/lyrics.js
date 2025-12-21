@@ -6,6 +6,7 @@ let activeLyricsKey = null;
 let skipLyricsUpdate = false;
 let isLyricsLoading = false;
 let lastLyricsRequest = null;
+const lrc_con = document.getElementById('lyrics');
 
 const metadata = {};
 
@@ -131,7 +132,7 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
     isLyricsLoading = true;
     lrc_wipe();
     stat_up(`<i class="fa-solid fa-magnifying-glass"></i> Searching lyrics...`);
-    const lrc_con = document.getElementById('lyrics');
+    
     lrc_con.innerHTML = '<div class="spinner"></div>';
     try {
         const response = await fetch(
@@ -142,7 +143,7 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
             skipLyricsUpdate = true;
             isLyricsLoading = false;
             stat_up(`<i class="fa-solid fa-microphone-lines-slash"></i> This song is an instrumental`);
-            lrc_con.innerHTML = '';
+            lrc_con.innerHTML = 'This song is an instrumental';
             return lrc_data = [lrc_parse(`Instrumental`)[0]];
         } else if (response.ok && data.syncedLyrics) {
             lrc_data = lrc_parse(data.syncedLyrics);
@@ -194,7 +195,7 @@ function lrc_parse(syncedLyrics) {
 }
 
 function lrc_play(lrc_currents, act_index) {
-    const lrc_con = document.getElementById('lyrics');
+    
     lrc_con.innerHTML = '';
     const player = document.getElementById('player');
 
@@ -233,7 +234,7 @@ function lrc_play(lrc_currents, act_index) {
 function update_lyrics() {
     if (skipLyricsUpdate || isLyricsLoading) return;
     const player = document.getElementById('player');
-    const lrc_con = document.getElementById('lyrics');
+    
     const cur_time = player.currentTime;
     let act_index = -1;
 

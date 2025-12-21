@@ -12,7 +12,7 @@ if ('serviceWorker' in navigator && !noInstall) {
 
       if (registration.waiting) {
         if (typeof throw_error === 'function') {
-          throw_error('New version available - refresh to update', true);
+          throw_error('A new version is ready to install, please refresh the app to finish', true);
         }
         uptodate = false;
       }

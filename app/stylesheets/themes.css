@@ -419,7 +419,7 @@
 }
 
 :root[data-theme="red"] {
-    --lyric-color: #ff4d4d;
+    --lyric-color: #ff0000;
     --link: #ff6666;
 
     --bg: #150000;
@@ -498,7 +498,7 @@
 }
 
 :root[data-theme="neon-purple"] {
-    --lyric-color: #c400ff;
+    --lyric-color: #6600ff;
     --link: #e066ff;
 
     --bg: #0a0011;

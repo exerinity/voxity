@@ -134,8 +134,6 @@ function stat_up(msg, ac = true) {
     }
 }
 
-stat_up('<i class="fa-solid fa-circle-notch fa-spin bop"></i> Loading...')
-
 function debounce(fn) {
     return () => {
         const now = Date.now();
@@ -333,11 +331,11 @@ function toggleShuffle() {
     if (shuffleMode) {
         shuffleHistory = [];
         resetShufflePool();
-        stat_up('<i class="fa-solid fa-shuffle" style="color: green;"></i> Now shuffling...');
+        stat_up('<i class="fa-solid fa-shuffle" style="color: green;"></i> Shuffle ON');
     } else {
         shuffleHistory = [];
         shufflePool = [];
-        stat_up('<i class="fa-solid fa-shuffle" style="color: red;"></i> No longer shuffling...');
+        stat_up('<i class="fa-solid fa-shuffle" style="color: red;"></i> Shuffle OFF');
     }
     updateShuffleButton();
 }
@@ -527,20 +525,20 @@ async function handleEntry(entry, options = {}) {
 }
 
 const AUDIO_EXTENSIONS = new Set([
-  'mp3',
-  'aac',
-  'm4a',
-  'wav',
-  'ogg',
-  'opus',
-  'flac',
-  'webm',
+    'mp3',
+    'aac',
+    'm4a',
+    'wav',
+    'ogg',
+    'opus',
+    'flac',
+    'webm',
 
-  // video is cool too
-  'mp4',
-  'm4v',
-  'webm',
-  'ogv'
+    // video is cool too
+    'mp4',
+    'm4v',
+    'webm',
+    'ogv'
 ]);
 
 const LYRIC_EXTENSIONS = new Set(['lrc', 'srt', 'vtt']);
@@ -656,12 +654,12 @@ function quf(fileList, options = {}) {
             }
 
             if (!elements.player || !elements.player.src) {
-                throw_error('Play something first!');
+                throw_error('Nothing playing');
                 return;
             }
 
             try { skipLyricsUpdate = false; update_lyrics(); } catch { null }
-            throw_error('Lyrics parsed successfully!', true);
+            throw_error('Added lyrics', true);
         };
         reader.readAsText(files[0]);
         return;

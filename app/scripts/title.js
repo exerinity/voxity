@@ -5,6 +5,26 @@ function isTitleRotationEnabled() {
     return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('titleRotation');
 }
 
+function setStaticTitle() {
+    console.log("call");
+    setTimeout(() => {
+    if (typeof metadata === "object" && metadata) {
+        const title = metadata.title || "";
+        const artist = metadata.artist || "";
+
+        if (!title && !artist) {
+            document.title = "Voxity";
+        } else {
+            document.title = `${title || "Unknown Title"} by ${artist || "Unknown Artist"} / Voxity`;
+        }
+    } else {
+        document.title = "Voxity";
+    }
+
+    now = 0;
+}, 600); // 2 make sure all metadata is ready
+}
+
 function tabtitleOnce() {
     const scroll = [];
 
@@ -27,8 +47,12 @@ function tabtitleOnce() {
 }
 
 function startTitleRotation() {
-    if (!isTitleRotationEnabled()) return;
-    if (titleTimer) return; 
+    if (!isTitleRotationEnabled()) {
+        stopTitleRotation();
+        setStaticTitle();
+        return;
+    }
+    if (titleTimer) return;
     tabtitleOnce();
     titleTimer = setInterval(tabtitleOnce, 5000);
 }
@@ -38,7 +62,7 @@ function stopTitleRotation() {
         clearInterval(titleTimer);
         titleTimer = null;
     }
-    try { document.title = "Voxity"; } catch { }
+    setStaticTitle();
     now = 0;
 }
 
@@ -47,14 +71,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const player = elements && elements.player ? elements.player : document.getElementById('player');
         if (!player) return;
 
-        player.addEventListener('play', startTitleRotation);
+        player.addEventListener('play', () => {
+            if (isTitleRotationEnabled()) {
+                startTitleRotation();
+            } else {
+                setStaticTitle();
+            }
+        });
+
         player.addEventListener('pause', stopTitleRotation);
         player.addEventListener('ended', stopTitleRotation);
 
-        if (!player.paused && !player.ended && player.currentTime > 0) {
+        if (isTitleRotationEnabled() && !player.paused && !player.ended && player.currentTime > 0) {
             startTitleRotation();
+        } else {
+            setStaticTitle();
         }
-    } catch { 0 }
+    } catch (error) {
+        console.error("Error in DOMContentLoaded:", error);
+    }
 });
 
 document.addEventListener('voxity:settings-changed', (event) => {
