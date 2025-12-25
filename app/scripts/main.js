@@ -34,6 +34,24 @@ function shouldPlaySoundEffects() {
     return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('soundEffects');
 }
 
+let stallExit = false;
+
+window.addEventListener("beforeunload", (event) => {
+  if (isPWA()) return;
+  if (!stallExit) return;
+
+  event.preventDefault();
+  event.returnValue = "";
+});
+
+function isPWA() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: window-controls-overlay)").matches ||
+    navigator.standalone === true
+  );
+}
+
 function playUiSound(audioEl, { reset = true } = {}) {
     if (!audioEl || !shouldPlaySoundEffects()) return;
     try {

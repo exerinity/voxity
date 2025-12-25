@@ -112,8 +112,8 @@ window.addEventListener('DOMContentLoaded', () => {
             { 'twitter-dim': true, 'label': 'Twitter dim' }
         ];
         const VIZ_OPTIONS = [
-            { v: 'spectrum', l: 'Spectrum' },
             { v: 'waveform', l: 'Waveform' },
+            { v: 'spectrum', l: 'Spectrum' },
             { v: 'bars', l: 'Bars' },
             { v: 'circular', l: 'Circular' },
             { v: 'none', l: 'None (off)' },
@@ -144,7 +144,7 @@ window.addEventListener('DOMContentLoaded', () => {
         ];
         const key = 'au_theme';
         const btn = document.getElementById('settings');
-        let currentTheme = 'dim';
+        let currentTheme = 'lights-out';
 
         const getThemeName = (themeObj) => Object.keys(themeObj).find(key => key !== 'label') || '';
         const getThemeLabel = (themeName) => {
@@ -168,7 +168,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         function openSettingsModal({ focusViz = false } = {}) {
             const current = document.documentElement.getAttribute('data-theme') || currentTheme;
-            const currentViz = (document.getElementById('viz-mode')?.value) || 'spectrum';
+            const currentViz = (document.getElementById('viz-mode')?.value) || 'waveform';
             const accentValue = (document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff').trim() || '#8000ff';
             const preferenceSection = typeof window.VoxitySettings === 'undefined' ? '' : `
                     <div style="margin-top: 1.5rem;">
