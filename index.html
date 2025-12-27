@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <!--
    Welcome to the source code of Voxity! Since this does not obfuscate or hide behind frameworks or build steps,
    everything I write for the app is right here. Well, not here, but it's in the stylesheets and scripts below.
@@ -15,21 +14,19 @@
 
    Also, if you want an old version, also message me! Tell me which date (view the release notes first) and I will send you the build URL!
 -->
-
 <head>
-    <link rel="preconnect" href="https://lrclib.net">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voxity</title>
-    <link rel="stylesheet" href="/app/stylesheets/controls.css">
-    <link rel="stylesheet" href="/app/stylesheets/miscellaneous.css">
-    <link rel="stylesheet" href="/app/stylesheets/structure.css">
-    <link rel="stylesheet" href="/app/stylesheets/tandem.css">
-    <link rel="stylesheet" href="/app/stylesheets/themes.css">
+    <link rel="preload" href="/app/stylesheets/controls.css" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="/app/stylesheets/miscellaneous.css" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="/app/stylesheets/structure.css" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="/app/stylesheets/tandem.css" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="/app/stylesheets/themes.css" as="style" onload="this.rel='stylesheet'">
     <script src="/app/scripts/jsmediatags.js" defer></script>
     <script src="/app/scripts/pwa.js" defer></script>
     <script src="/app/scripts/twemoji.js" defer></script> <!-- this is not all of the scripts, some are in the body -->
-    <link rel="stylesheet" href="/app/stylesheets/fontawesome.css">
+    <link rel="preload" href="/app/stylesheets/fontawesome.css" as="style" onload="this.rel='stylesheet'">
     <script src="/app/scripts/message.js" defer></script>
     <meta name="description" content="A semi-advanced music player that supports any audio file your browser does">
     <meta name="keywords" content="music, player, audio, web audio api, visualizer, lyrics, jsmediatags">
