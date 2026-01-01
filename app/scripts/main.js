@@ -455,6 +455,9 @@ function rqueue() {
     queue.forEach((item, idx) => {
         const li = document.createElement('li');
         li.className = 'queue-item' + (idx === currentIndex ? ' active' : '');
+        li.draggable = true;
+        li.dataset.index = idx;
+
         const title = item.meta?.title;
         const artist = item.meta?.artist;
         const fullLabel = (title || artist) ? `${title || 'Unknown track'} by ${artist || 'Unknown artist'}` : (item.displayName || item.file.name);
@@ -502,9 +505,64 @@ function rqueue() {
         li.appendChild(dur);
         li.appendChild(rem);
 
+        li.addEventListener('dragstart', handleDragStart);
+        li.addEventListener('dragover', handleDragOver);
+        li.addEventListener('dragenter', handleDragEnter);
+        li.addEventListener('dragleave', handleDragLeave);
+        li.addEventListener('drop', handleDrop);
+        li.addEventListener('dragend', handleDragEnd);
+
         ul.appendChild(li);
 
         calqueue();
+    });
+}
+
+let dragSrcIndex = null;
+
+function handleDragStart(e) {
+    dragSrcIndex = parseInt(this.dataset.index, 10);
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter() {
+    this.classList.add('drag-over');
+}
+
+function handleDragLeave() {
+    this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    e.stopPropagation();
+    const dragTargetIndex = parseInt(this.dataset.index, 10);
+    if (dragSrcIndex !== dragTargetIndex) {
+        const [movedItem] = queue.splice(dragSrcIndex, 1);
+        queue.splice(dragTargetIndex, 0, movedItem);
+
+        if (currentIndex === dragSrcIndex) {
+            currentIndex = dragTargetIndex;
+        } else if (currentIndex > dragSrcIndex && currentIndex <= dragTargetIndex) {
+            currentIndex -= 1;
+        } else if (currentIndex < dragSrcIndex && currentIndex >= dragTargetIndex) {
+            currentIndex += 1;
+        }
+
+        rqueue();
+    }
+    return false;
+}
+
+function handleDragEnd() {
+    const items = elements.queueList.querySelectorAll('.queue-item');
+    items.forEach((item) => {
+        item.classList.remove('dragging', 'drag-over');
     });
 }
 

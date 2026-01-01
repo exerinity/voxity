@@ -127,7 +127,16 @@ function get_meta(file) {
     });
 }
 
+let lyricsAbortController = null;
+
 async function get_lyrics(trackName, artistName, albumName, duration) {
+    if (lyricsAbortController) {
+        lyricsAbortController.abort();
+    }
+
+    lyricsAbortController = new AbortController();
+    const { signal } = lyricsAbortController;
+
     skipLyricsUpdate = false;
     isLyricsLoading = true;
     lrc_wipe();
@@ -137,6 +146,7 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
     try {
         const response = await fetch(
             `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artistName)}&track_name=${encodeURIComponent(trackName)}&album_name=${encodeURIComponent(albumName)}&duration=${duration}`,
+            { signal }
         );
         const data = await response.json();
         if (response.ok && data.instrumental) {
@@ -162,11 +172,15 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
             isLyricsLoading = false;
         }
     } catch (e) {
-        stat_up(`<i class="fa-solid fa-xmark"></i> Error loading lyrics`);
+        if (signal.aborted) {
+            null;
+        } else {
+            stat_up(`<i class="fa-solid fa-xmark"></i> Error loading lyrics`);
+            throw_error(`Lyrics could not load:<br>${e}<br>You are likely offline.`);
+        }
         lrc_con.innerHTML = '';
         lrc_data = [];
         isLyricsLoading = false;
-        throw_error(`Lyrics could not load:<br>${e}<br>You are likely offline.`);
     }
 }
 

@@ -145,3 +145,11 @@ strong {
     gap: 20px;
     align-items: center;
 }
+
+.queue-item.dragging {
+    opacity: 0.5;
+}
+
+.queue-item.drag-over {
+    border: 2px dashed var(--lyric-color);
+}
