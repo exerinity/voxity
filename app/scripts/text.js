@@ -45,11 +45,11 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
   `;
 
 const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
-        <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a onclick="changelogmsg()" style="cursor: pointer">Release notes</a><br>
+        <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a href="/i/release_notes" onclick="event.preventDefault(); changelogmsg()" style="cursor: pointer">Release notes</a><br>
                 <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">
-          ${isPWA() ? "Voxity is currently installed as a PWA, nice!" : "Tip: If you have not already, you should install Voxity as a PWA. <a onclick='pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
+          ${isPWA() ? "Voxity is currently installed as a PWA, nice!" : "Tip: You should install Voxity as a PWA. <a href='/i/how_pwa' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
         </p>
         <hr>
         <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank">LRCLIB</a> as a lyrics source.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
         <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
-        <br><small><a href="/i/reload-font-awesome" onclick="event.preventDefault(); loadFA()">(if you do not see any icons, click here)</a></small>`;
+        <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">(if you do not see any icons, click here)</a></small>`;

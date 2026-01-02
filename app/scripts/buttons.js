@@ -1,8 +1,8 @@
 function changelogmsg() {
-    msg(`<iframe src="/releasenotes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/releasenotes" target="_blank">Open this in new tab</a>'}`, 'Release notes');
+    msg(`<iframe src="/i/release_notes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/i/release_notes" target="_blank">Open this in new tab</a>'}`, 'Release notes');
 }
 function pwamsg() {
-    msg(`<iframe src="/howpwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr><a href="/howpwa" target="_blank">Open this in new tab</a>`, 'How to install Voxity');
+    msg(`<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr><a href="/i/how_pwa" target="_blank">Open this in new tab</a>`, 'How to install Voxity');
 }
 
 
@@ -37,7 +37,7 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
-    return msg(about_content);
+    return msg(about_content, "About Voxity");
 }));
 
 document.getElementById('queuehead').addEventListener('click', debounce(() => {
@@ -209,7 +209,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">Tip: click the visualizer to open this</p>
                     </div>
                     ${preferenceSection}
-                    <br><small><a href="/i/reload-font-awesome" onclick="event.preventDefault(); loadFA()">If you do not see any icons, click here</a></small>
+                    <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">If you do not see any icons, click here</a></small>
                 `, 'Settings');
 
             setTimeout(() => {
@@ -412,7 +412,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        return msg(about_content);
+        return msg(about_content, "About Voxity");
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {
