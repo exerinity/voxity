@@ -7,6 +7,7 @@ let skipLyricsUpdate = false;
 let isLyricsLoading = false;
 let lastLyricsRequest = null;
 const lrc_con = document.getElementById('lyrics');
+let lrc_amount = 16;
 
 const metadata = {};
 
@@ -37,7 +38,7 @@ function maybeExecuteAutoLyrics({ force = false } = {}) {
 
 function get_meta(file) {
     jsmediatags.read(file, {
-        onSuccess: function(tag) {
+        onSuccess: function (tag) {
             const tags = tag.tags;
             metadata.title = tags.title || file.name || 'Unknown title';
             metadata.artist = tags.artist || 'Unknown artist';
@@ -79,7 +80,7 @@ function get_meta(file) {
                     }
                 }
             } else {
-                globalart = ''; 
+                globalart = '';
                 cover.classList.add('hidden');
                 if ('mediaSession' in navigator) set_media_session_metadata();
             }
@@ -105,7 +106,7 @@ function get_meta(file) {
                 }
             } catch { null }
         },
-        onError: function() {
+        onError: function () {
             metadata.title = truncate(file.name) || 'Unknown title';
             metadata.artist = 'Unknown artist';
             metadata.album = 'Unknown album';
@@ -115,7 +116,7 @@ function get_meta(file) {
             document.getElementById('np2').innerHTML = truncate(file.name || 'Unknown track');
             document.title = '';
             document.getElementById('cover-art').classList.add('hidden');
-            globalart = ''; 
+            globalart = '';
             if ('mediaSession' in navigator) set_media_session_metadata();
             lastLyricsRequest = null;
             try {
@@ -141,7 +142,7 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
     isLyricsLoading = true;
     lrc_wipe();
     stat_up(`<i class="fa-solid fa-magnifying-glass"></i> Searching lyrics...`);
-    
+
     lrc_con.innerHTML = '<div class="spinner"></div>';
     try {
         const response = await fetch(
@@ -192,15 +193,15 @@ function lrc_parse(syncedLyrics) {
         if (match) {
             const timeParts = match[1].split(':');
             const time = parseInt(timeParts[0]) * 60 + parseFloat(timeParts[1]);
-            return { 
-                time, 
+            return {
+                time,
                 text: match[2].trim(),
                 originalIndex: index,
                 isBlank: match[2].trim() === ''
             };
         }
-        return { 
-            time: 0, 
+        return {
+            time: 0,
             text: trimmedLine,
             originalIndex: index,
             isBlank: trimmedLine === ''
@@ -209,27 +210,27 @@ function lrc_parse(syncedLyrics) {
 }
 
 function lrc_play(lrc_currents, act_index) {
-    
+
     lrc_con.innerHTML = '';
     const player = document.getElementById('player');
 
     lrc_currents.forEach((line) => {
         const p = document.createElement('p');
-        
+
         if (line.isBlank) {
             p.classList.add('blank-line');
             p.style.height = '0.5em';
             p.style.minHeight = '0.5em';
-            p.textContent = ''; 
+            p.textContent = '';
         } else {
             p.textContent = line.text || ' ';
             p.style.cursor = line.time > 0 ? 'pointer' : 'default';
-            
+
             if (line.originalIndex === act_index) {
                 p.classList.add('active');
             }
         }
-        
+
         p.dataset.index = line.originalIndex;
         p.dataset.time = line.time;
 
@@ -248,7 +249,7 @@ function lrc_play(lrc_currents, act_index) {
 function update_lyrics() {
     if (skipLyricsUpdate || isLyricsLoading) return;
     const player = document.getElementById('player');
-    
+
     const cur_time = player.currentTime;
     let act_index = -1;
 
@@ -262,11 +263,10 @@ function update_lyrics() {
     }
 
     const lrc_currents = [];
-    let lrc_amount = 16;
     let half = Math.floor(lrc_amount / 2);
 
     let display_index = act_index >= 0 ? act_index : Math.max(0, lrc_data.findLastIndex(line => line.time <= cur_time) || 0);
-    
+
     let lrc_si = Math.max(0, display_index - half);
     let lrc_en = Math.min(lrc_data.length - 1, display_index + half);
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <head>
+    <title>How to install Voxity as a PWA</title>
     <style>
         body {
             margin: 0;
@@ -87,4 +88,12 @@
         </ol>
         <h1><a href="#i">Back to top</a></h1>
     </div>
+    <script>
+        if (window.location.search.includes('standalone')) {
+            const container = document.getElementById('i');
+            const backLink = document.createElement('p');
+            backLink.innerHTML = '<a href="/" style="font-size: 14px; margin-bottom: 10px; display: inline-block; color: #fff; text-decoration: underline dashed;">&#8592; Return to Voxity</a>';
+            container.insertBefore(backLink, container.firstChild);
+        }
+    </script>
 </body>

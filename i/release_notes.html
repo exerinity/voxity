@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <title>Release notes</title>
     <style>
         html,
         body {
@@ -13,14 +14,14 @@
             font-family: 'Inter', sans-serif;
         }
 
-        #o {
+        #i {
             max-width: 960px;
             margin: 40px auto;
             padding: 0 20px;
             line-height: 1.6
         }
 
-        #o img {
+        #i img {
             max-width: 100%
         }
 
@@ -39,7 +40,7 @@
 </head>
 
 <body>
-    <div id="o">
+    <div id="i" class="container">
         <p>Welcome to the Release notes for the Voxity PWA! Please note, that these are not exhaustive, and only
             covering major/some minor updates. In other words, I may update the app minorly without updating this
             document.</p>
@@ -48,6 +49,13 @@
                 title="DM me on Twitter">let me know!</a></p>
         <h1>2026</h1>
         <h2>January</h2>
+        <h3>2nd (v80a)</h3>
+        <ul>
+            <li>Added a small catch to the <a href="/i/release_notes">release notes</a> and the <a href="/i/how_pwa">how
+                    to install</a> pages where if the page is opened in standalone, a "back to Voxity" gets added to the top</li>
+            <li>The amount of lyrics actively shown can now be modified by changing the "lrc_amount" variable in the console (proper modifier soon)</li>
+            <li>Added a rudimentary method of fixing "window.open" on the cover art viewer not working on Chromium with a new page which basically does the same thing (this might not work, very possibly a 414 error and may even upset the Service Worker)</li>
+        </ul>
         <h3>1st (v80)</h3>
         <ul>
             <li>Added a way to reorder the queue via dragging items within it</li>
@@ -479,8 +487,16 @@
         <h4>Initial upload to current repository</h4>
         <p>Previously, it was <em>*just*</em> on Cloudflare Pages, but I took that down and uploaded it to GitHub. The
             rest is history...</p>
-        <h1><a href="#o">Back to top</a></h1>
+        <h1><a href="#i">Back to top</a></h1>
     </div>
+    <script>
+        if (window.location.search.includes('standalone')) {
+            const container = document.getElementById('i');
+            const backLink = document.createElement('p');
+            backLink.innerHTML = '<a href="/" style="font-size: 14px; margin-bottom: 10px; display: inline-block; color: #fff; text-decoration: underline dashed;">&#8592; Return to Voxity</a>';
+            container.insertBefore(backLink, container.firstChild);
+        }
+    </script>
 </body>
 
 </html>
