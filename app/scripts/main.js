@@ -1466,9 +1466,9 @@ document.getElementById('dropzone').addEventListener('contextmenu', (e) => e.pre
 document.getElementById('droppedzone').addEventListener('contextmenu', (e) => e.preventDefault());
 // intentionally, i am leaving the top status bar right-clickable, but to keep it cleaner, no right-click on the rest of the app
 
-function loadFA() {
+async function loadFA() {
     closeTopModal(); // for if in settings or welcome lolz
-    stat_up("Attempting to inject Font Awesome manually...");
+    const mod = await msg("Attempting to inject Font Awesome manually...");
     const fl = document.createElement('link');
     fl.rel = 'stylesheet';
     fl.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
@@ -1477,6 +1477,6 @@ function loadFA() {
 
     document.head.appendChild(fl);
 
-    fl.onload = () => stat_up('<i class="fa-solid fa-font-awesome"></i> Testing, testing, 1 2 3'); throw_error("Icons should have loaded", true)
+    fl.onload = () => mod.setContent('Icons should have loaded <i class="fa-solid fa-font-awesome"></i>');
     fl.onerror = () => throw_error("Could not load icons");
 }
