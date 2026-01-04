@@ -37,19 +37,19 @@ function shouldPlaySoundEffects() {
 let stallExit = false;
 
 window.addEventListener("beforeunload", (event) => {
-  if (isPWA()) return;
-  if (!stallExit) return;
+    if (isPWA()) return;
+    if (!stallExit) return;
 
-  event.preventDefault();
-  event.returnValue = "";
+    event.preventDefault();
+    event.returnValue = "";
 });
 
 function isPWA() {
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.matchMedia("(display-mode: window-controls-overlay)").matches ||
-    navigator.standalone === true
-  );
+    return (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.matchMedia("(display-mode: window-controls-overlay)").matches ||
+        navigator.standalone === true
+    );
 }
 
 function playUiSound(audioEl, { reset = true } = {}) {
@@ -243,6 +243,8 @@ let shuffleButton = null;
 const durationLoadQueue = [];
 let durationLoadInProgress = false;
 let durationAudio = null;
+let durationLoadUnsupportedCount = 0;
+let durationLoadUnsupportedFiles = [];
 
 function getItemIdByIndex(idx) {
     const item = queue[idx];
@@ -388,11 +390,22 @@ function enqueueDurationLoad(item, durEl) {
     durationLoadQueue.push(item);
     processNextDurationLoad();
 }
-
 function processNextDurationLoad() {
     if (durationLoadInProgress) return;
     const nextItem = durationLoadQueue.shift();
-    if (!nextItem) return;
+    if (!nextItem) {
+        if (durationLoadUnsupportedCount > 0) {
+            if (durationLoadUnsupportedCount < 10 && durationLoadUnsupportedFiles.length > 0) {
+                const list = durationLoadUnsupportedFiles.map(n => `${n}`).join('<br>');
+                msg(`${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. If you're certain they work with browsers, <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.<br><br><strong>Broken files:</strong><br>${list}`);
+            } else {
+                msg(`${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. If you're certain they work with browsers, <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.`);
+            }
+            durationLoadUnsupportedCount = 0;
+            durationLoadUnsupportedFiles = [];
+        }
+        return;
+    }
     durationLoadInProgress = true;
     const audio = ensureDurationAudioElement();
     let objectUrl = null;
@@ -421,7 +434,24 @@ function processNextDurationLoad() {
         const total = queue.length || 1;
         stat_up(`<i class="fa-solid fa-people-carry-box"></i> Loading ${nextItem.displayName || nextItem.file.name} (${pos} of ${total})...`);
         calqueue();
-        const durationValue = Number.isFinite(audio.duration) ? audio.duration : 0;
+
+        const durationValue = Number.isFinite(audio.duration) ? audio.duration : NaN;
+
+        if (!Number.isFinite(durationValue) || durationValue <= 0) {
+            if (idx === currentIndex) {
+                nextItem.duration = 0;
+            } else if (idx !== -1) {
+                queue.splice(idx, 1);
+                onQueueItemRemoved(nextItem);
+                durationLoadUnsupportedCount++;
+                try { durationLoadUnsupportedFiles.push(nextItem.displayName || nextItem.file.name); } catch { null }
+                stat_up(`<i class="fa-solid fa-circle-exclamation"></i> Ignoring broken file: ${nextItem.displayName || nextItem.file.name}`);
+            }
+            rqueue();
+            cleanup();
+            return;
+        }
+
         nextItem.duration = durationValue;
         const targetEl = nextItem._pendingDurationEl;
         const textValue = form_time_short(durationValue);
@@ -434,6 +464,17 @@ function processNextDurationLoad() {
     }
 
     function handleError() {
+        const idx = findIndexById(nextItem.id);
+        if (idx !== -1 && idx !== currentIndex) {
+            queue.splice(idx, 1);
+            onQueueItemRemoved(nextItem);
+            durationLoadUnsupportedCount++;
+            try { durationLoadUnsupportedFiles.push(nextItem.displayName || nextItem.file.name); } catch { null }
+            stat_up(`<i class="fa-solid fa-circle-exclamation"></i> Ignoring broken file: ${nextItem.displayName || nextItem.file.name}`);
+        } else if (idx === currentIndex) {
+            nextItem.duration = 0;
+        }
+        rqueue();
         cleanup();
     }
 
@@ -444,7 +485,7 @@ function processNextDurationLoad() {
         audio.src = objectUrl;
         audio.load();
     } catch {
-        cleanup();
+        handleError();
     }
 }
 
@@ -744,8 +785,7 @@ function quf(fileList, options = {}) {
     const audioFiles = files.filter(isAudioFile);
     const hasInvalidFiles = files.length !== audioFiles.length;
     if (!ignoreInvalid && hasInvalidFiles) {
-        throw_error('This is not an audio file or subtitle track');
-        return;
+        throw_error('Some invalid files were added');
     }
     if (audioFiles.length === 0) {
         if (!ignoreInvalid) {
