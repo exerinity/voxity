@@ -1,4 +1,4 @@
-const CACHE_NAME = 'voxity80b2';
+const CACHE_NAME = 'voxity81';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';
@@ -7,6 +7,7 @@ const FILES_TO_CACHE = [
   '/entry',
   '/i/how_pwa',
   '/i/release_notes',
+  '/i/imageview',
   '/favicon.ico',
   '/favicona.png',
   '/manifest.json',

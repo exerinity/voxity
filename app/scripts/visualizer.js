@@ -138,3 +138,14 @@ function vis_init() {
 
     draw(0);
 }
+
+try {
+    window.addEventListener('fpschange', () => {
+        try { lastFrame = 0; } catch {};
+        try {
+            if (!frame_id) {
+                try { vis_init(); } catch (e) { }
+            }
+        } catch (e) { }
+    });
+} catch (e) { }

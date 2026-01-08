@@ -351,11 +351,11 @@ function toggleShuffle() {
     if (shuffleMode) {
         shuffleHistory = [];
         resetShufflePool();
-        stat_up('<i class="fa-solid fa-shuffle" style="color: green;"></i> Shuffle ON');
+        stat_up('<i class="fa-solid fa-shuffle" style="color: green;"></i> Shuffle <strong>ON</strong>');
     } else {
         shuffleHistory = [];
         shufflePool = [];
-        stat_up('<i class="fa-solid fa-shuffle" style="color: red;"></i> Shuffle OFF');
+        stat_up('<i class="fa-solid fa-shuffle" style="color: red;"></i> Shuffle <strong>OFF</strong>');
     }
     updateShuffleButton();
 }
@@ -1045,7 +1045,7 @@ function init() {
         elements.player.loop = onrepeat;
         rep_button.innerHTML = '<i class="fa-solid fa-repeat"></i>';
         rep_button.style.color = onrepeat ? 'green' : 'red';
-        stat_up(onrepeat ? '<i class="fa-solid fa-repeat" style="color: green;"></i> Loop ON' : '<i class="fa-solid fa-repeat" style="color: red;"></i> Loop OFF');
+        stat_up(onrepeat ? '<i class="fa-solid fa-repeat" style="color: green;"></i> Loop <strong>ON</strong>' : '<i class="fa-solid fa-repeat" style="color: red;"></i> Loop <strong>OFF</strong>');
     }));
 
     shuffleButton = document.getElementById('shuffle');
@@ -1161,7 +1161,7 @@ function init() {
             icon = hi;
         }
 
-        stat_up(`${icon} Volume: ${(elements.player.volume * 100).toFixed(0)}%`);
+        stat_up(`${icon} Volume: <strong>${(elements.player.volume * 100).toFixed(0)}%</strong>`);
     });
 
     elements.speed.addEventListener('input', () => {
@@ -1179,17 +1179,17 @@ function init() {
         elements.player.playbackRate = elements.speed.value;
         elements.speed_min.innerHTML = '0.1x';
         elements.speed_max.innerHTML = '2.0x';
-        stat_up(`${icon} Speed: ${elements.speed.value}x`);
-        if (parseFloat(elements.speed.value) === 2.0) stat_up(`${icon} Speed: ${elements.speed.value}x - to go higher, click "Speed" above the slider!`);
+        stat_up(`${icon} Speed: <strong>${elements.speed.value}x</strong>`);
+        if (parseFloat(elements.speed.value) === 2.0) stat_up(`${icon} Speed: <strong>${elements.speed.value}x</strong> - to go higher, click "Speed" above the slider!`);
     });
 
     elements.index.addEventListener('input', () => {
         elements.player.currentTime = elements.index.value;
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(elements.index.value)} / ${form_time(elements.player.duration)}`);
+        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: <strong>${form_time(elements.index.value)} / ${form_time(elements.player.duration)}</strong>`);
     });
 
     elements.viz_mo.addEventListener('change', () => {
-        stat_up(`<i class="fa-solid fa-chart-simple"></i> Visualizer mode: ${elements.viz_mo.value}`);
+        stat_up(`<i class="fa-solid fa-chart-simple"></i> Visualizer mode: <strong>${elements.viz_mo.value}</strong>`);
     });
 
     wheel(elements.index, () => 3);

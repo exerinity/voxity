@@ -25,9 +25,20 @@
     const params = new URLSearchParams(location.search);
     const src = params.get("img");
     const name = params.get("name") || "Voxity";
-    document.title = name;
-    if (!src) window.location.href = '/';
-    if (src) document.getElementById("img").src = src;
+
+    if (!src) {
+      location.href = "/";
+    } else {
+      document.title = name;
+      const img = document.getElementById("img");
+      img.src = decodeURIComponent(src);
+
+      img.onload = () => {
+        if (img.src.startsWith("blob:")) {
+          window.addEventListener("beforeunload", () => URL.revokeObjectURL(img.src));
+        }
+      };
+    }
   </script>
 </body>
 </html>

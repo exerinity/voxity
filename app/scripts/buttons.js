@@ -50,7 +50,7 @@ document.getElementById('fwd').addEventListener('click', debounce(() => {
     const t = Math.min(dur, (elements.player.currentTime || 0) + 10);
     elements.player.currentTime = t;
     elements.index.value = t;
-    stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(t)} / ${form_time(dur)}`);
+    stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: <strong>${form_time(t)}</strong> / <strong>${form_time(dur)}</strong>`);
 }));
 
 document.getElementById('stop').addEventListener('click', debounce(() => {
@@ -70,48 +70,52 @@ document.getElementById('hotkeys').addEventListener('click', debounce(() => {
 
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
-    if (globalart) {
-        msg(`<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart">`, `${act_truncate(metadata.album || metadata.title || "Cover art")}`);
-        setTimeout(() => {
-            const img = document.getElementById('msgart');
-            if (img) {
-                img.onclick = () => {
-                    const ua = navigator.userAgent;
-                    if (ua.includes('Firefox')) {
-                        window.open(globalart, '_blank');
-                    } else if (ua.includes('Chrome')) {
-                        //return msg(`You will need to right-click the image and select <strong>Open image in new tab</strong> on Chromium browsers.<br><small>For some reason, on Chromium, with base64 encoded images, <strong>window.open()</strong> gives you <strong>about:blank</strong> instead of the image.</small>`, 'Hold up...');
-                        window.open('/i/imageview?img=' + encodeURIComponent(globalart) + '&name=' + encodeURIComponent(metadata.title || 'Voxity art viewer'), '_blank');
-                    } else {
-                        window.open(globalart, '_blank');
-                    }
-                };
+    if (!globalart) return;
+
+    msg(
+        `<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart">`,
+        act_truncate(metadata.album || metadata.title || "Cover art")
+    );
+
+    setTimeout(() => {
+        const img = document.getElementById('msgart');
+        if (!img) return;
+
+        img.onclick = () => {
+            let blobUrl = globalart;
+
+            if (globalart.startsWith('data:')) {
+                const res = globalart.split(',');
+                const mime = res[0].match(/:(.*?);/)[1];
+                const bstr = atob(res[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) u8arr[n] = bstr.charCodeAt(n);
+                const blob = new Blob([u8arr], { type: mime });
+                blobUrl = URL.createObjectURL(blob);
             }
-        }, 0);
-    }
+
+            const name = encodeURIComponent(metadata.title || metadata.album || 'Voxity art viewer');
+            window.open(`/i/imageview.html?img=${encodeURIComponent(blobUrl)}&name=${name}`, '_blank');
+        };
+    }, 0);
 }));
 
 window.addEventListener('DOMContentLoaded', () => {
     (function settingsModal() {
         const THEMES = [
-            { 'grey': true, 'label': 'Grey' },
             { 'dim': true, 'label': 'Dim' },
             { 'lights-out': true, 'label': 'Lights out' },
             { 'high-contrast': true, 'label': 'High contrast' },
-            { 'very-high-contrast': true, 'label': 'Very high contrast' },
             { 'red': true, 'label': 'Red' },
             { 'blue': true, 'label': 'Blue' },
+            { 'green': true, 'label': 'Green' },
             { 'light': true, 'label': 'Light' },
-            { 'khaki': true, 'label': 'Khaki' },
-            { 'hacker': true, 'label': 'Hacker' },
             { 'synthwave': true, 'label': 'Synthwave' },
-            { 'paper': true, 'label': 'Paper' },
-            { 'neon-green': true, 'label': 'Neon green' },
-            { 'neon-blue': true, 'label': 'Neon blue' },
             { 'neon-purple': true, 'label': 'Neon purple' },
-            { 'under-the-sea': true, 'label': 'Under the sea' },
-            { 'twitter-dim': true, 'label': 'Twitter dim' }
+            { 'neon-blue': true, 'label': 'Neon blue' }
         ];
+
         const VIZ_OPTIONS = [
             { v: 'waveform', l: 'Waveform' },
             { v: 'spectrum', l: 'Spectrum' },
@@ -171,6 +175,26 @@ window.addEventListener('DOMContentLoaded', () => {
             const current = document.documentElement.getAttribute('data-theme') || currentTheme;
             const currentViz = (document.getElementById('viz-mode')?.value) || 'waveform';
             const accentValue = (document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff').trim() || '#8000ff';
+            const fpsValue = (function () {
+                try {
+                    const stored = parseInt(localStorage.getItem('au_fps'));
+                    if (!isNaN(stored) && stored >= 1 && stored <= 300) return stored;
+                } catch (e) { }
+                try {
+                    if (typeof FPS !== 'undefined' && Number(FPS)) return Number(FPS);
+                } catch (e) { }
+                return 60;
+            })();
+            const lrcValue = (function () {
+                try {
+                    const stored = parseInt(localStorage.getItem('au_lrc_amount'));
+                    if (!isNaN(stored) && stored >= 1 && stored <= 48) return stored;
+                } catch (e) { }
+                try {
+                    if (typeof lrc_amount !== 'undefined' && Number(lrc_amount)) return Number(lrc_amount);
+                } catch (e) { }
+                return 16;
+            })();
             const preferenceSection = typeof window.VoxitySettings === 'undefined' ? '' : `
                     <div style="margin-top: 1.5rem;">
                         <div style="display:flex;flex-direction:column;gap:0.75rem;">
@@ -203,6 +227,22 @@ window.addEventListener('DOMContentLoaded', () => {
                         <input id="accent_color" type="color" value="${accentValue}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
                     </div>
                     <div style="margin-top: 1.5rem;">
+                        <label for="fps_slider" style="display:block;margin-bottom:0.4rem;color:#bbb;">Visualizer FPS</label>
+                        <div style="display:flex;gap:0.5rem;align-items:center;">
+                            <input id="fps_slider" type="range" min="1" max="300" value="${fpsValue}" style="flex: 1;">
+                            <input id="fps_number" type="number" min="1" max="300" value="${fpsValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                        </div>
+                        <small style="color:#888;">1-300</small>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <label for="lrc_slider" style="display:block;margin-bottom:0.4rem;color:#bbb;">Lyrics amount</label>
+                        <div style="display:flex;gap:0.5rem;align-items:center;">
+                            <input id="lrc_slider" type="range" min="1" max="48" value="${lrcValue}" style="flex: 1;">
+                            <input id="lrc_number" type="number" min="1" max="48" value="${lrcValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                        </div>
+                        <small style="color:#888;">Number of lyrics lines shown (1-48)</small>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
                         <label for="vizmode_select" style="display:block;margin-bottom:0.4rem;color:#bbb;">Visualizer mode</label>
                         <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
                             ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
@@ -218,6 +258,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 const acin = document.getElementById('accent_color');
                 const vizSelect = document.getElementById('vizmode_select');
                 const hiddenViz = document.getElementById('viz-mode');
+                const fpsSlider = document.getElementById('fps_slider');
+                const fpsNumber = document.getElementById('fps_number');
+                const lrcSlider = document.getElementById('lrc_slider');
+                const lrcNumber = document.getElementById('lrc_number');
                 const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
 
                 const requestNotificationPermission = async () => {
@@ -278,6 +322,44 @@ window.addEventListener('DOMContentLoaded', () => {
                     vizSelect.addEventListener('change', applyChange);
                 }
 
+                if (fpsSlider && fpsNumber) {
+                    const syncFPS = (v) => {
+                        const num = parseInt(v, 10);
+                        const val = (isNaN(num) ? 60 : Math.max(1, Math.min(300, num)));
+                        try { fpsSlider.value = val; } catch { }
+                        try { fpsNumber.value = val; } catch { }
+                        try { FPS = val; } catch { }
+                        try { localStorage.setItem('au_fps', String(val)); } catch { }
+                        try {
+                            const ev = new Event('fpschange', { bubbles: true });
+                            window.dispatchEvent(ev);
+                        } catch { }
+                        try { stat_up(`<i class="fa-solid fa-chart-simple"></i> Visualizer FPS: <strong>${val}</strong>`); } catch { }
+                    };
+
+                    fpsSlider.addEventListener('input', () => syncFPS(fpsSlider.value));
+                    fpsNumber.addEventListener('change', () => syncFPS(fpsNumber.value));
+                }
+
+                if (lrcSlider && lrcNumber) {
+                    const syncLRC = (v) => {
+                        const num = parseInt(v, 10);
+                        const val = (isNaN(num) ? 16 : Math.max(1, Math.min(48, num)));
+                        try { lrcSlider.value = val; } catch { }
+                        try { lrcNumber.value = val; } catch { }
+                        try { lrc_amount = val; } catch { }
+                        try { localStorage.setItem('au_lrc_amount', String(val)); } catch { }
+                        try {
+                            const ev = new Event('lrcamountchange', { bubbles: true });
+                            window.dispatchEvent(ev);
+                        } catch { }
+                        try { stat_up(`<i class='fa-solid fa-list'></i> Showing up to <strong>${val}</strong> lines`); } catch { }
+                    };
+
+                    lrcSlider.addEventListener('input', () => syncLRC(lrcSlider.value));
+                    lrcNumber.addEventListener('change', () => syncLRC(lrcNumber.value));
+                }
+
                 if (settingsApi) {
                     PREFERENCE_TOGGLES.forEach(toggle => {
                         const input = document.getElementById(`pref_${toggle.key}`);
@@ -316,6 +398,22 @@ window.addEventListener('DOMContentLoaded', () => {
         } catch {
             apply(currentTheme);
         }
+
+        try {
+            const f = parseInt(localStorage.getItem('au_fps'));
+            if (!isNaN(f)) {
+                const clamped = Math.max(1, Math.min(300, f));
+                try { FPS = clamped; } catch { }
+            }
+        } catch { }
+
+        try {
+            const la = parseInt(localStorage.getItem('au_lrc_amount'));
+            if (!isNaN(la)) {
+                const clamped = Math.max(1, Math.min(48, la));
+                try { lrc_amount = clamped; } catch { }
+            }
+        } catch { }
 
         updateSettingsTooltip(document.documentElement.getAttribute('data-theme') || currentTheme);
 

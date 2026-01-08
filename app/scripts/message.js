@@ -22,6 +22,8 @@ async function msg(text, tbartext) {
     box.style.padding = '2rem 2.5rem 1.5rem 2.5rem';
     box.style.maxWidth = '420px';
     box.style.width = '90vw';
+    box.style.maxHeight = '80vh';
+    box.style.overflow = 'hidden';
     box.style.position = 'absolute';
     box.style.fontFamily = 'inherit';
     box.style.textAlign = 'center';
@@ -139,10 +141,14 @@ async function msg(text, tbartext) {
     content.style.fontSize = '1.08rem';
     content.style.lineHeight = '1.6';
 
-    const contentWrap = document.createElement('div');
-    contentWrap.style.marginBottom = '1rem';
-    contentWrap.style.cursor = 'default';
-    contentWrap.innerHTML = text;
+    const contentBody = document.createElement('div');
+    contentBody.id = 'msg-body';
+    contentBody.style.marginBottom = '1rem';
+    contentBody.style.cursor = 'default';
+    contentBody.style.overflowY = 'auto';
+    contentBody.style.paddingRight = '8px';
+    contentBody.style.maxHeight = 'calc(80vh - 6rem)';
+    contentBody.innerHTML = text;
 
     const footer = document.createElement('div');
     footer.className = 'pop';
@@ -156,7 +162,7 @@ async function msg(text, tbartext) {
     closeBtn.addEventListener('click', closeModal);
 
     footer.appendChild(closeBtn);
-    content.appendChild(contentWrap);
+    content.appendChild(contentBody);
     content.appendChild(footer);
 
     box.appendChild(title);
@@ -202,7 +208,7 @@ async function msg(text, tbartext) {
             title.innerHTML = `<i class=\"fa-solid fa-tower-broadcast\" style=\"color: var(--lyric-color); margin-right: 0.5em;\"></i> ${text || 'Voxity'}`;
         },
         setContent: (html) => {
-            contentWrap.innerHTML = html;
+            contentBody.innerHTML = html;
             try { eiv(); } catch {}
         }
     };

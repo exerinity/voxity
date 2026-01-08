@@ -37,20 +37,20 @@ document.addEventListener('keydown', (e) => {
 
     const scrub = (amount) => {
         player.currentTime = Math.max(0, Math.min(player.duration, player.currentTime + amount));
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(player.currentTime)} / ${form_time(player.duration)} (${amount >= 0 ? '+' : ''}${amount}s)`);
+        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: <strong>${form_time(player.currentTime)} / ${form_time(player.duration)} (${amount >= 0 ? '+' : ''}${amount}s)</strong>`);
     };
 
     const jumpToPercent = (percent) => {
         const dur = player.duration || 0;
         player.currentTime = dur * percent;
         const actual = (player.currentTime / dur) * 100 || 0;
-        stat_up(`<i class="fa-solid fa-music"></i> Jumping to ${actual.toFixed(0)}% (${form_time(player.currentTime)} / ${form_time(dur)})`);
+        stat_up(`<i class="fa-solid fa-music"></i> Jumping to <strong>${actual.toFixed(0)}% (${form_time(player.currentTime)} / ${form_time(dur)})</strong>`);
     };
 
     const changeVolume = (delta) => {
         volSlider.value = Math.max(0, Math.min(2, parseFloat(volSlider.value) + delta));
         player.volume = volSlider.value / 2;
-        stat_up(`${getVolumeIcon()} Volume: ${(player.volume * 100).toFixed(0)}%`);
+        stat_up(`${getVolumeIcon()} Volume: <strong>${(player.volume * 100).toFixed(0)}%</strong>`);
     };
 
     switch (e.code) {
