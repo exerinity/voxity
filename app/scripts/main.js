@@ -1025,9 +1025,6 @@ function init() {
     document.getElementById('preemptive_warn').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
 
-    document.getElementById('dropzone')?.addEventListener('contextmenu', (e) => e.preventDefault(), { once: true });
-    document.getElementById('droppedzone')?.addEventListener('contextmenu', (e) => e.preventDefault(), { once: true });
-
     elements.upload.addEventListener('change', function () {
         if (elements.upload.files && elements.upload.files.length > 0) {
             quf(elements.upload.files);
