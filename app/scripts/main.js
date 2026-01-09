@@ -1182,8 +1182,16 @@ function init() {
 
     elements.index.addEventListener('input', () => {
         elements.player.currentTime = elements.index.value;
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: <strong>${form_time(elements.index.value)} / ${form_time(elements.player.duration)}</strong>`);
+        stat_up(
+            `<i class="fa-solid fa-music"></i> Scrubbing to: <strong>
+        ${form_time(elements.index.value)} / ${form_time(elements.player.duration)}
+        (${elements.player.duration
+                ? Math.round((elements.index.value / elements.player.duration) * 100)
+                : 0}% done)
+        </strong>`
+        );
     });
+
 
     elements.viz_mo.addEventListener('change', () => {
         stat_up(`<i class="fa-solid fa-chart-simple"></i> Visualizer mode: <strong>${elements.viz_mo.value}</strong>`);

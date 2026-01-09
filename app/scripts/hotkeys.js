@@ -36,9 +36,22 @@ document.addEventListener('keydown', (e) => {
     };
 
     const scrub = (amount) => {
-        player.currentTime = Math.max(0, Math.min(player.duration, player.currentTime + amount));
-        stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: <strong>${form_time(player.currentTime)} / ${form_time(player.duration)} (${amount >= 0 ? '+' : ''}${amount}s)</strong>`);
+        player.currentTime = Math.max(
+            0,
+            Math.min(player.duration, player.currentTime + amount)
+        );
+
+        stat_up(
+            `<i class="fa-solid fa-music"></i> Scrubbing to: <strong>
+        ${form_time(player.currentTime)} / ${form_time(player.duration)}
+        (${amount >= 0 ? '+' : ''}${amount}s, ${player.duration
+                ? Math.round((player.currentTime / player.duration) * 100)
+                : 0
+            }% done)
+        </strong>`
+        );
     };
+
 
     const jumpToPercent = (percent) => {
         const dur = player.duration || 0;
