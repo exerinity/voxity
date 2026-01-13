@@ -1421,6 +1421,14 @@ if (document.readyState === 'loading') {
 }*/
 init();
 
+window.deferredInstallPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  window.deferredInstallPrompt = e;
+});
+
+
 const link = document.createElement('link');
 link.rel = 'icon';
 link.type = 'image/png';

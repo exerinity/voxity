@@ -1,8 +1,27 @@
 function changelogmsg() {
     msg(`<iframe src="/i/release_notes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/i/release_notes?standalone" target="_blank">Open this in new tab</a>'}`, 'Release notes');
 }
-function pwamsg() {
-    msg(`<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr><a href="/i/how_pwa?standalone" target="_blank">Open this in new tab</a>`, 'How to install Voxity');
+async function pwamsg() {
+    if (isPWA()) {
+        return;
+    }
+
+    if (window.deferredInstallPrompt) {
+        window.deferredInstallPrompt.prompt();
+
+        const { outcome } = await window.deferredInstallPrompt.userChoice;
+        window.deferredInstallPrompt = null;
+
+        if (outcome === "accepted") {
+            throw_error("Thanks for installing Voxity!", true);
+        } 
+        return;
+    }
+
+    msg(
+        `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
+        "Install Voxity"
+    );
 }
 
 
