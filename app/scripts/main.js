@@ -1411,14 +1411,6 @@ function act_truncate(text) {
     return text.slice(0, truncate_max) + '...';
 }
 
-// i commented this shit out because it seemed extremely overcomplicated
-/*let inited = false;
-function ri() { if (inited) return; inited = true; init(); }
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', ri, { once: true });
-} else {
-    ri();
-}*/
 init();
 
 window.deferredInstallPrompt = null;
@@ -1426,6 +1418,12 @@ window.deferredInstallPrompt = null;
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   window.deferredInstallPrompt = e;
+  try {
+    if (!isPWA()) {
+      const btn = document.getElementById('installpwa');
+      if (btn) btn.classList.remove('hidden');
+    }
+  } catch { }
 });
 
 

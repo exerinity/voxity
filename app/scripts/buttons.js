@@ -14,6 +14,7 @@ async function pwamsg() {
 
         if (outcome === "accepted") {
             throw_error("Thanks for installing Voxity!", true);
+            try { document.getElementById('installpwa')?.classList.add('hidden'); } catch { }
         } 
         return;
     }
@@ -86,6 +87,19 @@ function restr() {
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     msg(hotkeys_content, 'List of hotkeys');
 }));
+
+
+try {
+    const installBtn = document.getElementById('installpwa');
+    if (installBtn && typeof pwamsg === 'function') {
+        installBtn.addEventListener('click', debounce(() => {
+            pwamsg();
+        }));
+        if (!isPWA() && window.deferredInstallPrompt) {
+            installBtn.classList.remove('hidden');
+        }
+    }
+} catch { }
 
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
