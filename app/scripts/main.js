@@ -90,29 +90,30 @@ function buildSongNotificationKey(file) {
 
 function maybeNotifySongStart(file) {
     if (!shouldSendSongNotifications()) return;
+
     const key = buildSongNotificationKey(file);
     if (lastSongNotificationKey && key === lastSongNotificationKey) return;
     lastSongNotificationKey = key;
+
     const meta = typeof metadata !== 'undefined' ? metadata : {};
     const title = meta.title || file?.name || 'Unknown title';
     const artist = meta.artist || '';
-    const album = meta.album || '';
-    let body = `${title}`;
-    if (artist) {
-        body += ` by ${artist}`;
-    }
-    if (album) {
-        body += ` from ${album}`;
-    }
-    const icon = (typeof globalart !== 'undefined' && globalart) ? globalart : '/favicon.ico';
+
+    const body = 'by ' + artist || '';
+
+    const icon =
+        (typeof globalart !== 'undefined' && globalart)
+            ? globalart
+            : '/app/media/voxity.png';
+
     try {
         songNotificationCounter += 1;
-        new Notification('Now playing', {
+        new Notification(title, {
             body,
             icon,
             tag: `voxity-song-${songNotificationCounter}`,
         });
-    } catch { }
+    } catch {}
 }
 
 let stat_calls = 0;
