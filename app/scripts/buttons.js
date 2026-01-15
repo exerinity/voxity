@@ -25,6 +25,274 @@ async function pwamsg() {
     );
 }
 
+const SLEEP_TIMER_PRESETS = [
+    { label: '+1 min', seconds: 60 },
+    { label: '+5 min', seconds: 300 },
+    { label: '+15 min', seconds: 900 },
+    { label: '+45 min', seconds: 2700 },
+];
+
+const sleepTimerState = {
+    expiresAt: null,
+    timeoutId: null,
+    intervalId: null,
+};
+
+function getSleepTimerRemainingMs() {
+    if (!sleepTimerState.expiresAt) return 0;
+    return Math.max(0, sleepTimerState.expiresAt - Date.now());
+}
+
+function formatSleepTimerClock(ms) {
+    if (ms <= 0) return '00:00';
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+function formatSleepTimerDuration(ms) {
+    if (ms <= 0) return '0s';
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const parts = [];
+    if (hours) parts.push(`${hours}h`);
+    if (minutes) parts.push(`${minutes}m`);
+    if (seconds || parts.length === 0) parts.push(`${seconds}s`);
+    return parts.join(' ');
+}
+
+function resetSleepTimerState() {
+    if (sleepTimerState.timeoutId) {
+        clearTimeout(sleepTimerState.timeoutId);
+        sleepTimerState.timeoutId = null;
+    }
+    if (sleepTimerState.intervalId) {
+        clearInterval(sleepTimerState.intervalId);
+        sleepTimerState.intervalId = null;
+    }
+    sleepTimerState.expiresAt = null;
+}
+
+function updateSleepTimerUi() {
+    const remainingMs = getSleepTimerRemainingMs();
+    const active = Boolean(sleepTimerState.expiresAt && remainingMs > 0);
+    const countdownEl = document.getElementById('sleep_timer_countdown');
+    if (countdownEl) {
+        countdownEl.textContent = active ? formatSleepTimerClock(remainingMs) : '--:--';
+    }
+    const stateEl = document.getElementById('sleep_timer_state');
+    if (stateEl) {
+        stateEl.textContent = active
+            ? `Sleep timer active - ${formatSleepTimerDuration(remainingMs)} left`
+            : 'No sleep timer active';
+    }
+    const expiresEl = document.getElementById('sleep_timer_expires');
+    if (expiresEl) {
+        expiresEl.textContent = active
+            ? `Pausing at ${new Date(sleepTimerState.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+    }
+    const settingsHint = document.getElementById('sleep_timer_settings_hint');
+    if (settingsHint) {
+        settingsHint.textContent = active
+            ? `Active - ${formatSleepTimerDuration(remainingMs)} left`
+            : 'No sleep timer scheduled';
+    }
+    const activeSection = document.getElementById('sleep_timer_active_section');
+    if (activeSection) {
+        activeSection.hidden = !active;
+    }
+    const startSection = document.getElementById('sleep_timer_start_section');
+    if (startSection) {
+        startSection.hidden = active;
+    }
+    const cancelBtn = document.getElementById('sleep_timer_cancel');
+    if (cancelBtn) {
+        cancelBtn.hidden = !active;
+    }
+}
+
+function ensureSleepTimerTicker() {
+    if (sleepTimerState.intervalId) return;
+    sleepTimerState.intervalId = setInterval(() => {
+        if (!sleepTimerState.expiresAt) {
+            clearInterval(sleepTimerState.intervalId);
+            sleepTimerState.intervalId = null;
+            return;
+        }
+        const remaining = getSleepTimerRemainingMs();
+        if (remaining <= 0) {
+            completeSleepTimer();
+            return;
+        }
+        updateSleepTimerUi();
+    }, 500);
+}
+
+function scheduleSleepTimerFinishTimeout() {
+    if (sleepTimerState.timeoutId) {
+        clearTimeout(sleepTimerState.timeoutId);
+        sleepTimerState.timeoutId = null;
+    }
+    if (!sleepTimerState.expiresAt) return;
+    const remaining = Math.max(0, sleepTimerState.expiresAt - Date.now());
+    sleepTimerState.timeoutId = setTimeout(() => {
+        sleepTimerState.timeoutId = null;
+        completeSleepTimer();
+    }, remaining);
+    ensureSleepTimerTicker();
+}
+
+function startSleepTimer(seconds) {
+    const secs = Math.round(Number(seconds));
+    if (!Number.isFinite(secs) || secs <= 0) {
+        throw_error('Enter a duration greater than 0');
+        return false;
+    }
+    sleepTimerState.expiresAt = Date.now() + (secs * 1000);
+    scheduleSleepTimerFinishTimeout();
+    updateSleepTimerUi();
+    const remaining = getSleepTimerRemainingMs();
+    stat_up(`<i class="fa-solid fa-moon"></i> Sleep timer set (${formatSleepTimerDuration(remaining)} remaining)`);
+    return true;
+}
+
+function extendSleepTimer(seconds) {
+    const secs = Math.round(Number(seconds));
+    if (!Number.isFinite(secs) || secs <= 0) {
+        return false;
+    }
+    if (!sleepTimerState.expiresAt) {
+        return startSleepTimer(secs);
+    }
+    sleepTimerState.expiresAt += secs * 1000;
+    scheduleSleepTimerFinishTimeout();
+    updateSleepTimerUi();
+    const remaining = getSleepTimerRemainingMs();
+    stat_up(`<i class="fa-solid fa-moon"></i> Sleep timer extended (${formatSleepTimerDuration(secs * 1000)} added, ${formatSleepTimerDuration(remaining)} left)`);
+    return true;
+}
+
+function cancelSleepTimer(showFeedback = true) {
+    if (!sleepTimerState.expiresAt) {
+        return false;
+    }
+    resetSleepTimerState();
+    updateSleepTimerUi();
+    if (showFeedback) {
+        stat_up('<i class="fa-solid fa-moon"></i> Sleep timer cancelled');
+    }
+    return true;
+}
+
+function completeSleepTimer() {
+    if (!sleepTimerState.expiresAt) {
+        resetSleepTimerState();
+        updateSleepTimerUi();
+        return;
+    }
+    resetSleepTimerState();
+    updateSleepTimerUi();
+    try {
+        elements.player.pause();
+    } catch { }
+    try {
+        elements.time_sound.currentTime = 0;
+        elements.time_sound.play();
+        msg("Your sleep timer has successfully finished. The playback will now pause.", "Time's up");
+    } catch { }
+    stat_up('<i class="fa-solid fa-moon"></i> Sleep timer done');
+}
+
+async function openSleepTimerModal() {
+    const quickButtons = SLEEP_TIMER_PRESETS.map(btn => `<button data-sleep-timer-add="${btn.seconds}">${btn.label}</button>`).join('');
+    const modal = await msg(`
+        <div id="sleep_timer_modal_content">
+            <div id="sleep_timer_active_section" hidden>
+                <p id="sleep_timer_state">No sleep timer active</p>
+                <p id="sleep_timer_countdown">--:--</p>
+                <small id="sleep_timer_expires"></small>
+            </div>
+            <div id="sleep_timer_start_section">
+                <label for="sleep_timer_minutes">How long should Voxity keep playing?</label>
+                <input id="sleep_timer_minutes" type="number" min="1" value="15">
+                <button id="sleep_timer_start">Start timer</button>
+            </div>
+            <div>
+                <p><strong>Quick add</strong></p>
+                <div id="sleep_timer_quick_add" class="pop">
+                    ${quickButtons}
+                </div>
+                <small>These buttons stack, even while a timer is counting down.</small>
+            </div>
+            <div class="pop">
+                <button id="sleep_timer_cancel" hidden>Cancel sleep timer</button>
+            </div>
+        </div>
+    `, 'Sleep timer');
+
+    setTimeout(() => {
+        const root = modal?.overlay || document;
+        const minutesInput = root.querySelector('#sleep_timer_minutes');
+        const startBtn = root.querySelector('#sleep_timer_start');
+        const quickBtns = root.querySelectorAll('[data-sleep-timer-add]');
+        const cancelBtn = root.querySelector('#sleep_timer_cancel');
+
+        const handleStart = () => {
+            if (!minutesInput) return;
+            const minutes = parseFloat(minutesInput.value);
+            if (isNaN(minutes) || minutes <= 0) {
+                throw_error('Enter a valid number of minutes greater than 0');
+                minutesInput.focus();
+                return;
+            }
+            startSleepTimer(minutes * 60);
+            updateSleepTimerUi();
+            try { minutesInput.blur(); } catch { }
+        };
+
+        if (startBtn && minutesInput) {
+            startBtn.addEventListener('click', handleStart);
+            minutesInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleStart();
+                }
+            });
+        }
+
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const seconds = Number(btn.getAttribute('data-sleep-timer-add')) || 0;
+                extendSleepTimer(seconds);
+                updateSleepTimerUi();
+            });
+        });
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                const cancelled = cancelSleepTimer();
+                if (!cancelled) {
+                    throw_error('No sleep timer to cancel');
+                }
+                updateSleepTimerUi();
+            });
+        }
+
+        updateSleepTimerUi();
+        if (minutesInput && !sleepTimerState.expiresAt) {
+            minutesInput.focus();
+        }
+    }, 0);
+}
+
 
 document.getElementById('plps').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
@@ -204,7 +472,7 @@ window.addEventListener('DOMContentLoaded', () => {
             btn.title = `Open settings (theme: ${label})`;
         }
 
-        function openSettingsModal({ focusViz = false } = {}) {
+        async function openSettingsModal({ focusViz = false } = {}) {
             const current = document.documentElement.getAttribute('data-theme') || currentTheme;
             const currentViz = (document.getElementById('viz-mode')?.value) || 'waveform';
             const accentValue = (document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff').trim() || '#8000ff';
@@ -243,7 +511,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }).join('')}
                         </div>
                     </div>`;
-            msg(`<div style="margin: 1rem 0;">
+            const modal = await msg(`<div style="margin: 1rem 0;">
                         <label for="theme_select" style="display:block;margin-bottom:0.4rem;color:#bbb;">Theme</label>
                         <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
                             ${THEMES.map(t => {
@@ -283,6 +551,16 @@ window.addEventListener('DOMContentLoaded', () => {
                         <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">Tip: click the visualizer to open this</p>
                     </div>
                     ${preferenceSection}
+                    <div id="sleep_timer_settings_block">
+                        <p>
+                            <strong>Sleep timer</strong><br>
+                            <small id="sleep_timer_settings_hint">No sleep timer scheduled</small>
+                        </p>
+                        <div class="pop">
+                            <button id="open_sleep_timer_modal">Manage sleep timer</button>
+                        </div>
+                        <small>Automatically pause playback after the chosen time, even with this modal closed.</small>
+                    </div>
                     <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">If you do not see any icons, click here</a></small>
                 `, 'Voxity settings');
 
@@ -296,6 +574,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const lrcSlider = document.getElementById('lrc_slider');
                 const lrcNumber = document.getElementById('lrc_number');
                 const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
+                const sleepBtn = document.getElementById('open_sleep_timer_modal');
 
                 const requestNotificationPermission = async () => {
                     if (typeof window === 'undefined' || typeof Notification === 'undefined') {
@@ -418,6 +697,16 @@ window.addEventListener('DOMContentLoaded', () => {
                         visualizer.style.backgroundColor = color;
                     }
                 }
+
+                if (sleepBtn) {
+                    sleepBtn.addEventListener('click', () => {
+                        try {
+                            modal.close();
+                        } catch { }
+                        openSleepTimerModal();
+                    });
+                }
+                updateSleepTimerUi();
             }, 0);
         }
 
