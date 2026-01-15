@@ -1,5 +1,6 @@
 const deb_ms = 500;
 let lastact = 0;
+let showTimeRemaining = false;
 const elements = {
     app: document.getElementById('app'),
     player: document.getElementById('player'),
@@ -26,6 +27,7 @@ const elements = {
     success_sound: document.getElementById('sucsound'),
     error_sound: document.getElementById('errsound'),
     message_sound: document.getElementById('msgsound'),
+    time_sound: document.getElementById('timesound'),
     branding: document.getElementById('branding'),
     queueList: document.getElementById('queue-list'),
 };
@@ -1019,7 +1021,7 @@ function remq(idx) {
 
 function init() {
     if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent)) {
-        msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.<br><br>Also, clean that dirty fucking screen.`, 'Mobile')
+        msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.`);
     }
 
     playUiSound(elements.welcomesound);
@@ -1122,9 +1124,8 @@ function init() {
 
     elements.player.addEventListener('timeupdate', () => {
         const current = form_time(elements.player.currentTime);
-        const duration = form_time(elements.player.duration);
         elements.timeCurrent.innerHTML = current;
-        elements.timeDuration.innerHTML = duration;
+        updateTimeDurationDisplay(elements.player.currentTime, elements.player.duration);
         elements.index.max = elements.player.duration || 100;
         elements.index.value = elements.player.currentTime;
         update_lyrics();
@@ -1137,6 +1138,11 @@ function init() {
                 });
             } catch { }
         }
+    });
+
+    elements.timeDuration?.addEventListener('click', () => {
+        showTimeRemaining = !showTimeRemaining;
+        updateTimeDurationDisplay(elements.player.currentTime, elements.player.duration);
     });
 
     elements.vol.addEventListener('input', () => {
@@ -1280,6 +1286,21 @@ function form_time(t) {
     const m = Math.floor(t / 60);
     const s = Math.floor(t % 60);
     return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function updateTimeDurationDisplay(currentTime, duration) {
+    if (!elements.timeDuration) return;
+    if (showTimeRemaining) {
+        if (!Number.isFinite(duration)) {
+            elements.timeDuration.innerHTML = '--:--';
+            return;
+        }
+        const safeCurrent = Number.isFinite(currentTime) ? currentTime : 0;
+        const remaining = Math.max(0, duration - safeCurrent);
+        elements.timeDuration.innerHTML = `-${form_time(remaining)}`;
+        return;
+    }
+    elements.timeDuration.innerHTML = form_time(duration);
 }
 
 function maxtruncate() {

@@ -68,6 +68,13 @@ function formatSleepTimerDuration(ms) {
     return parts.join(' ');
 }
 
+function formatLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function resetSleepTimerState() {
     if (sleepTimerState.timeoutId) {
         clearTimeout(sleepTimerState.timeoutId);
@@ -90,32 +97,41 @@ function updateSleepTimerUi() {
     const stateEl = document.getElementById('sleep_timer_state');
     if (stateEl) {
         stateEl.textContent = active
-            ? `Sleep timer active - ${formatSleepTimerDuration(remainingMs)} left`
-            : 'No sleep timer active';
+            ? `Ongoing`
+            : 'Not running';
     }
     const expiresEl = document.getElementById('sleep_timer_expires');
     if (expiresEl) {
-        expiresEl.textContent = active
-            ? `Pausing at ${new Date(sleepTimerState.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-    }
-    const settingsHint = document.getElementById('sleep_timer_settings_hint');
-    if (settingsHint) {
-        settingsHint.textContent = active
-            ? `Active - ${formatSleepTimerDuration(remainingMs)} left`
-            : 'No sleep timer scheduled';
+        if (active) {
+            const expiresDate = new Date(sleepTimerState.expiresAt);
+            const now = new Date();
+            const differentDay = expiresDate.getFullYear() !== now.getFullYear()
+                || expiresDate.getMonth() !== now.getMonth()
+                || expiresDate.getDate() !== now.getDate();
+            const timeString = expiresDate.toLocaleTimeString([], { hour12: true });
+            const dateSuffix = differentDay ? ` on ${formatLocalDate(expiresDate)}` : '';
+            expiresEl.innerHTML = `Finishes at <strong>${timeString}${dateSuffix}</strong>`;
+        } else {
+            expiresEl.textContent = '';
+        }
     }
     const activeSection = document.getElementById('sleep_timer_active_section');
     if (activeSection) {
-        activeSection.hidden = !active;
+        activeSection.style.display = active ? 'flex' : 'none';
     }
     const startSection = document.getElementById('sleep_timer_start_section');
     if (startSection) {
-        startSection.hidden = active;
+        startSection.style.display = active ? 'none' : 'flex';
     }
     const cancelBtn = document.getElementById('sleep_timer_cancel');
     if (cancelBtn) {
-        cancelBtn.hidden = !active;
+        cancelBtn.style.display = active ? 'inline-flex' : 'none';
+    }
+    const inlineBtnLabel = document.getElementById('sleep_timer_button_label');
+    if (inlineBtnLabel) {
+        inlineBtnLabel.textContent = active
+            ? formatSleepTimerClock(remainingMs)
+            : '';
     }
 }
 
@@ -153,7 +169,7 @@ function scheduleSleepTimerFinishTimeout() {
 function startSleepTimer(seconds) {
     const secs = Math.round(Number(seconds));
     if (!Number.isFinite(secs) || secs <= 0) {
-        throw_error('Enter a duration greater than 0');
+        throw_error('Must be at least 1 second');
         return false;
     }
     sleepTimerState.expiresAt = Date.now() + (secs * 1000);
@@ -203,38 +219,51 @@ function completeSleepTimer() {
     try {
         elements.player.pause();
     } catch { }
+    const timerSoundEnabled = typeof shouldPlaySoundEffects === 'function'
+        ? shouldPlaySoundEffects()
+        : true;
+    if (timerSoundEnabled) {
+        try {
+            if (elements.time_sound) {
+                elements.time_sound.volume = elements.player.volume || 1; // to avoid blasting someone sound asleep hahah
+                if (typeof playUiSound === 'function') {
+                    playUiSound(elements.time_sound);
+                } else {
+                    elements.time_sound.currentTime = 0;
+                    elements.time_sound.play();
+                }
+            }
+        } catch { }
+    }
     try {
-        elements.time_sound.currentTime = 0;
-        elements.time_sound.play();
-        msg("Your sleep timer has successfully finished. The playback will now pause.", "Time's up");
+        msg('Your sleep timer has reached zero, <a href="/i/sleep_timer" onclick="event.preventDefault(); closeTopModal(); openSleepTimerModal();">but you can always add more time</a>', "Time's up");
     } catch { }
-    stat_up('<i class="fa-solid fa-moon"></i> Sleep timer done');
 }
 
 async function openSleepTimerModal() {
-    const quickButtons = SLEEP_TIMER_PRESETS.map(btn => `<button data-sleep-timer-add="${btn.seconds}">${btn.label}</button>`).join('');
+    const quickButtons = SLEEP_TIMER_PRESETS.map(btn => `<button data-sleep-timer-add="${btn.seconds}" style="flex:1 1 110px; padding:0.65rem 0.75rem; border-radius:4px; border:1px solid #444; background:#1f1f1f; color:white; cursor:pointer;">${btn.label}</button>`).join('');
     const modal = await msg(`
-        <div id="sleep_timer_modal_content">
-            <div id="sleep_timer_active_section" hidden>
-                <p id="sleep_timer_state">No sleep timer active</p>
-                <p id="sleep_timer_countdown">--:--</p>
-                <small id="sleep_timer_expires"></small>
+        <div style="margin:1rem 0; display:flex; flex-direction:column; gap:1.25rem; text-align:left;">
+            <div id="sleep_timer_active_section" style="display:none; flex-direction:column; gap:0.35rem;">
+                <p id="sleep_timer_state" style="margin:0; color:#bbb;">No sleep timer active</p>
+                <div id="sleep_timer_countdown" style="font-size:2.2rem; font-weight:700;">--:--</div>
+                <small id="sleep_timer_expires" style="color:#888;"></small>
             </div>
-            <div id="sleep_timer_start_section">
-                <label for="sleep_timer_minutes">How long should Voxity keep playing?</label>
-                <input id="sleep_timer_minutes" type="number" min="1" value="15">
-                <button id="sleep_timer_start">Start timer</button>
+            <div id="sleep_timer_start_section" style="display:flex; flex-direction:column; gap:0.6rem;">
+                <label for="sleep_timer_minutes" style="font-weight:600; color:#ddd;">How long?</label>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <input id="sleep_timer_minutes" type="number" min="1" value="15" style="flex:1; padding:0.5rem 0.75rem; border-radius:8px; border:1px solid #444; background:#1f1f1f; color:white;">
+                    <span style="color:#aaa;">minutes</span>
+                </div>
+                <button id="sleep_timer_start" style="padding:0.65rem 1rem; border:none; border-radius:8px; background:var(--lyric-color,#8000ff); color:white; font-weight:600; cursor:pointer;">Start timer!</button>
             </div>
             <div>
-                <p><strong>Quick add</strong></p>
-                <div id="sleep_timer_quick_add" class="pop">
+                <p style="margin:0 0 0.35rem; color:#bbb; font-weight:600;">Add (more) time</p>
+                <div id="sleep_timer_quick_add" style="display:flex; flex-wrap:wrap; gap:0.5rem;">
                     ${quickButtons}
                 </div>
-                <small>These buttons stack, even while a timer is counting down.</small>
             </div>
-            <div class="pop">
-                <button id="sleep_timer_cancel" hidden>Cancel sleep timer</button>
-            </div>
+            <button id="sleep_timer_cancel" style="display:none; padding:0.6rem 1rem; border:none; border-radius:8px; background:#3b1b1b; color:#ffb3b3; font-weight:600; cursor:pointer;">Cancel sleep timer</button>
         </div>
     `, 'Sleep timer');
 
@@ -249,7 +278,7 @@ async function openSleepTimerModal() {
             if (!minutesInput) return;
             const minutes = parseFloat(minutesInput.value);
             if (isNaN(minutes) || minutes <= 0) {
-                throw_error('Enter a valid number of minutes greater than 0');
+                throw_error('Must be at least 1 minute');
                 minutesInput.focus();
                 return;
             }
@@ -280,7 +309,7 @@ async function openSleepTimerModal() {
             cancelBtn.addEventListener('click', () => {
                 const cancelled = cancelSleepTimer();
                 if (!cancelled) {
-                    throw_error('No sleep timer to cancel');
+                    throw_error('No sleep timer to cancel - this button should not be visible currently, but whatever.');
                 }
                 updateSleepTimerUi();
             });
@@ -292,6 +321,15 @@ async function openSleepTimerModal() {
         }
     }, 0);
 }
+
+const sleepTimerTrigger = document.getElementById('open_sleep_timer_modal');
+if (sleepTimerTrigger) {
+    sleepTimerTrigger.addEventListener('click', debounce(() => {
+        openSleepTimerModal();
+    }));
+}
+
+updateSleepTimerUi();
 
 
 document.getElementById('plps').addEventListener('click', debounce(() => {
@@ -551,16 +589,6 @@ window.addEventListener('DOMContentLoaded', () => {
                         <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">Tip: click the visualizer to open this</p>
                     </div>
                     ${preferenceSection}
-                    <div id="sleep_timer_settings_block">
-                        <p>
-                            <strong>Sleep timer</strong><br>
-                            <small id="sleep_timer_settings_hint">No sleep timer scheduled</small>
-                        </p>
-                        <div class="pop">
-                            <button id="open_sleep_timer_modal">Manage sleep timer</button>
-                        </div>
-                        <small>Automatically pause playback after the chosen time, even with this modal closed.</small>
-                    </div>
                     <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">If you do not see any icons, click here</a></small>
                 `, 'Voxity settings');
 
@@ -574,7 +602,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 const lrcSlider = document.getElementById('lrc_slider');
                 const lrcNumber = document.getElementById('lrc_number');
                 const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
-                const sleepBtn = document.getElementById('open_sleep_timer_modal');
 
                 const requestNotificationPermission = async () => {
                     if (typeof window === 'undefined' || typeof Notification === 'undefined') {
@@ -698,14 +725,6 @@ window.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                if (sleepBtn) {
-                    sleepBtn.addEventListener('click', () => {
-                        try {
-                            modal.close();
-                        } catch { }
-                        openSleepTimerModal();
-                    });
-                }
                 updateSleepTimerUi();
             }, 0);
         }
