@@ -143,7 +143,7 @@ function stat_up(msg, ac = true) {
                 elements.status.innerHTML = `<i class="fa-solid fa-tower-broadcast bop"></i> Voxity`;
                 elements.branding.innerHTML = null;
             } else if (elements.player.paused) {
-                elements.status.innerHTML = `<i class="fa-solid fa-circle-pause"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
+                elements.status.innerHTML = `<i class="fa-solid fa-circle-pause fa-fade"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Voxity';
             } else {
                 calqueue();
@@ -1536,7 +1536,7 @@ async function loadFA() {
     const mod = await msg("Attempting to inject Font Awesome manually...");
     const fl = document.createElement('link');
     fl.rel = 'stylesheet';
-    fl.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
+    fl.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' + '?cachebuster=' + Date.now();
     fl.crossOrigin = 'anonymous';
     fl.referrerPolicy = 'no-referrer';
 

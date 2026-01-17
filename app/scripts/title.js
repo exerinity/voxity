@@ -6,7 +6,6 @@ function isTitleRotationEnabled() {
 }
 
 function setStaticTitle() {
-    console.log("call");
     setTimeout(() => {
     if (typeof metadata === "object" && metadata) {
         const title = metadata.title || "";
@@ -15,7 +14,7 @@ function setStaticTitle() {
         if (!title && !artist) {
             document.title = "Voxity";
         } else {
-            document.title = `${title || "Unknown Title"} by ${artist || "Unknown Artist"} / Voxity`;
+            document.title = `${title || "Unknown Title"} by ${artist || "Unknown Artist"}`;
         }
     } else {
         document.title = "Voxity";
@@ -108,3 +107,5 @@ document.addEventListener('voxity:settings-changed', (event) => {
 /* The goal of this is to make titles look better...
 if you have something like "Sometimes Things Get, Whatever / Random Album Title / deadmau5 / Voxity" all crammed into the title bar,
 it looks shitty, and 11 times out of 10, truncated. This doesn't matter much anyway, Voxity integrates with the Media Session API so.. */
+
+/* and the entire point of it can be defeated by turning it off hahah */

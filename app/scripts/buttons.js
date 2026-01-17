@@ -255,7 +255,7 @@ async function openSleepTimerModal() {
                     <input id="sleep_timer_minutes" type="number" min="1" value="15" style="flex:1; padding:0.5rem 0.75rem; border-radius:8px; border:1px solid #444; background:#1f1f1f; color:white;">
                     <span style="color:#aaa;">minutes</span>
                 </div>
-                <button id="sleep_timer_start" style="padding:0.65rem 1rem; border:none; border-radius:8px; background:var(--lyric-color,#8000ff); color:white; font-weight:600; cursor:pointer;">Start timer!</button>
+                <button id="sleep_timer_start" style="padding:0.65rem 1rem; border:none; border-radius:8px; background:#1f1f1f; color:white; font-weight:600; cursor:pointer;">Start</button>
             </div>
             <div>
                 <p style="margin:0 0 0.35rem; color:#bbb; font-weight:600;">Add (more) time</p>
