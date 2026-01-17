@@ -15,7 +15,7 @@ async function pwamsg() {
         if (outcome === "accepted") {
             throw_error("Thanks for installing Voxity!", true);
             try { document.getElementById('installpwa')?.classList.add('hidden'); } catch { }
-        } 
+        }
         return;
     }
 
@@ -456,12 +456,10 @@ window.addEventListener('DOMContentLoaded', () => {
         ];
 
         const VIZ_OPTIONS = [
-            { v: 'waveform', l: 'Waveform' },
             { v: 'spectrum', l: 'Spectrum' },
-            { v: 'bars', l: 'Bars' },
+            { v: 'waveform', l: 'Waveform' },
             { v: 'circular', l: 'Circular' },
-            { v: 'none', l: 'None (off)' },
-            { v: 'nonefr', l: 'Actually none' },
+            { v: 'none', l: 'Off' },
         ];
         const PREFERENCE_TOGGLES = [
             {
@@ -512,7 +510,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         async function openSettingsModal({ focusViz = false } = {}) {
             const current = document.documentElement.getAttribute('data-theme') || currentTheme;
-            const currentViz = (document.getElementById('viz-mode')?.value) || 'waveform';
+            const currentViz = (document.getElementById('viz-mode')?.value) || 'spectrum';
             const accentValue = (document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff').trim() || '#8000ff';
             const fpsValue = (function () {
                 try {

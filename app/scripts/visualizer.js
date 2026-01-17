@@ -1,24 +1,11 @@
-// configuration (tweak these if you want on the fly)
-let FPS = 30;
-let MAX_BINS = 256;
-let BAR_SKIP = 2;
-let INTENSITY = 1;
+let FPS = 60;
+let MAX_BINS = 512;
+let BAR_SKIP = 1;
+let INTENSITY = 1.25;
 let viz_color = '#8000ff';
 
-// state
 let frame_id = null;
 let lastFrame = 0;
-
-let textX = 100;
-let textY = 100;
-let textVX = 0.4;
-let textVY = 0.4;
-let textColor = randomColor();
-
-// for the "none" mode
-function randomColor() {
-    return `hsl(${Math.random() * 360},100%,50%)`;
-}
 
 function vis_init() {
     const canvas = document.getElementById('visualizer');
@@ -27,34 +14,41 @@ function vis_init() {
     const analyser = getAnalyser();
     if (!analyser) return;
 
-    analyser.fftSize = 1024;
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.7;
 
     const len = Math.min(analyser.frequencyBinCount, MAX_BINS);
     const freqData = new Uint8Array(len);
     const timeData = new Uint8Array(len);
 
-    const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
     const W = canvas.clientWidth;
     const H = canvas.clientHeight;
-    canvas.width = W * DPR * 0.75;
-    canvas.height = H * DPR * 0.75;
-    ctx.scale(DPR, DPR);
 
-    ctx.font = "bold 20px Inter, sans-serif";
-    const TEXT = "voxity";
-    const TEXT_W = ctx.measureText(TEXT).width;
-    const TEXT_H = 20;
+    canvas.width  = Math.floor(W * DPR);
+    canvas.height = Math.floor(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
 
     if (frame_id) cancelAnimationFrame(frame_id);
+
+    modeSel.addEventListener('change', () => {
+        if (modeSel.value === 'none') {
+            ctx.clearRect(0, 0, W, H);
+        }
+    });
 
     function draw(t) {
         frame_id = requestAnimationFrame(draw);
         if (t - lastFrame < 1000 / FPS) return;
         lastFrame = t;
 
-        ctx.clearRect(0, 0, W, H);
-
         const mode = modeSel.value;
+        if (mode === "none") return;
+
+        ctx.clearRect(0, 0, W, H);
 
         if (mode === "waveform") {
             analyser.getByteTimeDomainData(timeData);
@@ -67,8 +61,8 @@ function vis_init() {
             let x = 0;
 
             for (let i = 0; i < len; i += BAR_SKIP) {
-                const v = timeData[i] / 128.0;
-                const y = (v * H) / 2;
+                const v = (timeData[i] - 128) / 128;
+                const y = H / 2 + v * H * 0.45;
                 i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
                 x += step * BAR_SKIP;
             }
@@ -77,9 +71,7 @@ function vis_init() {
             return;
         }
 
-        if (mode !== "none" && mode !== "nonefr") {
-            analyser.getByteFrequencyData(freqData);
-        }
+        analyser.getByteFrequencyData(freqData);
 
         if (mode === "bars" || mode === "spectrum") {
             const barW = W / (len / BAR_SKIP);
@@ -99,40 +91,28 @@ function vis_init() {
         if (mode === "circular") {
             const cx = W / 2;
             const cy = H / 2;
-            const baseR = Math.min(W, H) * 0.25;
+            const baseR = Math.min(W, H) * 0.28;
 
             ctx.strokeStyle = viz_color;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
+            ctx.lineWidth = 1.5;
 
             for (let i = 0; i < len; i += BAR_SKIP) {
                 const a = (i / len) * Math.PI * 2;
-                const r = baseR + (freqData[i] / 255) * baseR * 0.8;
-                const x = cx + Math.cos(a) * r;
-                const y = cy + Math.sin(a) * r;
-                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                const v = freqData[i] / 255;
+
+                const r1 = baseR;
+                const r2 = baseR + v * baseR * 1.2 * INTENSITY;
+
+                const x1 = cx + Math.cos(a) * r1;
+                const y1 = cy + Math.sin(a) * r1;
+                const x2 = cx + Math.cos(a) * r2;
+                const y2 = cy + Math.sin(a) * r2;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
             }
-
-            ctx.closePath();
-            ctx.stroke();
-            return;
-        }
-
-        if (mode === "none") {
-            textX += textVX;
-            textY += textVY;
-
-            if (textX <= 0 || textX + TEXT_W >= W) {
-                textVX *= -1;
-                textColor = randomColor();
-            }
-            if (textY <= TEXT_H || textY >= H) {
-                textVY *= -1;
-                textColor = randomColor();
-            }
-
-            ctx.fillStyle = textColor;
-            ctx.fillText(TEXT, textX, textY);
         }
     }
 
@@ -141,11 +121,7 @@ function vis_init() {
 
 try {
     window.addEventListener('fpschange', () => {
-        try { lastFrame = 0; } catch {};
-        try {
-            if (!frame_id) {
-                try { vis_init(); } catch (e) { }
-            }
-        } catch (e) { }
+        lastFrame = 0;
+        if (!frame_id) vis_init();
     });
-} catch (e) { }
+} catch {}
