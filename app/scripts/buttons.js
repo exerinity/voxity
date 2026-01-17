@@ -366,9 +366,23 @@ document.getElementById('branding').addEventListener('click', debounce(() => {
     return msg(about_content, "About Voxity");
 }));
 
-document.getElementById('queuehead').addEventListener('click', debounce(() => {
-    calqueue();
-}));
+const queueHead = document.getElementById('queuehead');
+if (queueHead) {
+    queueHead.addEventListener('click', debounce(() => {
+        calqueue();
+    }));
+
+    const scrollCurrentTrackIntoView = debounce(() => {
+        if (!scrollCurrentQueueItemIntoView()) {
+            throw_error('No track playing!');
+        }
+    });
+
+    queueHead.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+        scrollCurrentTrackIntoView();
+    });
+}
 
 document.getElementById('fwd').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');

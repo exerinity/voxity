@@ -1496,6 +1496,41 @@ function calqueue() {
     }
 }
 
+function scrollCurrentQueueItemIntoView(options = {}) {
+    const list = elements.queueList;
+    if (!list) return false;
+
+    const activeItem = list.querySelector('.queue-item.active');
+    if (!activeItem) return false;
+
+    const focused = list.querySelector('.queue-item.focus');
+    if (focused && focused !== activeItem) {
+        focused.classList.remove('focus');
+    }
+    activeItem.classList.add('focus');
+
+    const scrollOptions = {
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest',
+    };
+    if (options && typeof options === 'object') {
+        if (options.behavior) scrollOptions.behavior = options.behavior;
+        if (options.block) scrollOptions.block = options.block;
+        if (options.inline) scrollOptions.inline = options.inline;
+    }
+
+    try {
+        activeItem.scrollIntoView(scrollOptions);
+    } catch {
+        try {
+            activeItem.scrollIntoView();
+        } catch { }
+    }
+
+    return true;
+}
+
 async function loadFA() {
     closeTopModal(); // for if in settings or welcome lolz
     const mod = await msg("Attempting to inject Font Awesome manually...");
