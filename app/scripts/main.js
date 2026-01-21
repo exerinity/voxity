@@ -244,6 +244,7 @@ let shufflePool = [];
 let shuffleHistory = [];
 let shuffleButton = null;
 const durationLoadQueue = [];
+let durationLoadDelay = 100;
 let durationLoadInProgress = false;
 let durationAudio = null;
 let durationLoadUnsupportedCount = 0;
@@ -428,7 +429,7 @@ function processNextDurationLoad() {
             audio.removeAttribute('src');
             audio.load();
         } catch { null }
-        processNextDurationLoad();
+        setTimeout(processNextDurationLoad, durationLoadDelay);
     }
 
     function handleLoaded() {

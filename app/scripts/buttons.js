@@ -1,4 +1,4 @@
-function changelogmsg() {
+function relnote() {
     msg(`<iframe src="/i/release_notes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/i/release_notes?standalone" target="_blank">Open this in new tab</a>'}`, 'Release notes');
 }
 async function pwamsg() {
@@ -13,7 +13,7 @@ async function pwamsg() {
         window.deferredInstallPrompt = null;
 
         if (outcome === "accepted") {
-            throw_error("Thanks for installing Voxity!", true);
+            throw_error("Thanks for installing Voxity! <i class='fa-solid fa-heart' style='color:red;'></i>", true);
             try { document.getElementById('installpwa')?.classList.add('hidden'); } catch { }
         }
         return;

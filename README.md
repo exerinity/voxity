@@ -6,7 +6,7 @@ I am not good at READMEs, and I don't like duplicating [content from my site (fo
 ![](https://vienna.exerinity.dev/ES80EWxqo5.png)
 
 # License
-This project is licensed under the MIT license. See the [license](license) file for details.
+This project is licensed under the MIT license. See the [license](LICENSE) file for details.
 
 # Things used
 - **Twemoji**: https://twemoji.twitter.com / https://github.com/twitter/twemoji
