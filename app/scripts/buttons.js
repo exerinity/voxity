@@ -382,6 +382,15 @@ if (queueHead) {
         event.preventDefault();
         scrollCurrentTrackIntoView();
     });
+
+    queueHead.addEventListener('auxclick', (event) => {
+        if (event.button !== 1) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (typeof openQueueSearchModal === 'function') {
+            openQueueSearchModal();
+        }
+    });
 }
 
 document.getElementById('fwd').addEventListener('click', debounce(() => {
