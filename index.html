@@ -39,7 +39,8 @@
     <audio src="/app/media/error.ogg" id="errsound" preload="auto"></audio>
     <audio src="/app/media/message.ogg" id="msgsound" preload="auto"></audio>
     <audio src="/app/media/done.ogg" id="donesound" preload="auto"></audio>
-    <audio src="/app/media/time.ogg" id="timesound" preload="auto"></audio> <!-- this is the "finished rendering" sound from FL Studio -->
+    <audio src="/app/media/time.ogg" id="timesound" preload="auto"></audio>
+    <!-- this is the "finished rendering" sound from FL Studio -->
     <div id="preemptive_warn"
         style="background: var(--dialog-bg);    color: var(--fg);    border-radius: 16px;    box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 32px;    padding: 2rem 2.5rem 1.5rem;    max-width: 720px;    width: 90vw;    position: absolute;    font-family: inherit;    text-align: center;    animation: 0.2s ease 0s 1 normal none running zin;    left: 500px;    top: 500px;">
         <div
@@ -97,6 +98,8 @@
                     <button id="clearqueue" title="Clear queue"><i class="fa-solid fa-trash"></i></button>
                     <button id="open_sleep_timer_modal" class="bop" title="Manage the sleep timer">
                         <i class="fa-solid fa-moon"></i> <span id="sleep_timer_button_label"></span>
+                        <button onclick="openQueueSearchModal()" title="Search items in the queue"><i
+                                class="fa-solid fa-search"></i></button>
                     </button>
                 </div>
                 <div class="controls">
