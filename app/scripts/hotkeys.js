@@ -88,6 +88,15 @@ document.addEventListener('keydown', (e) => {
             }
             break;
 
+        case 'KeyF':
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                if (typeof openQueueSearchModal === 'function') {
+                    openQueueSearchModal();
+                }
+            }
+            break;
+
         case 'KeyT':
             document.getElementById('loop')?.click();
             break;
