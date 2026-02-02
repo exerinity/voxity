@@ -12,12 +12,19 @@
     font-style: italic;
 }
 
+@font-face {
+    font-family: 'GSansFlex';
+    src: url('/app/fonts/googlesansflex/GoogleSansFlex-VariableFont_GRAD\,ROND\,opsz\,slnt\,wdth\,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+}
+
 body {
     margin: 0;
     padding: 0;
     background-color: var(--bg);
     color: var(--fg);
-    font-family: 'Inter', sans-serif;
+    font-family: 'GSansFlex', sans-serif;
     overflow-x: hidden;
     overflow-y: auto;
     user-select: none;

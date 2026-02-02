@@ -34,7 +34,7 @@
     --spinner-trk: #061f30;
     --shadow: #2226;
     --shadow-strong: #2228;
-    --font-primary: 'Inter', sans-serif;
+    --font-primary: 'GSansFlex', sans-serif;
 }
 
 
@@ -198,7 +198,7 @@
     --shadow: #00000088;
     --shadow-strong: #000000cc;
 
-    --font-primary: 'Inter', sans-serif;
+    --font-primary: 'GSansFlex', sans-serif;
     --panel-gradient: linear-gradient(145deg, #1a001f, #330033);
     --control-gradient: linear-gradient(to bottom, #330033, #10001a);
     --transition-fast: 0.15s;
@@ -236,7 +236,7 @@
     --shadow: #0006;
     --shadow-strong: #0008;
 
-    --font-primary: 'Inter', sans-serif;
+    --font-primary: 'GSansFlex', sans-serif;
 
     --panel-gradient: linear-gradient(145deg, #1a0000, #330000);
     --control-gradient: linear-gradient(to bottom, #2a0000, #0f0000);
@@ -273,7 +273,7 @@
     --shadow: #bf00ff66;
     --shadow-strong: #d400ff99;
 
-    --font-primary: 'Orbitron', 'Rajdhani', 'Inter', sans-serif;
+    --font-primary: 'Orbitron', 'Rajdhani', 'GSansFlex', sans-serif;
 
     --panel-gradient: linear-gradient(145deg, #1b0033, #3d0091);
     --control-gradient: linear-gradient(to bottom, #4c0080, #12001f);
@@ -316,7 +316,7 @@
     --shadow: #0080ff66;
     --shadow-strong: #00aaff99;
 
-    --font-primary: 'Orbitron', 'Rajdhani', 'Inter', sans-serif;
+    --font-primary: 'Orbitron', 'Rajdhani', 'GSansFlex', sans-serif;
 
     --panel-gradient: linear-gradient(145deg, #00152b, #002a55);
     --control-gradient: linear-gradient(to bottom, #003366, #000b1a);
@@ -359,7 +359,7 @@
     --shadow: #0006;
     --shadow-strong: #0009;
 
-    --font-primary: 'Inter', sans-serif;
+    --font-primary: 'GSansFlex', sans-serif;
 
     --panel-gradient: linear-gradient(145deg, #001c13, #003322);
     --control-gradient: linear-gradient(to bottom, #002d22, #001a12);

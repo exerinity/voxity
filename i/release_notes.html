@@ -5,13 +5,20 @@
     <meta charset="utf-8">
     <title>Release notes</title>
     <style>
+        @font-face {
+            font-family: 'GSansFlex';
+            src: url('/app/fonts/googlesansflex/GoogleSansFlex-VariableFont_GRAD\,ROND\,opsz\,slnt\,wdth\,wght.ttf') format('truetype');
+            font-weight: 100 900;
+            font-style: normal;
+        }
+
         html,
         body {
             height: 100%;
             margin: 0;
             background: #000;
             color: #fff;
-            font-family: 'Inter', sans-serif;
+            font-family: 'GSansFlex', sans-serif;
         }
 
         #i {
@@ -48,6 +55,10 @@
                 href="https://twitter.com/messages/compose?recipient_id=1988378945625223168" target="_blank"
                 title="DM me on Twitter">let me know!</a></p>
         <h1>2026</h1>
+        <h2>February</h2>
+        <h3>2nd (v84a)</h3>
+        <p>Switched default font from Inter to Google Sans Flex (the Inter files remain, this may revert, just testing
+            it out)</p>
         <h2>January</h2>
         <h3>26th (v84)</h3>
         <p>New queue searching function: middle-click the queue header or press CTRL+F to enter it (or the button)</p>
@@ -55,7 +66,8 @@
         <ul>
             <li>Voxity now waits 100 milliseconds between loading tracks, rudimental performance tweak (you can change
                 this by changing the durationLoadDelay value; might integrate to settings)</li>
-            <li>Removed "Search " and "Paste " from the two lyrics-related buttons; the icons are kinda self-explanatory, plus the title text</li>
+            <li>Removed "Search " and "Paste " from the two lyrics-related buttons; the icons are kinda
+                self-explanatory, plus the title text</li>
         </ul>
         <h3>17th (v83)</h3>
         <ul>

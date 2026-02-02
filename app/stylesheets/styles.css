@@ -3,14 +3,14 @@
 */
 
 @font-face {
-    font-family: 'Inter';
+    font-family: 'GSansFlex';
     src: url('/app/fonts/inter/Inter-VariableFont_opsz,wght.ttf') format('truetype');
     font-weight: 100 900;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Inter';
+    font-family: 'GSansFlex';
     src: url('/app/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
     font-weight: 100 900;
     font-style: italic;
@@ -21,7 +21,7 @@ body {
     padding: 0;
     background-color: var(--bg);
     color: var(--fg);
-    font-family: 'Inter', sans-serif;
+    font-family: 'GSansFlex', sans-serif;
     overflow-x: hidden;
     overflow-y: auto;
     user-select: none;
