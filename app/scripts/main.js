@@ -1,4 +1,4 @@
-const deb_ms = 500;
+const deb_ms = 300;
 let lastact = 0;
 let showTimeRemaining = false;
 const elements = {
@@ -30,7 +30,9 @@ const elements = {
     time_sound: document.getElementById('timesound'),
     branding: document.getElementById('branding'),
     queueList: document.getElementById('queue-list'),
+    rescue: document.getElementById('rescue'),
 };
+rescue.innerHTML = rescue.innerHTML + '<br><strong>main.js has responded. The app should now load...</strong>'; // you will probably never see this before init fires
 
 function shouldPlaySoundEffects() {
     return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('soundEffects');

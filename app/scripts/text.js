@@ -9,6 +9,7 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
           <li><strong>R</strong>: restart track</li>
           <li><strong>T</strong>: toggle loop</li>
           <li><strong>H</strong>: toggle shuffle</li>
+          <li><strong>Ctrl + F</strong>: open search</li>
         </ul>
       </details>
     </li>

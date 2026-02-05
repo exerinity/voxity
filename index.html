@@ -48,13 +48,15 @@
             <i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> Voxity
         </div>
         <div style="margin-top: 0.5rem; font-size: 1.08rem; line-height: 1.6;">
-            <div style="margin-bottom:1rem; cursor: default;">Something broke trying to load Voxity. Make sure
+            <div style="margin-bottom:1rem; cursor: default;" id="rescue">
+                <script type="text/javascript">document.write(`Something broke trying to load Voxity. Make sure
                 JavaScript is enabled and that "main.js" can be accessed (i.e., you are not blocking it) before
                 refreshing. If that still fails, perform a hard refresh with CTRL/Command+Shift+R or <a
                     href="/?cachebuster=9999999999999999999999">try a cache buster</a>.
                 <br><small>PS: Even if you don't see this, everything might still be broken. Good luck, comrade. This
                     message is only removed by main.js once the page loads. More can go wrong and this box won't catch
-                    it.</small>
+                    it.</small><hr>JavaScript is <strong style="color:green;">enabled</strong>. <a href="/app/scripts/main.js" target="_blank">Please check main.js is accessible</a>.<br><a href="https://exerinity.com/i/email">I need help!</a>`);</script> <!-- for if javascript works, but if something else doesnt -->
+                <noscript>JavaScript is <strong style="color:red;">disabled</strong>. Please enable it to continue. <a href="https://support.google.com/adsense/answer/12654?hl=en" target="_blank">Learn how...</a></noscript> <!-- for simply if javascript is disabled -->
             </div>
         </div>
     </div>
