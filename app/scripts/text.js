@@ -42,15 +42,15 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
       </details>
     </li>
   </ul>
-  <i style="font-size:0.9rem;color:#888;">You can also scroll over bars like volume and speed to change them</i>
+  <i style="font-size:0.9rem;color:#888;">You can also scroll your mouse over the sliders</i>
   `;
 
 const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
-        <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a href="/i/release_notes" onclick="event.preventDefault(); changelogmsg()" style="cursor: pointer">Release notes</a><br>
+        <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a href="/i/release_notes" onclick="event.preventDefault(); relnote()" style="cursor: pointer">Release notes</a><br>
                 <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">
           ${isPWA() ? "Voxity is currently installed as a PWA, nice!" : "Tip: You should install Voxity as a PWA. <a href='/i/how_pwa' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
         </p>
         <hr>
         <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank">LRCLIB</a> as a lyrics source.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
         <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Twitter</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a> - <a href="https://github.com/exerinity/voxity" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
-        <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">(if you do not see any icons, click here)</a></small>`;
+        <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>`;
