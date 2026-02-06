@@ -56,7 +56,6 @@ function get_meta(file) {
 
             const cover = document.getElementById('cover-art');
             if (metadata.picture) {
-                sfa(metadata.picture.data ? URL.createObjectURL(new Blob([new Uint8Array(metadata.picture.data)], { type: metadata.picture.format })) : '/favicon.ico');
                 const arr = new Uint8Array(metadata.picture.data);
                 let binary = '';
                 const cs = 8192;
@@ -107,13 +106,13 @@ function get_meta(file) {
             } catch { null }
         },
         onError: function () {
-            metadata.title = truncate(file.name) || 'Unknown title';
+            metadata.title = act_truncate(file.name) || 'Unknown title';
             metadata.artist = 'Unknown artist';
             metadata.album = 'Unknown album';
 
             document.getElementById('artist').innerHTML = '';
             document.getElementById('album').innerHTML = '';
-            document.getElementById('np2').innerHTML = truncate(file.name || 'Unknown track');
+            document.getElementById('np2').innerHTML = act_truncate(file.name || 'Unknown track');
             document.title = '';
             document.getElementById('cover-art').classList.add('hidden');
             globalart = '';
