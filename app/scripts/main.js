@@ -149,7 +149,6 @@ function stat_up(msg, ac = true) {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-pause fa-fade"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Voxity';
             } else {
-                calqueue();
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> Now playing: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Voxity';
             }
@@ -470,7 +469,7 @@ function processNextDurationLoad() {
         const idx = findIndexById(nextItem.id);
         const pos = idx !== -1 ? idx + 1 : (queue.length ? queue.length : 1);
         const total = queue.length || 1;
-        stat_up(`<i class="fa-solid fa-people-carry-box"></i> Loading ${nextItem.displayName || nextItem.file.name} (${pos} of ${total})...`);
+        stat_up(`<i class="fa-solid fa-people-carry-box"></i> Processing: <strong>${nextItem.displayName || nextItem.file.name}</strong> (${pos} of ${total})...`);
         calqueue();
 
         const durationValue = Number.isFinite(audio.duration) ? audio.duration : NaN;
@@ -853,7 +852,6 @@ function quf(fileList, options = {}) {
         } catch { null }
     }
     rqueue();
-    calqueue();
     if (isemp && queue.length > 0) {
         pindex(0);
     }
