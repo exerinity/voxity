@@ -116,8 +116,9 @@ function maybeNotifySongStart(file) {
             body,
             icon,
             tag: `voxity-song-${songNotificationCounter}`,
+            silent: true,
         });
-    } catch {}
+    } catch { }
 }
 
 let stat_calls = 0;
@@ -215,7 +216,6 @@ function play(file, name) {
             vis_init();
             elements.title2.innerHTML = name;
             get_meta(file);
-            sfa(metadata.picture && metadata.picture.data ? URL.createObjectURL(new Blob([new Uint8Array(metadata.picture.data)], { type: metadata.picture.format })) : '/favicon.ico');
             const ra = parseFloat(elements.vol.value);
             elements.player.volume = isNaN(ra) ? 1 : Math.max(0, Math.min(1, ra / 2));
             const rt = parseFloat(elements.speed.value);
@@ -403,12 +403,42 @@ function processNextDurationLoad() {
     const nextItem = durationLoadQueue.shift();
     if (!nextItem) {
         if (durationLoadUnsupportedCount > 0) {
-            if (durationLoadUnsupportedCount < 10 && durationLoadUnsupportedFiles.length > 0) {
-                const list = durationLoadUnsupportedFiles.map(n => `${n}`).join('<br>');
-                msg(`${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. If you're certain they work with browsers, <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.<br><br><strong>Broken files:</strong><br>${list}`);
+            if (durationLoadUnsupportedFiles.length > 0) {
+                const list = durationLoadUnsupportedFiles
+                    .map(n => `${n}`)
+                    .join('<br>');
+
+                if (durationLoadUnsupportedCount < 10) {
+                    msg(
+                        `${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. 
+                If you're certain they work with browsers, 
+                <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.
+                <br><br>
+                <strong>Broken files:</strong><br>
+                ${list}`
+                    );
+                } else {
+                    msg(
+                        `${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. 
+                If you're certain they work with browsers, 
+                <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.
+                <br><br>
+                <details>
+                    <summary><strong>Broken files</strong></summary>
+                    <div style="margin-top: 8px;">
+                        ${list}
+                    </div>
+                </details>`
+                    );
+                }
             } else {
-                msg(`${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. If you're certain they work with browsers, <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.`);
+                msg(
+                    `${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. 
+            If you're certain they work with browsers, 
+            <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.`
+                );
             }
+
             durationLoadUnsupportedCount = 0;
             durationLoadUnsupportedFiles = [];
         }
@@ -973,7 +1003,6 @@ function resetPlayerState() {
         cover.removeAttribute('alt');
         cover.removeAttribute('title');
     }
-    sfa('/favicon.ico');
     if ('mediaSession' in navigator) {
         try { navigator.mediaSession.playbackState = 'none'; } catch { }
     }
@@ -1099,7 +1128,6 @@ function init() {
         playUiSound(document.getElementById('donesound'));
         throw_error('Finished playing queue', true);
         document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
-        sfa('/favicon.ico');
         if ('mediaSession' in navigator) {
             try { navigator.mediaSession.playbackState = 'paused'; } catch { }
         }
@@ -1443,40 +1471,22 @@ init();
 window.deferredInstallPrompt = null;
 
 window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  window.deferredInstallPrompt = e;
-  try {
-    if (!isPWA()) {
-      const btn = document.getElementById('installpwa');
-      if (btn) btn.classList.remove('hidden');
-    }
-  } catch { }
-});
-
-
-const link = document.createElement('link');
-link.rel = 'icon';
-link.type = 'image/png';
-link.href = '/favicon.ico';
-document.getElementsByTagName('head')[0].appendChild(link);
-function sfa(url) {
-    if (!url) return;
+    e.preventDefault();
+    window.deferredInstallPrompt = e;
     try {
-        link.href = url;
-    } catch { null }
-}
+        if (!isPWA()) {
+            const btn = document.getElementById('installpwa');
+            if (btn) btn.classList.remove('hidden');
+        }
+    } catch { }
+});
 
 if (typeof localStorage !== 'undefined') {
     const isFirstVisit = !localStorage.getItem('hai');
     if (isFirstVisit) {
         try { localStorage.setItem('hai', '1'); } catch { null }
         setTimeout(() => {
-            msg(`<p>Voxity is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files to get started!</p>
-<p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.dev/projects/voxity" target="_blank" rel="noopener">https://exerinity.dev/projects/voxity</a></p>
-<p><a href="https://exerinity.dev/projects/voxity/screenshots" target="_blank" rel="noopener">View some screenshots of Voxity here</a></p>
-<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
-<br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">(if you do not see any icons, click here)</a></small>
-`, "Welcome to Voxity");
+            welcome();
         }, 2500);
 
         stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Voxity!');
@@ -1760,4 +1770,13 @@ async function loadFA() {
 
     fl.onload = () => mod.setContent('Icons should have loaded <i class="fa-solid fa-font-awesome"></i>');
     fl.onerror = () => throw_error("Could not load icons");
+}
+
+function welcome() {
+    msg(`<p>Voxity is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files to get started!</p>
+<p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.dev/projects/voxity" target="_blank" rel="noopener">https://exerinity.dev/projects/voxity</a></p>
+<p><a href="https://exerinity.dev/projects/voxity/screenshots" target="_blank" rel="noopener">View some screenshots of Voxity here</a></p>
+<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a> - <a href="https://exerinity.dev/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
+<br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a></small>
+`, "Welcome to Voxity");
 }
