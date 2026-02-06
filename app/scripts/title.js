@@ -21,7 +21,7 @@ function setStaticTitle() {
     }
 
     now = 0;
-}, 600); // 2 make sure all metadata is ready
+}, 200); // 2 make sure all metadata is ready
 }
 
 function tabtitleOnce() {
