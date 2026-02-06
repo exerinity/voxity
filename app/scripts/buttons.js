@@ -16,6 +16,13 @@ async function pwamsg() {
             throw_error("Thanks for installing Voxity! <i class='fa-solid fa-heart' style='color:red;'></i>", true);
             try { document.getElementById('installpwa')?.classList.add('hidden'); } catch { }
         }
+        else {
+            throw_error("Prompt failed - opening the how to");
+            msg(
+                `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
+                "Install Voxity"
+            );
+        }
         return;
     }
 
@@ -1081,7 +1088,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
 
     const modal = await msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
             <input id="lrcse" placeholder="${metadata.title}" 
-                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+                style="padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
             <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
                 <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
             </div><br>
