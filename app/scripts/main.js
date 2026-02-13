@@ -157,6 +157,55 @@ function stat_up(msg, ac = true) {
     }
 }
 
+let modalTitleStatusTimeout = null;
+let modalTitleStatusContext = null;
+
+function modal_title_up(msg, options = {}) {
+    const stack = window.__voxityModals;
+    if (!stack || stack.length === 0) return false;
+    const topModal = stack[stack.length - 1];
+    if (!topModal || typeof topModal.setTitle !== 'function') return false;
+
+    if (modalTitleStatusTimeout) {
+        clearTimeout(modalTitleStatusTimeout);
+        modalTitleStatusTimeout = null;
+        if (!modalTitleStatusContext || modalTitleStatusContext.modal !== topModal) {
+            try {
+                if (modalTitleStatusContext && typeof modalTitleStatusContext.modal?.setTitle === 'function') {
+                    modalTitleStatusContext.modal.setTitle(modalTitleStatusContext.restore || 'Voxity');
+                }
+            } catch { }
+            modalTitleStatusContext = null;
+        }
+    }
+
+    let restoreText;
+    if (modalTitleStatusContext && modalTitleStatusContext.modal === topModal) {
+        restoreText = modalTitleStatusContext.restore;
+    } else {
+        restoreText = typeof topModal.getTitle === 'function'
+            ? topModal.getTitle()
+            : 'Voxity';
+    }
+
+    topModal.setTitle(msg || 'Voxity');
+    modalTitleStatusContext = { modal: topModal, restore: restoreText };
+
+    const duration = typeof options.duration === 'number' ? options.duration : 3000;
+    modalTitleStatusTimeout = setTimeout(() => {
+        try {
+            const stackHasModal = Array.isArray(window.__voxityModals) && window.__voxityModals.includes(topModal);
+            if (stackHasModal && modalTitleStatusContext && modalTitleStatusContext.modal === topModal) {
+                topModal.setTitle(modalTitleStatusContext.restore || 'Voxity');
+            }
+        } catch { }
+        modalTitleStatusTimeout = null;
+        modalTitleStatusContext = null;
+    }, Math.max(0, duration));
+
+    return true;
+}
+
 function debounce(fn) {
     return () => {
         const now = Date.now();
@@ -1228,11 +1277,6 @@ function init() {
                 : 0}% done)
         </strong>`
         );
-    });
-
-
-    elements.viz_mo.addEventListener('change', () => {
-        stat_up(`<i class="fa-solid fa-chart-simple"></i> Visualizer mode: <strong>${elements.viz_mo.value}</strong>`);
     });
 
     wheel(elements.index, () => 3);
