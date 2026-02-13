@@ -5,23 +5,44 @@ function isTitleRotationEnabled() {
     return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('titleRotation');
 }
 
+function getTitleRotationIntervalMs() {
+    if (typeof window.VoxitySettings === 'undefined') return 5000;
+    const raw = Number(window.VoxitySettings.get('titleRotationInterval'));
+    const normalized = Number.isFinite(raw) ? Math.min(240, Math.max(1, Math.round(raw))) : 5;
+    return normalized * 1000;
+}
+
+function shouldShowStaticSongInfo() {
+    if (typeof window.VoxitySettings === 'undefined') return true;
+    return window.VoxitySettings.isEnabled('staticSongTitle');
+}
+
 function setStaticTitle() {
     setTimeout(() => {
-    if (typeof metadata === "object" && metadata) {
-        const title = metadata.title || "";
-        const artist = metadata.artist || "";
+        const rotationEnabled = isTitleRotationEnabled();
+        const shouldShowTitle = rotationEnabled ? true : shouldShowStaticSongInfo();
 
-        if (!title && !artist) {
+        if (!shouldShowTitle) {
             document.title = "Voxity";
-        } else {
-            document.title = `${title || "Unknown Title"} by ${artist || "Unknown Artist"}`;
+            now = 0;
+            return;
         }
-    } else {
-        document.title = "Voxity";
-    }
 
-    now = 0;
-}, 200); // 2 make sure all metadata is ready
+        if (typeof metadata === "object" && metadata) {
+            const title = metadata.title || "";
+            const artist = metadata.artist || "";
+
+            if (!title && !artist) {
+                document.title = "Voxity";
+            } else {
+                document.title = `${title || "Unknown Title"} by ${artist || "Unknown Artist"}`;
+            }
+        } else {
+            document.title = "Voxity";
+        }
+
+        now = 0;
+    }, 200); // 2 make sure all metadata is ready
 }
 
 function tabtitleOnce() {
@@ -53,7 +74,7 @@ function startTitleRotation() {
     }
     if (titleTimer) return;
     tabtitleOnce();
-    titleTimer = setInterval(tabtitleOnce, 5000);
+    titleTimer = setInterval(tabtitleOnce, getTitleRotationIntervalMs());
 }
 
 function stopTitleRotation() {
@@ -92,15 +113,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('voxity:settings-changed', (event) => {
-    if (!event || (event.detail?.key !== 'titleRotation')) return;
+    if (!event) return;
+    const key = event.detail?.key;
+    if (!key) return;
+
+    if (key === 'staticSongTitle') {
+        if (!isTitleRotationEnabled()) {
+            setStaticTitle();
+        }
+        return;
+    }
+
+    if (key !== 'titleRotation' && key !== 'titleRotationInterval') return;
     const player = (typeof elements !== 'undefined' && elements?.player) ? elements.player : document.getElementById('player');
     if (!player) return;
-    if (event.detail.value) {
-        if (!player.paused && !player.ended) {
-            startTitleRotation();
+
+    if (key === 'titleRotation') {
+        if (event.detail.value) {
+            if (!player.paused && !player.ended) {
+                startTitleRotation();
+            }
+        } else {
+            stopTitleRotation();
         }
-    } else {
-        stopTitleRotation();
+        return;
+    }
+
+    if (titleTimer) {
+        clearInterval(titleTimer);
+        titleTimer = setInterval(tabtitleOnce, getTitleRotationIntervalMs());
     }
 });
 
