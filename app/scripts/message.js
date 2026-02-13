@@ -41,7 +41,9 @@ async function msg(text, tbartext) {
     title.style.alignItems = 'center';
     title.style.height = '24px';
     title.style.userSelect = 'none';
-    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> ${tbartext || "Voxity"}`
+    const initialTitleText = tbartext || "Voxity";
+    let currentTitleText = initialTitleText;
+    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> ${initialTitleText}`
 
     const close = document.createElement('button');
     close.innerHTML = '<i class="fa-solid fa-xmark"></i>';
@@ -205,8 +207,11 @@ async function msg(text, tbartext) {
         overlay,
         close: () => closeModal(),
         setTitle: (text) => {
-            title.innerHTML = `<i class=\"fa-solid fa-tower-broadcast\" style=\"color: var(--lyric-color); margin-right: 0.5em;\"></i> ${text || 'Voxity'}`;
+            const nextTitle = text || 'Voxity';
+            title.innerHTML = `<i class=\"fa-solid fa-tower-broadcast\" style=\"color: var(--lyric-color); margin-right: 0.5em;\"></i> ${nextTitle}`;
+            currentTitleText = nextTitle;
         },
+        getTitle: () => currentTitleText,
         setContent: (html) => {
             contentBody.innerHTML = html;
             try { eiv(); } catch {}
