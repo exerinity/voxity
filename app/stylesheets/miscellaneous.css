@@ -90,3 +90,91 @@ details ul {
     margin-top: 0.3em;
     line-height: 1.5;
 }
+
+.voxity-settings-modal {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.voxity-settings-section {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.voxity-settings-section h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.voxity-settings-note {
+    margin: 0 0 0.75rem;
+    color: #919191;
+    font-size: 0.85rem;
+}
+
+.voxity-settings-field {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.75rem;
+}
+
+.voxity-settings-field:first-of-type {
+    margin-top: 0;
+}
+
+.voxity-settings-field label {
+    margin-bottom: 0.35rem;
+    color: #bbb;
+    font-weight: 600;
+}
+
+.voxity-settings-slider {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.voxity-settings-slider input[type="range"] {
+    flex: 1;
+}
+
+.voxity-settings-small {
+    margin-top: 0.25rem;
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.voxity-settings-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.voxity-settings-toggle {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.voxity-settings-toggle input {
+    margin-top: 0.35rem;
+    accent-color: var(--lyric-color, #8000ff);
+}
+
+.voxity-settings-toggle label {
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+}
+
+.voxity-settings-toggle p {
+    margin: 0.25rem 0 0;
+    color: #aaa;
+    font-size: 0.9rem;
+}
