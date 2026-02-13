@@ -1,4 +1,4 @@
-const CACHE_NAME = 'voxity84b';
+const CACHE_NAME = 'voxity85';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';
@@ -30,7 +30,7 @@ const FILES_TO_CACHE = [
 
   // scripts
   sc+'main.js',
-  sc+'app.js',
+  sc+'pwa.js',
   sc+'audio.js',
   sc+'buttons.js',
   sc+'error.js',
