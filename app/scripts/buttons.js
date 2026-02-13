@@ -491,16 +491,22 @@ window.addEventListener('DOMContentLoaded', () => {
             { v: 'circular', l: 'Circular' },
             { v: 'none', l: 'Off' },
         ];
+        const DEFAULT_ROTATION_INTERVAL = 5;
         const PREFERENCE_TOGGLES = [
             {
                 key: 'soundEffects',
                 label: 'Enable sound effects',
-                description: 'For loading the app, error messages, and finished notifications',
+                description: 'For error messages and finished notifications',
             },
             {
                 key: 'titleRotation',
                 label: 'Enable title rotation',
                 description: 'Rotate the tab title with current song metadata',
+            },
+            {
+                key: 'staticSongTitle',
+                label: 'Show static song title',
+                description: 'If rotation is disabled, don\'t show info at all',
             },
             {
                 key: 'autoLyrics',
@@ -510,7 +516,7 @@ window.addEventListener('DOMContentLoaded', () => {
             {
                 key: 'songNotifications',
                 label: 'System song notifications',
-                description: 'Send a desktop notification when a new track begins playing',
+                description: 'Send a notification when the track changes',
                 requiresPermission: 'notification',
             },
         ];
@@ -542,6 +548,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const current = document.documentElement.getAttribute('data-theme') || currentTheme;
             const currentViz = (document.getElementById('viz-mode')?.value) || 'spectrum';
             const accentValue = (document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff').trim() || '#8000ff';
+            const hasSettingsApi = typeof window.VoxitySettings !== 'undefined';
             const fpsValue = (function () {
                 try {
                     const stored = parseInt(localStorage.getItem('au_fps'));
@@ -562,63 +569,87 @@ window.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { }
                 return 16;
             })();
-            const preferenceSection = typeof window.VoxitySettings === 'undefined' ? '' : `
-                    <div style="margin-top: 1.5rem;">
-                        <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                            ${PREFERENCE_TOGGLES.map(toggle => {
-                const checked = window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
-                return `<div style="display:flex;gap:0.75rem;align-items:flex-start;">
-                                            <input type="checkbox" id="pref_${toggle.key}" ${checked} style="margin-top:0.3rem;accent-color:var(--lyric-color,#8000ff);">
-                                            <div>
-                                                <label for="pref_${toggle.key}" style="font-weight:600;cursor:pointer;">${toggle.label}</label>
-                                                <p style="margin:0.2rem 0 0;font-size:0.9rem;color:#aaa;">${toggle.description}</p>
-                                            </div>
-                                        </div>`;
-            }).join('')}
-                        </div>
-                    </div>`;
-            const modal = await msg(`<div style="margin: 1rem 0;">
-                        <label for="theme_select" style="display:block;margin-bottom:0.4rem;color:#bbb;">Theme</label>
-                        <select id="theme_select" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
-                            ${THEMES.map(t => {
+            const rotationIntervalValue = (function () {
+                if (!hasSettingsApi) return DEFAULT_ROTATION_INTERVAL;
+                const stored = Number(window.VoxitySettings.get('titleRotationInterval'));
+                if (!Number.isFinite(stored)) return DEFAULT_ROTATION_INTERVAL;
+                return Math.min(240, Math.max(1, Math.round(stored)));
+            })();
+            const modal = await msg(`
+                <div class="voxity-settings-modal">
+                    <section class="voxity-settings-section">
+                        <h3>Appearance</h3>
+                        <div class="voxity-settings-field">
+                            <label for="theme_select">Theme</label>
+                            <select id="theme_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                                ${THEMES.map(t => {
                 const themeName = getThemeName(t);
                 if (!themeName) return '';
                 const label = t.label;
                 const selected = current === themeName ? 'selected' : '';
                 return `<option value="${themeName}" ${selected}>${label}</option>`;
             }).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label for="accent_color"  style="display:block;margin-bottom:0.4rem;color:#bbb;">Accent color</label>
-                        <input id="accent_color" type="color" value="${accentValue}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
-                    </div>
-                    <div style="margin-top: 1.5rem;">
-                        <label for="fps_slider" style="display:block;margin-bottom:0.4rem;color:#bbb;">Visualizer FPS</label>
-                        <div style="display:flex;gap:0.5rem;align-items:center;">
-                            <input id="fps_slider" type="range" min="1" max="300" value="${fpsValue}" style="flex: 1;">
-                            <input id="fps_number" type="number" min="1" max="300" value="${fpsValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                            </select>
                         </div>
-                        <small style="color:#888;">1-300</small>
-                    </div>
-                    <div style="margin-top: 1.5rem;">
-                        <label for="lrc_slider" style="display:block;margin-bottom:0.4rem;color:#bbb;">Lyrics amount</label>
-                        <div style="display:flex;gap:0.5rem;align-items:center;">
-                            <input id="lrc_slider" type="range" min="1" max="48" value="${lrcValue}" style="flex: 1;">
-                            <input id="lrc_number" type="number" min="1" max="48" value="${lrcValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                        <div class="voxity-settings-field">
+                            <label for="accent_color">Accent color</label>
+                            <input id="accent_color" type="color" value="${accentValue}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
                         </div>
-                        <small style="color:#888;">Number of lyrics lines shown (1-48)</small>
-                    </div>
-                    <div style="margin-top: 1.5rem;">
-                        <label for="vizmode_select" style="display:block;margin-bottom:0.4rem;color:#bbb;">Visualizer mode</label>
-                        <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
-                            ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
-                        </select>
-                        <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">Tip: click the visualizer to open this</p>
-                    </div>
-                    ${preferenceSection}
-                    <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">If you do not see any icons, click here</a></small>
-                `, 'Voxity settings');
+                    </section>
+                    <section class="voxity-settings-section">
+                        <h3>Audio feedback</h3>
+                        <div class="voxity-settings-field">
+                            <label for="fps_slider">Visualizer FPS</label>
+                            <div class="voxity-settings-slider">
+                                <input id="fps_slider" type="range" min="1" max="300" value="${fpsValue}">
+                                <input id="fps_number" type="number" min="1" max="300" value="${fpsValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                            </div>
+                            <small class="voxity-settings-small">1-300 frames per second</small>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="lrc_slider">Lyrics amount</label>
+                            <div class="voxity-settings-slider">
+                                <input id="lrc_slider" type="range" min="1" max="48" value="${lrcValue}">
+                                <input id="lrc_number" type="number" min="1" max="48" value="${lrcValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                            </div>
+                            <small class="voxity-settings-small">Number of lyric lines visible (1-48)</small>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="pref_titleRotationInterval">Title rotation speed</label>
+                            <div class="voxity-settings-slider">
+                                <input type="range" id="pref_titleRotationInterval" min="1" max="240" value="${rotationIntervalValue}" ${hasSettingsApi ? '' : 'disabled'}>
+                                <input type="number" id="pref_titleRotationInterval_number" min="1" max="240" value="${rotationIntervalValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;" ${hasSettingsApi ? '' : 'disabled'}>
+                            </div>
+                            <small class="voxity-settings-small">Seconds between title changes (1-240)</small>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="vizmode_select">Visualizer mode</label>
+                            <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                                ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
+                            </select>
+                            <small class="voxity-settings-small">Tip: click the visualizer to reopen this panel</small>
+                        </div>
+                    </section>
+                    <section class="voxity-settings-section">
+                        <h3>Preferences</h3>
+                        ${hasSettingsApi ? '' : '<p class="voxity-settings-note">Not allowed</p>'}
+                        <div class="voxity-settings-toggles">
+                            ${PREFERENCE_TOGGLES.map(toggle => {
+                const checked = hasSettingsApi && window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
+                const disabled = hasSettingsApi ? '' : 'disabled';
+                return `<div class="voxity-settings-toggle">
+                                            <input type="checkbox" id="pref_${toggle.key}" ${checked} ${disabled}>
+                                            <div>
+                                                <label for="pref_${toggle.key}">${toggle.label}</label>
+                                                <p>${toggle.description}</p>
+                                            </div>
+                                        </div>`;
+            }).join('')}
+                        </div>
+                    </section>
+                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>
+                </div>
+            `, 'Voxity settings');
 
             setTimeout(() => {
                 const select = document.getElementById('theme_select');
@@ -629,6 +660,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 const fpsNumber = document.getElementById('fps_number');
                 const lrcSlider = document.getElementById('lrc_slider');
                 const lrcNumber = document.getElementById('lrc_number');
+                const rotationSlider = document.getElementById('pref_titleRotationInterval');
+                const rotationNumber = document.getElementById('pref_titleRotationInterval_number');
                 const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
 
                 const requestNotificationPermission = async () => {
@@ -672,7 +705,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         document.documentElement.style.setProperty('--lyric-color', color);
                         viz_color = color;
                         uvzc(color);
-                        stat_up(`<span style='color: ${color};'><i class='fa-solid fa-palette'></i> Accent color set to ${color}</span>`);
+                        modal_title_up(`Accent color set to ${color}`);
                     });
                 }
 
@@ -684,7 +717,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         if (!hiddenViz) return;
                         hiddenViz.value = vizSelect.value;
                         hiddenViz.dispatchEvent(new Event('change', { bubbles: true }));
-                        throw_error(`Visualizer: ${vizSelect.options[vizSelect.selectedIndex]?.text || vizSelect.value}`, true);
+                        modal_title_up(`Visualizer mode: ${vizSelect.options[vizSelect.selectedIndex]?.text || vizSelect.value}`, true);
                     };
                     vizSelect.addEventListener('change', applyChange);
                 }
@@ -701,7 +734,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             const ev = new Event('fpschange', { bubbles: true });
                             window.dispatchEvent(ev);
                         } catch { }
-                        try { stat_up(`<i class="fa-solid fa-chart-simple"></i> Visualizer FPS: <strong>${val}</strong>`); } catch { }
+                        try { modal_title_up(`Visualizer FPS: ${val}`); } catch { }
                     };
 
                     fpsSlider.addEventListener('input', () => syncFPS(fpsSlider.value));
@@ -720,7 +753,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             const ev = new Event('lrcamountchange', { bubbles: true });
                             window.dispatchEvent(ev);
                         } catch { }
-                        try { stat_up(`<i class='fa-solid fa-list'></i> Showing up to <strong>${val}</strong> lines`); } catch { }
+                        try { modal_title_up(`Showing up to ${val} lines`); } catch { }
                     };
 
                     lrcSlider.addEventListener('input', () => syncLRC(lrcSlider.value));
@@ -744,6 +777,40 @@ window.addEventListener('DOMContentLoaded', () => {
                             });
                         }
                     });
+
+                    if (rotationSlider && rotationNumber) {
+                        const clampInterval = (value) => {
+                            const num = Number(value);
+                            if (!Number.isFinite(num)) return DEFAULT_ROTATION_INTERVAL;
+                            return Math.min(240, Math.max(1, Math.round(num)));
+                        };
+                        const syncRotationInputs = (value, { announce = false } = {}) => {
+                            const normalized = clampInterval(value);
+                            rotationSlider.value = normalized;
+                            rotationNumber.value = normalized;
+                            if (announce) {
+                                try {
+                                    modal_title_up(`Title rotation speed: ${normalized}s`);
+                                } catch { }
+                            }
+                            return normalized;
+                        };
+                        const persistRotationInterval = (value, { announce = false } = {}) => {
+                            const normalized = syncRotationInputs(value, { announce });
+                            settingsApi.set('titleRotationInterval', normalized);
+                        };
+
+                        syncRotationInputs(rotationSlider.value);
+                        rotationSlider.addEventListener('input', () => {
+                            syncRotationInputs(rotationSlider.value, { announce: true });
+                        });
+                        rotationSlider.addEventListener('change', () => {
+                            persistRotationInterval(rotationSlider.value);
+                        });
+                        rotationNumber.addEventListener('change', () => {
+                            persistRotationInterval(rotationNumber.value, { announce: true });
+                        });
+                    }
                 }
 
                 function uvzc(color) {
