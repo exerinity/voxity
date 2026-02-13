@@ -3,6 +3,8 @@
     const DEFAULTS = Object.freeze({
         soundEffects: true,
         titleRotation: true,
+        titleRotationInterval: 5,
+        staticSongTitle: true,
         autoLyrics: true,
         songNotifications: false,
     });
