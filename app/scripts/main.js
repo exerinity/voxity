@@ -1053,7 +1053,7 @@ function remq(idx) {
 
 function init() {
     if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent)) {
-        msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.`);
+        msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.<br><br>Also, clean that dirty fucking screen.`);
     }
 
     playUiSound(elements.welcomesound);
