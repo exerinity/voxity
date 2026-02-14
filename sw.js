@@ -41,7 +41,6 @@ const FILES_TO_CACHE = [
   sc+'title.js',
   sc+'visualizer.js',
   sc+'api.js',
-  sc+'twemoji.js',
   sc+'text.js',
   sc+'settings.js',
 
