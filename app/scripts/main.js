@@ -268,7 +268,6 @@ function play(file, name) {
             elements.player.volume = isNaN(ra) ? 1 : Math.max(0, Math.min(1, ra / 2));
             const rt = parseFloat(elements.speed.value);
             elements.player.playbackRate = isNaN(rt) ? 1 : rt;
-            twittermoji();
             calqueue();
         }).catch(e => {
             if (t !== pt) return;
@@ -1800,6 +1799,10 @@ async function openQueueSearchModal(initialQuery = '') {
 }
 
 async function loadFA() {
+    if (!navigator.onLine) {
+        throw_error('Connect to the internet first!');
+        return;
+    }
     closeTopModal(); // for if in settings or welcome lolz
     const mod = await msg("Attempting to inject Font Awesome manually...");
     const fl = document.createElement('link');
@@ -1811,7 +1814,7 @@ async function loadFA() {
     document.head.appendChild(fl);
 
     fl.onload = () => mod.setContent('Icons should have loaded <i class="fa-solid fa-font-awesome"></i>');
-    fl.onerror = () => throw_error("Could not load icons");
+    fl.onerror = () => throw_error("Could not load icons"); closeTopModal();
 }
 
 function welcome() {
