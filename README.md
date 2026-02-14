@@ -9,6 +9,6 @@ I am not good at READMEs, and I don't like duplicating [content from my site (fo
 This project is licensed under the MIT license. See the [license](LICENSE) file for details.
 
 # Things used
-- **Twemoji**: https://twemoji.twitter.com / https://github.com/twitter/twemoji
+~~- **Twemoji**: https://twemoji.twitter.com / https://github.com/twitter/twemoji~~ removed as of v85a
 - **jsmediatags**: https://github.com/aadsm/jsmediatags
 - **Font Awesome**: https://fontawesome.com / https://github.com/FortAwesome/Font-Awesome
