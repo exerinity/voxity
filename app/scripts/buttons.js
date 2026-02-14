@@ -506,7 +506,7 @@ window.addEventListener('DOMContentLoaded', () => {
             {
                 key: 'staticSongTitle',
                 label: 'Show static song title',
-                description: 'If rotation is disabled, don\'t show info at all',
+                description: 'If rotation is disabled, show info statically',
             },
             {
                 key: 'autoLyrics',
