@@ -6,6 +6,7 @@
         titleRotationInterval: 5,
         staticSongTitle: true,
         autoLyrics: true,
+        lyricsSource: 'lrclib',
         songNotifications: false,
     });
 
