@@ -96,25 +96,28 @@ details ul {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    color: var(--fg);
+    font-family: var(--font-primary);
 }
 
 .voxity-settings-section {
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--dialog-bg);
+    border: 1px solid var(--control-br);
     border-radius: 12px;
-    padding: 1rem 1.25rem;
+    padding: 1.1rem 1.3rem;
+    box-shadow: 0 8px 18px var(--shadow);
 }
 
 .voxity-settings-section h3 {
     margin: 0 0 0.5rem;
     font-size: 1rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--fg-strong);
 }
 
 .voxity-settings-note {
     margin: 0 0 0.75rem;
-    color: #919191;
+    color: var(--muted-2);
     font-size: 0.85rem;
 }
 
@@ -130,8 +133,57 @@ details ul {
 
 .voxity-settings-field label {
     margin-bottom: 0.35rem;
-    color: #bbb;
+    color: var(--fg);
     font-weight: 600;
+}
+
+.voxity-settings-control {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid var(--control-br);
+    background: var(--control-bg);
+    color: var(--fg);
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.voxity-settings-control:focus-visible {
+    outline: none;
+    border-color: var(--lyric-color, #8000ff);
+    box-shadow: 0 0 0 2px var(--lyric-color, #8000ff);
+}
+
+.voxity-settings-control[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.voxity-settings-number {
+    width: 76px;
+    padding: 0.4rem 0.5rem;
+    text-align: center;
+}
+
+.voxity-settings-color {
+    height: 50px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.voxity-settings-color::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 6px;
+}
+
+.voxity-settings-color::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+.voxity-settings-color::-moz-color-swatch {
+    border: none;
+    border-radius: 6px;
 }
 
 .voxity-settings-slider {
@@ -142,12 +194,18 @@ details ul {
 
 .voxity-settings-slider input[type="range"] {
     flex: 1;
+    accent-color: var(--lyric-color, #8000ff);
+}
+
+.voxity-settings-slider input[type="range"][disabled] {
+    opacity: 0.6;
 }
 
 .voxity-settings-small {
     margin-top: 0.25rem;
-    color: #888;
+    color: var(--muted-2);
     font-size: 0.85rem;
+    display: block;
 }
 
 .voxity-settings-toggles {
@@ -160,6 +218,11 @@ details ul {
     display: flex;
     gap: 0.75rem;
     align-items: flex-start;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--control-br);
+    background: var(--control-bg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .voxity-settings-toggle input {
@@ -169,12 +232,62 @@ details ul {
 
 .voxity-settings-toggle label {
     font-weight: 600;
-    color: #fff;
+    color: var(--fg);
     cursor: pointer;
 }
 
 .voxity-settings-toggle p {
     margin: 0.25rem 0 0;
-    color: #aaa;
+    color: var(--muted);
     font-size: 0.9rem;
+}
+
+.voxity-settings-lyrics-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.voxity-settings-lyrics-option {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.65rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--control-br);
+    background: var(--control-bg);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.voxity-settings-lyrics-option:hover,
+.voxity-settings-toggle:hover {
+    border-color: var(--lyric-color, #8000ff);
+    box-shadow: 0 6px 14px var(--shadow);
+}
+
+.voxity-settings-lyrics-option input[type="radio"] {
+    margin-top: 0.35rem;
+    accent-color: var(--lyric-color, #8000ff);
+}
+
+.voxity-settings-lyrics-option strong {
+    color: var(--fg);
+}
+
+.voxity-settings-toggle[data-disabled="true"],
+.voxity-settings-lyrics-option[data-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    border-style: dashed;
+}
+
+.voxity-settings-toggle[data-disabled="true"] label {
+    cursor: not-allowed;
+}
+
+.voxity-settings-toggle[data-disabled="true"]:hover,
+.voxity-settings-lyrics-option[data-disabled="true"]:hover {
+    border-color: var(--control-br);
 }
