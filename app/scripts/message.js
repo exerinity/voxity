@@ -73,6 +73,13 @@ async function msg(text, tbartext) {
     const closeModal = () => {
         if (isClosed) return;
         isClosed = true;
+        try {
+            if (modalApi) {
+                document.dispatchEvent(new CustomEvent('voxity:modal-closed', {
+                    detail: { modal: modalApi },
+                }));
+            }
+        } catch { }
         unregisterModal();
         box.style.animation = 'zout 0.15s ease forwards';
         overlay.style.animation = 'fout 0.15s ease forwards';
@@ -219,5 +226,10 @@ async function msg(text, tbartext) {
     };
     window.__voxityModals = window.__voxityModals || [];
     window.__voxityModals.push(modalApi);
+    try {
+        document.dispatchEvent(new CustomEvent('voxity:modal-opened', {
+            detail: { modal: modalApi },
+        }));
+    } catch { }
     return modalApi;
 }
