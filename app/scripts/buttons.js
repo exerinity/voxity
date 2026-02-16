@@ -511,13 +511,25 @@ window.addEventListener('DOMContentLoaded', () => {
             {
                 key: 'autoLyrics',
                 label: 'Load lyrics automatically',
-                description: 'Automatically query LRCLIB when a track starts',
+                description: 'Automatically query lyrics when a track starts',
             },
             {
                 key: 'songNotifications',
                 label: 'System song notifications',
                 description: 'Send a notification when the track changes',
                 requiresPermission: 'notification',
+            },
+        ];
+        const LYRICS_SOURCES = [
+            {
+                key: 'lrclib',
+                label: 'LRCLIB.net',
+                note: 'Stable, more precise lookups, but crowd-sourced, so could be wrong for lesser known songs',
+            },
+            {
+                key: 'musixmatch',
+                label: 'Musixmatch.com',
+                note: 'Unstable, less precise lookups, but professional enterprise lyrics, so spot-on for popular songs, rough for others',
             },
         ];
         const key = 'au_theme';
@@ -575,13 +587,18 @@ window.addEventListener('DOMContentLoaded', () => {
                 if (!Number.isFinite(stored)) return DEFAULT_ROTATION_INTERVAL;
                 return Math.min(240, Math.max(1, Math.round(stored)));
             })();
+            const selectedLyricsSource = (function () {
+                if (!hasSettingsApi) return 'lrclib';
+                const stored = window.VoxitySettings.get('lyricsSource');
+                return stored === 'musixmatch' ? 'musixmatch' : 'lrclib';
+            })();
             const modal = await msg(`
                 <div class="voxity-settings-modal">
                     <section class="voxity-settings-section">
                         <h3>Appearance</h3>
                         <div class="voxity-settings-field">
                             <label for="theme_select">Theme</label>
-                            <select id="theme_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                            <select id="theme_select" class="voxity-settings-control">
                                 ${THEMES.map(t => {
                 const themeName = getThemeName(t);
                 if (!themeName) return '';
@@ -593,7 +610,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="voxity-settings-field">
                             <label for="accent_color">Accent color</label>
-                            <input id="accent_color" type="color" value="${accentValue}" style="width: 100%; height: 50px; border: none; cursor: pointer; background: none;">
+                            <input id="accent_color" type="color" value="${accentValue}" class="voxity-settings-control voxity-settings-color">
                         </div>
                     </section>
                     <section class="voxity-settings-section">
@@ -602,7 +619,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             <label for="fps_slider">Visualizer FPS</label>
                             <div class="voxity-settings-slider">
                                 <input id="fps_slider" type="range" min="1" max="300" value="${fpsValue}">
-                                <input id="fps_number" type="number" min="1" max="300" value="${fpsValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                                <input id="fps_number" type="number" min="1" max="300" value="${fpsValue}" class="voxity-settings-control voxity-settings-number">
                             </div>
                             <small class="voxity-settings-small">1-300 frames per second</small>
                         </div>
@@ -610,7 +627,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             <label for="lrc_slider">Lyrics amount</label>
                             <div class="voxity-settings-slider">
                                 <input id="lrc_slider" type="range" min="1" max="48" value="${lrcValue}">
-                                <input id="lrc_number" type="number" min="1" max="48" value="${lrcValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                                <input id="lrc_number" type="number" min="1" max="48" value="${lrcValue}" class="voxity-settings-control voxity-settings-number">
                             </div>
                             <small class="voxity-settings-small">Number of lyric lines visible (1-48)</small>
                         </div>
@@ -618,13 +635,13 @@ window.addEventListener('DOMContentLoaded', () => {
                             <label for="pref_titleRotationInterval">Title rotation speed</label>
                             <div class="voxity-settings-slider">
                                 <input type="range" id="pref_titleRotationInterval" min="1" max="240" value="${rotationIntervalValue}" ${hasSettingsApi ? '' : 'disabled'}>
-                                <input type="number" id="pref_titleRotationInterval_number" min="1" max="240" value="${rotationIntervalValue}" style="width:72px; padding:0.35rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;" ${hasSettingsApi ? '' : 'disabled'}>
+                                <input type="number" id="pref_titleRotationInterval_number" min="1" max="240" value="${rotationIntervalValue}" class="voxity-settings-control voxity-settings-number" ${hasSettingsApi ? '' : 'disabled'}>
                             </div>
                             <small class="voxity-settings-small">Seconds between title changes (1-240)</small>
                         </div>
                         <div class="voxity-settings-field">
                             <label for="vizmode_select">Visualizer mode</label>
-                            <select id="vizmode_select" style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #444; background:#2a2a2a; color:white;">
+                            <select id="vizmode_select" class="voxity-settings-control">
                                 ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
                             </select>
                             <small class="voxity-settings-small">Tip: click the visualizer to reopen this panel</small>
@@ -637,7 +654,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             ${PREFERENCE_TOGGLES.map(toggle => {
                 const checked = hasSettingsApi && window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
                 const disabled = hasSettingsApi ? '' : 'disabled';
-                return `<div class="voxity-settings-toggle">
+                return `<div class="voxity-settings-toggle"${hasSettingsApi ? '' : ' data-disabled="true"'}>
                                             <input type="checkbox" id="pref_${toggle.key}" ${checked} ${disabled}>
                                             <div>
                                                 <label for="pref_${toggle.key}">${toggle.label}</label>
@@ -645,6 +662,22 @@ window.addEventListener('DOMContentLoaded', () => {
                                             </div>
                                         </div>`;
             }).join('')}
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label>Lyrics source</label>
+                            <div class="voxity-settings-lyrics-options">
+                                ${LYRICS_SOURCES.map(source => {
+                const checked = source.key === selectedLyricsSource ? 'checked' : '';
+                const disabled = hasSettingsApi ? '' : 'disabled';
+                return `<label class="voxity-settings-lyrics-option"${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                                    <input type="radio" name="lyrics_source" value="${source.key}" data-label="${source.label}" ${checked} ${disabled}>
+                                                    <div>
+                                                        <strong>${source.label}</strong>
+                                                        <p class="voxity-settings-small">${source.note}</p>
+                                                    </div>
+                                                </label>`;
+            }).join('')}
+                            </div>
                         </div>
                     </section>
                     <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>
@@ -663,6 +696,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const rotationSlider = document.getElementById('pref_titleRotationInterval');
                 const rotationNumber = document.getElementById('pref_titleRotationInterval_number');
                 const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
+                const lyricsSourceInputs = Array.from(document.querySelectorAll('input[name="lyrics_source"]'));
 
                 const requestNotificationPermission = async () => {
                     if (typeof window === 'undefined' || typeof Notification === 'undefined') {
@@ -761,6 +795,30 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (settingsApi) {
+                    const normalizeLyricsSource = (value) => value === 'musixmatch' ? 'musixmatch' : 'lrclib';
+                    const syncLyricsSourceInputs = (value) => {
+                        const normalized = normalizeLyricsSource(value);
+                        lyricsSourceInputs.forEach(input => {
+                            input.checked = input.value === normalized;
+                        });
+                        return normalized;
+                    };
+
+                    if (lyricsSourceInputs.length) {
+                        syncLyricsSourceInputs(settingsApi.get('lyricsSource'));
+                        lyricsSourceInputs.forEach(input => {
+                            input.addEventListener('change', () => {
+                                if (!input.checked) return;
+                                const normalized = syncLyricsSourceInputs(input.value);
+                                settingsApi.set('lyricsSource', normalized);
+                                try {
+                                    const label = input.dataset.label || normalized;
+                                    modal_title_up(`Lyrics source: ${label}`);
+                                } catch { }
+                            });
+                        });
+                    }
+
                     PREFERENCE_TOGGLES.forEach(toggle => {
                         const input = document.getElementById(`pref_${toggle.key}`);
                         if (input) {
