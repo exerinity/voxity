@@ -1,5 +1,6 @@
 function relnote() {
-    msg(`<iframe src="/i/release_notes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/i/release_notes?standalone" target="_blank">Open this in new tab</a>'}`, 'Release notes');
+    const modalPromise = msg(`<iframe src="/i/release_notes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/i/release_notes?standalone" target="_blank">Open this in new tab</a>'}`, 'Release notes');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/i/release_notes');
 }
 async function pwamsg() {
     if (isPWA()) {
@@ -18,10 +19,11 @@ async function pwamsg() {
         }
         else {
             throw_error("Prompt failed - opening the how to");
-            msg(
+            const modalPromise = msg(
                 `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
                 "Install Voxity"
             );
+            window.VoxityRouter?.setModalRoute(modalPromise, '/i/how_pwa');
         }
         return;
     }
@@ -273,6 +275,7 @@ async function openSleepTimerModal() {
             <button id="sleep_timer_cancel" style="display:none; padding:0.6rem 1rem; border:none; border-radius:8px; background:#3b1b1b; color:#ffb3b3; font-weight:600; cursor:pointer;">Cancel sleep timer</button>
         </div>
     `, 'Sleep timer');
+    window.VoxityRouter?.setModalRoute(modal, '/sleep_timer');
 
     setTimeout(() => {
         const root = modal?.overlay || document;
@@ -370,7 +373,9 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 }));
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
-    return msg(about_content, "About Voxity");
+    const modalPromise = msg(about_content, "About Voxity");
+    window.VoxityRouter?.setModalRoute(modalPromise, '/about');
+    return modalPromise;
 }));
 
 const queueHead = document.getElementById('queuehead');
@@ -421,7 +426,8 @@ function restr() {
 }
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
-    msg(hotkeys_content, 'List of hotkeys');
+    const modalPromise = msg(hotkeys_content, 'List of hotkeys');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/i/hotkeys');
 }));
 
 
@@ -441,10 +447,11 @@ try {
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
     if (!globalart) return;
 
-    msg(
+    const modalPromise = msg(
         `<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart">`,
         act_truncate(metadata.album || metadata.title || "Cover art")
     );
+    window.VoxityRouter?.setModalRoute(modalPromise, '/i/imageview');
 
     setTimeout(() => {
         const img = document.getElementById('msgart');
@@ -683,6 +690,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>
                 </div>
             `, 'Voxity settings');
+            window.VoxityRouter?.setModalRoute(modal, '/settings');
 
             setTimeout(() => {
                 const select = document.getElementById('theme_select');
@@ -932,7 +940,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');
     }
-    msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
             <p style="margin: 0; color: #888;">They must be in LRC format - you can find them on <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a> or other lyrics sites.</p>
             <textarea id="lrc_textarea" placeholder="[00:00.00] Start\n[00:10.50] Next line" rows="10" 
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 0.95rem;"></textarea>
@@ -942,6 +950,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
             </div><br><small style="color: #888;">You can drag and drop a .lrc or .srt/.vtt file to the dropzone or search LRCLIB for lyrics by pressing <strong><i class="fa-solid fa-magnifying-glass"></i> Search lyrics</strong></small>
         </div>
     `, 'Paste your own lyrics');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/lyrics/edit');
 
     setTimeout(() => {
         const ta = document.getElementById('lrc_textarea');
@@ -1005,7 +1014,9 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
 
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        return msg(about_content, "About Voxity");
+        const modalPromise = msg(about_content, "About Voxity");
+        window.VoxityRouter?.setModalRoute(modalPromise, '/about');
+        return modalPromise;
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {
@@ -1051,7 +1062,7 @@ document.getElementById('album').addEventListener('click', debounce(() => {
 document.getElementById('volc').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_vol = Math.round(elements.player.volume * 100);
-    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="vol_inp" type="number" min="0" max="100" value="${cur_vol}" 
@@ -1065,6 +1076,7 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
             </div>
         </div>
     `, 'Set volume');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/control/volume');
 
     setTimeout(() => {
         const input = document.getElementById('vol_inp');
@@ -1104,7 +1116,7 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
 document.getElementById('speedc').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_spd = elements.speed.value;
-    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="spd_inp" type="number" min="0.1" max="14.0" step="0.1" value="${cur_spd}" 
@@ -1118,6 +1130,7 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
             </div>
         </div>
     `, 'Set speed');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/control/speed');
 
     setTimeout(() => {
         const input = document.getElementById('spd_inp');
@@ -1161,7 +1174,7 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
         return throw_error('No track loaded!');
     }
 
-    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="ind_inp" type="number" min="0" max="${Math.floor(dur)}" value="${Math.floor(cur)}" 
@@ -1175,6 +1188,7 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
             </div>
         </div>
     `, 'Set playback time');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/control/time');
 
     setTimeout(() => {
         const input = document.getElementById('ind_inp');
@@ -1220,6 +1234,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
             <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
         </div>
     `, 'Search for lyrics');
+    window.VoxityRouter?.setModalRoute(modal, '/lyrics/search');
 
     setTimeout(() => {
         const sin = document.getElementById('lrcse');
