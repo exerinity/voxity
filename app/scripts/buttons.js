@@ -526,6 +526,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 description: 'Send a notification when the track changes',
                 requiresPermission: 'notification',
             },
+            {
+                key: 'wakeLock',
+                label: 'Acquire screen wakelock',
+                description: 'Prevent the display from sleeping while playing audio'
+            },
         ];
         const LYRICS_SOURCES = [
             {
@@ -599,6 +604,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const stored = window.VoxitySettings.get('lyricsSource');
                 return stored === 'musixmatch' ? 'musixmatch' : 'lrclib';
             })();
+            const supportsWakeLock = typeof navigator !== 'undefined' && 'wakeLock' in navigator;
             const modal = await msg(`
                 <div class="voxity-settings-modal">
                     <section class="voxity-settings-section">
@@ -661,11 +667,15 @@ window.addEventListener('DOMContentLoaded', () => {
                             ${PREFERENCE_TOGGLES.map(toggle => {
                 const checked = hasSettingsApi && window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
                 const disabled = hasSettingsApi ? '' : 'disabled';
+                const supportMessage = toggle.key === 'wakeLock' && !supportsWakeLock
+                    ? '<p class="voxity-settings-small">Wake Lock API not supported in this browser</p>'
+                    : '';
                 return `<div class="voxity-settings-toggle"${hasSettingsApi ? '' : ' data-disabled="true"'}>
                                             <input type="checkbox" id="pref_${toggle.key}" ${checked} ${disabled}>
                                             <div>
                                                 <label for="pref_${toggle.key}">${toggle.label}</label>
                                                 <p>${toggle.description}</p>
+                                                ${supportMessage}
                                             </div>
                                         </div>`;
             }).join('')}
@@ -811,6 +821,25 @@ window.addEventListener('DOMContentLoaded', () => {
                         });
                         return normalized;
                     };
+                    const ensureWakeLockPreference = async (checked) => {
+                        const controller = typeof window !== 'undefined' ? window.VoxityWakeLock : null;
+                        if (!controller) {
+                            if (checked) {
+                                throw_error('Wake locks are not available right now');
+                                return false;
+                            }
+                            return true;
+                        }
+                        if (checked) {
+                            if (!controller.supported()) {
+                                throw_error('Wake locks are not supported in this browser yet');
+                                return false;
+                            }
+                            return controller.enable();
+                        }
+                        await controller.disable();
+                        return true;
+                    };
 
                     if (lyricsSourceInputs.length) {
                         syncLyricsSourceInputs(settingsApi.get('lyricsSource'));
@@ -829,19 +858,25 @@ window.addEventListener('DOMContentLoaded', () => {
 
                     PREFERENCE_TOGGLES.forEach(toggle => {
                         const input = document.getElementById(`pref_${toggle.key}`);
-                        if (input) {
-                            input.checked = settingsApi.isEnabled(toggle.key);
-                            input.addEventListener('change', async () => {
-                                if (toggle.requiresPermission === 'notification' && input.checked) {
-                                    const granted = await requestNotificationPermission();
-                                    if (!granted) {
-                                        input.checked = false;
-                                        return;
-                                    }
+                        if (!input) return;
+                        input.checked = settingsApi.isEnabled(toggle.key);
+                        input.addEventListener('change', async () => {
+                            if (toggle.requiresPermission === 'notification' && input.checked) {
+                                const granted = await requestNotificationPermission();
+                                if (!granted) {
+                                    input.checked = false;
+                                    return;
                                 }
-                                settingsApi.set(toggle.key, input.checked);
-                            });
-                        }
+                            }
+                            if (toggle.key === 'wakeLock') {
+                                const wakeLockAllowed = await ensureWakeLockPreference(input.checked);
+                                if (!wakeLockAllowed) {
+                                    input.checked = false;
+                                    return;
+                                }
+                            }
+                            settingsApi.set(toggle.key, input.checked);
+                        });
                     });
 
                     if (rotationSlider && rotationNumber) {

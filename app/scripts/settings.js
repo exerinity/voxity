@@ -8,6 +8,7 @@
         autoLyrics: true,
         lyricsSource: 'lrclib',
         songNotifications: false,
+        wakeLock: false,
     });
 
     let values = { ...DEFAULTS };
