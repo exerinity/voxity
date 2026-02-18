@@ -489,7 +489,8 @@ window.addEventListener('DOMContentLoaded', () => {
             { 'light': true, 'label': 'Light' },
             { 'synthwave': true, 'label': 'Synthwave' },
             { 'neon-purple': true, 'label': 'Neon purple' },
-            { 'neon-blue': true, 'label': 'Neon blue' }
+            { 'neon-blue': true, 'label': 'Neon blue' },
+            { 'paradise': true, 'label': 'Paradise' },
         ];
 
         const VIZ_OPTIONS = [
@@ -545,8 +546,60 @@ window.addEventListener('DOMContentLoaded', () => {
             },
         ];
         const key = 'au_theme';
+        const ACCENT_COLOR_STORAGE_KEY = 'au_accent_color';
+        const DEFAULT_ACCENT_COLOR = '#8000ff';
         const btn = document.getElementById('settings');
         let currentTheme = 'lights-out';
+
+        const normalizeAccentColor = (value) => {
+            if (typeof value !== 'string') return null;
+            const trimmed = value.trim();
+            if (!trimmed) return null;
+            return /^#[0-9a-f]{3,8}$/i.test(trimmed) ? trimmed.toLowerCase() : null;
+        };
+
+        const getStoredAccentColor = () => {
+            try {
+                return normalizeAccentColor(localStorage.getItem(ACCENT_COLOR_STORAGE_KEY));
+            } catch {
+                return null;
+            }
+        };
+
+        const getInlineAccentColor = () => normalizeAccentColor(document.documentElement.style.getPropertyValue('--lyric-color'));
+
+        const getComputedAccentColor = () => {
+            try {
+                if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') return null;
+                return normalizeAccentColor(window.getComputedStyle(document.documentElement).getPropertyValue('--lyric-color'));
+            } catch {
+                return null;
+            }
+        };
+
+        const resolveAccentColor = () => getStoredAccentColor() || getInlineAccentColor() || getComputedAccentColor() || DEFAULT_ACCENT_COLOR;
+
+        const applyAccentColor = (value, { persist = false } = {}) => {
+            const normalized = normalizeAccentColor(value);
+            if (!normalized) return null;
+            document.documentElement.style.setProperty('--lyric-color', normalized);
+            try { viz_color = normalized; } catch { }
+            try {
+                const visualizer = document.getElementById('visualizer');
+                if (visualizer) {
+                    visualizer.style.backgroundColor = normalized;
+                }
+            } catch { }
+            if (persist) {
+                try { localStorage.setItem(ACCENT_COLOR_STORAGE_KEY, normalized); } catch { }
+            }
+            return normalized;
+        };
+
+        const storedAccent = getStoredAccentColor();
+        if (storedAccent) {
+            applyAccentColor(storedAccent);
+        }
 
         const getThemeName = (themeObj) => Object.keys(themeObj).find(key => key !== 'label') || '';
         const getThemeLabel = (themeName) => {
@@ -571,7 +624,7 @@ window.addEventListener('DOMContentLoaded', () => {
         async function openSettingsModal({ focusViz = false } = {}) {
             const current = document.documentElement.getAttribute('data-theme') || currentTheme;
             const currentViz = (document.getElementById('viz-mode')?.value) || 'spectrum';
-            const accentValue = (document.documentElement.style.getPropertyValue('--lyric-color') || '#8000ff').trim() || '#8000ff';
+            const accentValue = resolveAccentColor();
             const hasSettingsApi = typeof window.VoxitySettings !== 'undefined';
             const fpsValue = (function () {
                 try {
@@ -753,11 +806,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
                 if (acin) {
                     acin.addEventListener('input', () => {
-                        const color = acin.value;
-                        document.documentElement.style.setProperty('--lyric-color', color);
-                        viz_color = color;
-                        uvzc(color);
-                        modal_title_up(`Accent color set to ${color}`);
+                        const applied = applyAccentColor(acin.value, { persist: true });
+                        if (applied) {
+                            modal_title_up(`Accent color set to ${applied}`);
+                        }
                     });
                 }
 
@@ -911,13 +963,6 @@ window.addEventListener('DOMContentLoaded', () => {
                         rotationNumber.addEventListener('change', () => {
                             persistRotationInterval(rotationNumber.value, { announce: true });
                         });
-                    }
-                }
-
-                function uvzc(color) {
-                    const visualizer = document.getElementById('visualizer');
-                    if (visualizer) {
-                        visualizer.style.backgroundColor = color;
                     }
                 }
 
