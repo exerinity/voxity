@@ -32,8 +32,8 @@ if ('serviceWorker' in navigator && !noInstall) {
                 stat_up('<i class="fa-solid fa-download"></i> The Service Worker was updated');
                 msg(
                   'There is a new version of Voxity available! ' +
-                  'Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh the page</a> to update - or to ensure it <i>actually</i> updates, click that hyperlink.<br>' +
-                  '<hr><a href="/i/release_notes" onclick="event.preventDefault(); changelogmsg()">View release notes</a><br>' +
+                  'Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh the app</a> to update - or to ensure it <i>actually</i> updates, click that hyperlink.<br>' +
+                  '<hr><a href="/i/release_notes" onclick="event.preventDefault(); relnote()">View release notes</a><br>' +
                   '<small>Or, if you don\'t want to, just close this box, I won\'t force you...</small>'
                 );
               }
