@@ -56,6 +56,13 @@ function isPWA() {
     );
 }
 
+function isElectron() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('electron') === 'true') {
+        return true;
+    } else return false;
+}
+
 function playUiSound(audioEl, { reset = true } = {}) {
     if (!audioEl || !shouldPlaySoundEffects()) return;
     try {
