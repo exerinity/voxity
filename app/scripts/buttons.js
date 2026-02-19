@@ -596,6 +596,23 @@ window.addEventListener('DOMContentLoaded', () => {
             return normalized;
         };
 
+        const resetAccentColorToTheme = () => {
+            try { document.documentElement.style.removeProperty('--lyric-color'); } catch { }
+            try { localStorage.removeItem(ACCENT_COLOR_STORAGE_KEY); } catch { }
+            let normalized = getComputedAccentColor();
+            if (!normalized) {
+                normalized = DEFAULT_ACCENT_COLOR;
+            }
+            try { viz_color = normalized; } catch { }
+            try {
+                const visualizer = document.getElementById('visualizer');
+                if (visualizer) {
+                    visualizer.style.removeProperty('background-color');
+                }
+            } catch { }
+            return normalized;
+        };
+
         const storedAccent = getStoredAccentColor();
         if (storedAccent) {
             applyAccentColor(storedAccent);
@@ -676,7 +693,10 @@ window.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="voxity-settings-field">
                             <label for="accent_color">Accent color</label>
-                            <input id="accent_color" type="color" value="${accentValue}" class="voxity-settings-control voxity-settings-color">
+                            <div class="voxity-settings-color-row">
+                                <input id="accent_color" type="color" value="${accentValue}" class="voxity-settings-control voxity-settings-color">
+                                <button type="button" id="accent_color_reset" class="voxity-settings-reset" title="Reset to the current theme default" aria-label="Reset accent color to default"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                            </div>
                         </div>
                     </section>
                     <section class="voxity-settings-section">
@@ -758,6 +778,7 @@ window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const select = document.getElementById('theme_select');
                 const acin = document.getElementById('accent_color');
+                const accentResetBtn = document.getElementById('accent_color_reset');
                 const vizSelect = document.getElementById('vizmode_select');
                 const hiddenViz = document.getElementById('viz-mode');
                 const fpsSlider = document.getElementById('fps_slider');
@@ -809,6 +830,18 @@ window.addEventListener('DOMContentLoaded', () => {
                         const applied = applyAccentColor(acin.value, { persist: true });
                         if (applied) {
                             modal_title_up(`Accent color set to ${applied}`);
+                        }
+                    });
+                }
+
+                if (accentResetBtn) {
+                    accentResetBtn.addEventListener('click', () => {
+                        const resetValue = resetAccentColorToTheme();
+                        if (resetValue && acin) {
+                            acin.value = resetValue;
+                        }
+                        if (resetValue) {
+                            modal_title_up(`Accent color reset to ${resetValue}`);
                         }
                     });
                 }

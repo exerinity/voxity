@@ -186,6 +186,46 @@ details ul {
     border-radius: 6px;
 }
 
+.voxity-settings-color-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.voxity-settings-color-row .voxity-settings-color {
+    flex: 1 1 180px;
+}
+
+.voxity-settings-reset {
+    border: 1px solid var(--control-br);
+    background: var(--btn-bg);
+    color: var(--fg);
+    border-radius: 8px;
+    padding: 0;
+    height: 42px;
+    width: 42px;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.voxity-settings-reset:focus-visible {
+    outline: none;
+    border-color: var(--lyric-color, #8000ff);
+    box-shadow: 0 0 0 2px var(--lyric-color, #8000ff);
+}
+
+.voxity-settings-reset:hover {
+    background: var(--btn-hover-bg);
+    border-color: var(--lyric-color, #8000ff);
+    color: var(--fg-strong);
+}
+
 .voxity-settings-slider {
     display: flex;
     gap: 0.5rem;
