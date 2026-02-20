@@ -1957,12 +1957,9 @@ async function openQueueSearchModal(initialQuery = '') {
 }
 
 async function loadFA() {
-    if (!navigator.onLine) {
-        throw_error('Connect to the internet first!');
-        return;
-    }
-    closeTopModal(); // for if in settings or welcome lolz
     const mod = await msg("Attempting to inject Font Awesome manually...");
+    window.VoxityRouter?.setModalRoute(mod, '/i/load_fa');
+    await new Promise(resolve => setTimeout(resolve, 600));
     const fl = document.createElement('link');
     fl.rel = 'stylesheet';
     fl.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' + '?cachebuster=' + Date.now();
@@ -1971,8 +1968,8 @@ async function loadFA() {
 
     document.head.appendChild(fl);
 
-    fl.onload = () => mod.setContent('Icons should have loaded <i class="fa-solid fa-font-awesome"></i>');
-    fl.onerror = () => throw_error("Could not load icons"); closeTopModal();
+    fl.onload = () => mod.setContent('<span class="fa-fade">Icons should have loaded <i class="fa-solid fa-font-awesome"></i></span>');
+    fl.onerror = () => throw_error("Could not load icons");
 }
 
 function welcome() {
