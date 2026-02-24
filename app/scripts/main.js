@@ -13,9 +13,11 @@ const elements = {
     index: document.getElementById('index'),
     indexTooltip: document.getElementById('index-tooltip'),
     vol: document.getElementById('volume'),
+    volTooltip: document.getElementById('volume-tooltip'),
     vol_min: document.getElementById('vol-min'),
     vol_max: document.getElementById('vol-max'),
     speed: document.getElementById('speed'),
+    speedTooltip: document.getElementById('speed-tooltip'),
     speed_min: document.getElementById('spd-min'),
     speed_max: document.getElementById('spd-max'),
     viz_int: document.getElementById('viz-intensity'),
@@ -1423,6 +1425,10 @@ function init() {
         if (parseFloat(elements.speed.value) === 2.0) stat_up(`${icon} Speed: <strong>${elements.speed.value}x</strong> - to go higher, click "Speed" above the slider!`);
     });
 
+    attachSliderTooltip(elements.vol, elements.volTooltip, { formatValue: formatVolumeTooltipText });
+    attachSliderTooltip(elements.speed, elements.speedTooltip, { formatValue: formatSpeedTooltipText });
+    attachSliderTooltip(elements.index, elements.indexTooltip, { formatValue: formatIndexTooltipText, trackPointer: true });
+
     elements.index.addEventListener('input', () => {
         elements.player.currentTime = elements.index.value;
         stat_up(
@@ -1532,6 +1538,121 @@ function updateTimeDurationDisplay(currentTime, duration) {
         return;
     }
     elements.timeDuration.innerHTML = form_time(duration);
+}
+
+function attachSliderTooltip(slider, tooltip, { formatValue, trackPointer = false } = {}) {
+    if (!slider || !tooltip || typeof formatValue !== 'function') return;
+    const state = { visible: false };
+    const target = slider.closest('.range-wrapper') || slider;
+
+    const updateFromClientX = (clientX) => {
+        const rect = target.getBoundingClientRect();
+        if (!rect || rect.width === 0) return;
+        const { min, range } = getSliderBounds(slider);
+        const sliderValue = Number.parseFloat(slider.value);
+        let percent;
+        let value;
+        if (trackPointer && Number.isFinite(clientX)) {
+            percent = (clientX - rect.left) / rect.width;
+            percent = Math.min(Math.max(percent, 0), 1);
+            value = min + percent * range;
+        } else if (Number.isFinite(sliderValue)) {
+            percent = (sliderValue - min) / range;
+            percent = Math.min(Math.max(percent, 0), 1);
+            value = sliderValue;
+        } else {
+            percent = 0;
+            value = min;
+        }
+        tooltip.textContent = formatValue({ value, percent, slider });
+        tooltip.style.left = `${percent * 100}%`;
+    };
+
+    const show = (clientX) => {
+        state.visible = true;
+        tooltip.classList.remove('hidden');
+        updateFromClientX(clientX);
+    };
+
+    const hide = () => {
+        state.visible = false;
+        tooltip.classList.add('hidden');
+    };
+
+    const handlePointerEnter = (event) => {
+        if (event.pointerType === 'touch') return;
+        show(event.clientX);
+    };
+
+    const handlePointerDown = (event) => {
+        show(event.clientX);
+    };
+
+    const handlePointerMove = (event) => {
+        if (!state.visible) return;
+        updateFromClientX(event.clientX);
+    };
+
+    const handlePointerLeave = () => hide();
+    const handlePointerCancel = () => hide();
+    const handlePointerUp = (event) => {
+        if (event.pointerType === 'touch') {
+            hide();
+        }
+    };
+
+    const handleFocus = () => show();
+    const handleBlur = () => hide();
+
+    target.addEventListener('pointerenter', handlePointerEnter);
+    target.addEventListener('pointerdown', handlePointerDown);
+    target.addEventListener('pointermove', handlePointerMove);
+    target.addEventListener('pointerleave', handlePointerLeave);
+    target.addEventListener('pointercancel', handlePointerCancel);
+    target.addEventListener('pointerup', handlePointerUp);
+
+    slider.addEventListener('focus', handleFocus);
+    slider.addEventListener('blur', handleBlur);
+    slider.addEventListener('input', () => {
+        if (state.visible) {
+            updateFromClientX();
+        }
+    });
+}
+
+function getSliderBounds(slider) {
+    const minRaw = Number.parseFloat(slider.min);
+    const maxRaw = Number.parseFloat(slider.max);
+    const min = Number.isFinite(minRaw) ? minRaw : 0;
+    let max = Number.isFinite(maxRaw) ? maxRaw : min + 100;
+    if (max === min) {
+        max = min + 1;
+    }
+    const range = max - min;
+    return { min, max, range };
+}
+
+function formatIndexTooltipText({ value, percent }) {
+    const duration = Number.isFinite(elements.player?.duration) ? elements.player.duration : null;
+    const safeValue = duration !== null ? Math.min(Math.max(value, 0), duration) : Math.max(value, 0);
+    const percentText = `${Math.round(percent * 100)}%`;
+    return `${form_time(safeValue)} (${percentText})`;
+}
+
+function formatVolumeTooltipText({ value, slider }) {
+    const { min, range } = getSliderBounds(slider);
+    let safeValue = Number.isFinite(value) ? value : Number.parseFloat(slider.value);
+    if (!Number.isFinite(safeValue)) safeValue = min;
+    const normalized = range ? (safeValue - min) / range : 0;
+    const percent = Math.round(Math.min(Math.max(normalized, 0), 1) * 100);
+    return `Volume: ${percent}%`;
+}
+
+function formatSpeedTooltipText({ value }) {
+    if (!Number.isFinite(value)) return '--';
+    const rounded = Math.round(value * 100) / 100;
+    const formatted = rounded.toFixed(2).replace(/\.?0+$/, '');
+    return `${formatted}x`;
 }
 
 function maxtruncate() {
