@@ -3,13 +3,13 @@ A modern, opinionated, fast, PWA local music player written entirely in JavaScri
 
 ![](https://i.exerinity.com/Voxity_20260218_223009.png)
 
-# Links
+## Links
 - Try now: https://voxity.dev
 - Release notes: https://voxity.dev/i/release_notes
 - Download: https://github.com/exerinity/voxity.electron/releases
 - More info: https://exerinity.com/projects/voxity
 
-# Some quick features
+## Some quick features
 - Online lyric searching and displaying, with clickable lines from [LRCLIB](https://lrclib.net) or [Musixmatch](https://www.musixmatch.com)
 - A queue with an intelligent shuffle system and drag-to-reorder
 - Metadata parsing and displaying, courtesy of jsmediatags
@@ -17,7 +17,7 @@ A modern, opinionated, fast, PWA local music player written entirely in JavaScri
 - 3 responsive visualizers with variable FPS
 - An intuitive hotkey system with many binds
 - Integration with the Media Session API
-- WebVTT and SubRip subtitle parsing, on top of LyRiC parsing
+- Crude WebVTT and SubRip subtitle parsing, on top of LyRiC parsing
 - A basic sleep timer
 - Sound effects for finished queue, error, welcome, and more
 - System notifications when a new song begins (requires permission)
@@ -31,29 +31,26 @@ A modern, opinionated, fast, PWA local music player written entirely in JavaScri
 
 and more!
 
-# About this repository
+## About this repository
 The code here is 1:1 of what you recieve when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
-
-Nevertheless, feel free to fork this repository and do whatever you want with it. If you make a cool flavor of Voxity, I'll be more than happy to check it out and maybe even link it!
-
-# Other repositories
+## Other repositories
 There is also an Electron version of Voxity, available for Windows and some Linux distros (AppImage and deb), which has some extra features like an application menu and more to come to it. 
 
 https://github.com/exerinity/voxity.electron
 
 The proxy used for fetching lyrics from Musixmatch is due to be released. It's really just a basic Express server, that pretends to be a Musixmatch desktop app user... nothing special
 
-# License
+## License
 This project is licensed under the MIT license. See the [license](LICENSE) file for details.
 
-# Things used
+## Things used
 - ~~**Twemoji**: https://twemoji.twitter.com~~ *removed as of v85a\**
 - **jsmediatags**: https://github.com/aadsm/jsmediatags
 - **Font Awesome**: https://fontawesome.com
 
 \*- what good is an emoji library in a music player? especially with Font Awesome present?
 
-# Parents
+## Ascendants
 Voxity was birthed in July 2025 after combining these three projects:
 ### Basic player
 - A basic video/audio player with the same ethos as Voxity; the speed-volume-scrub sliders and controls // 
@@ -65,4 +62,17 @@ https://visualizer.exerinity.com
 
 ### Doom/Incompetech player
 - A concept of a song picker and player, two variants for DOOM and Incompetech (Kevin MacLeod) // 
-https://exerinity.com/doom/ost and [https://](https://demo.player.exerinity.com/)
+https://exerinity.com/doom/ost and https://demo.player.exerinity.com/
+
+### Also, inspirations where credit is due!
+- **Windows Media Player** for the rotating tab title logic, in the mini player
+- **Winamp** for the status bar system (https://files.exerinity.com/Voxity_20260224_203314.mp4)
+- **VLC media player** for the notifications (...kinda)
+
+## Donate
+Instead of donating to me, you should donate to
+
+- [The Tim Bergling Foundation](https://www.timberglingfoundation.org/donationer)
+- [LRCLIB](https://github.com/sponsors/tranxuanthang)
+
+I'm not affiliated with these, but, developing Voxity does not cost me anything, so I should not recieve anything back for it
