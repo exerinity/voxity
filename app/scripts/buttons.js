@@ -250,29 +250,29 @@ function completeSleepTimer() {
 }
 
 async function openSleepTimerModal() {
-    const quickButtons = SLEEP_TIMER_PRESETS.map(btn => `<button data-sleep-timer-add="${btn.seconds}" style="flex:1 1 110px; padding:0.65rem 0.75rem; border-radius:4px; border:1px solid #444; background:#1f1f1f; color:white; cursor:pointer;">${btn.label}</button>`).join('');
+    const quickButtons = SLEEP_TIMER_PRESETS.map(btn => `<button type="button" class="sleep-timer-quick-button" data-sleep-timer-add="${btn.seconds}">${btn.label}</button>`).join('');
     const modal = await msg(`
-        <div style="margin:1rem 0; display:flex; flex-direction:column; gap:1.25rem; text-align:left;">
-            <div id="sleep_timer_active_section" style="display:none; flex-direction:column; gap:0.35rem;">
-                <p id="sleep_timer_state" style="margin:0; color:#bbb;">No sleep timer active</p>
-                <div id="sleep_timer_countdown" style="font-size:2.2rem; font-weight:700;">--:--</div>
-                <small id="sleep_timer_expires" style="color:#888;"></small>
+        <div class="sleep-timer-modal">
+            <div id="sleep_timer_active_section" class="sleep-timer-card">
+                <p id="sleep_timer_state" class="sleep-timer-state">No sleep timer active</p>
+                <div id="sleep_timer_countdown" class="sleep-timer-countdown">--:--</div>
+                <small id="sleep_timer_expires" class="sleep-timer-expires"></small>
             </div>
-            <div id="sleep_timer_start_section" style="display:flex; flex-direction:column; gap:0.6rem;">
-                <label for="sleep_timer_minutes" style="font-weight:600; color:#ddd;">How long?</label>
-                <div style="display:flex; align-items:center; gap:0.5rem;">
-                    <input id="sleep_timer_minutes" type="number" min="1" value="15" style="flex:1; padding:0.5rem 0.75rem; border-radius:8px; border:1px solid #444; background:#1f1f1f; color:white;">
-                    <span style="color:#aaa;">minutes</span>
+            <div id="sleep_timer_start_section" class="sleep-timer-card">
+                <label for="sleep_timer_minutes" class="sleep-timer-label">How long?</label>
+                <div class="sleep-timer-input-row">
+                    <input id="sleep_timer_minutes" class="sleep-timer-input" type="number" min="1" value="15">
+                    <span class="sleep-timer-input-suffix">minutes</span>
                 </div>
-                <button id="sleep_timer_start" style="padding:0.65rem 1rem; border:none; border-radius:8px; background:#1f1f1f; color:white; font-weight:600; cursor:pointer;">Start</button>
+                <button id="sleep_timer_start" type="button" class="sleep-timer-primary-btn">Start</button>
             </div>
-            <div>
-                <p style="margin:0 0 0.35rem; color:#bbb; font-weight:600;">Add (more) time</p>
-                <div id="sleep_timer_quick_add" style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+            <div class="sleep-timer-card">
+                <p class="sleep-timer-quick-label">Add (more) time</p>
+                <div id="sleep_timer_quick_add" class="sleep-timer-quick-grid">
                     ${quickButtons}
                 </div>
             </div>
-            <button id="sleep_timer_cancel" style="display:none; padding:0.6rem 1rem; border:none; border-radius:8px; background:#3b1b1b; color:#ffb3b3; font-weight:600; cursor:pointer;">Cancel sleep timer</button>
+            <button id="sleep_timer_cancel" type="button" class="sleep-timer-cancel-btn">Cancel sleep timer</button>
         </div>
     `, 'Sleep timer');
     window.VoxityRouter?.setModalRoute(modal, '/sleep_timer');
