@@ -34,6 +34,10 @@
     --spinner-trk: #061f30;
     --shadow: #2226;
     --shadow-strong: #2228;
+    --tooltip-surface: rgba(12, 12, 12, 0.92);
+    --tooltip-border: rgba(255, 255, 255, 0.08);
+    --tooltip-text: var(--fg-strong, var(--fg));
+    --tooltip-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
     --font-primary: 'GSansFlex', sans-serif;
 }
 
@@ -116,6 +120,9 @@
     --spinner-trk: #061f30;
     --shadow: #0006;
     --shadow-strong: #0008;
+    --tooltip-surface: #000000;
+    --tooltip-border: #ffffff;
+    --tooltip-shadow: 0 0 0 2px #ffffff;
 }
 
 
@@ -169,6 +176,9 @@
     --link: #0a84ff;
     --shadow: #0001;
     --shadow-strong: #0002;
+    --tooltip-surface: rgba(255, 255, 255, 0.95);
+    --tooltip-border: rgba(0, 0, 0, 0.12);
+    --tooltip-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
 }
 
 :root[data-theme="synthwave"] {
