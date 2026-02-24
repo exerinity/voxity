@@ -1540,7 +1540,7 @@ function updateTimeDurationDisplay(currentTime, duration) {
     elements.timeDuration.innerHTML = form_time(duration);
 }
 
-function attachSliderTooltip(slider, tooltip, { formatValue, trackPointer = false } = {}) {
+function attachSliderTooltip(slider, tooltip, { formatValue } = {}) {
     if (!slider || !tooltip || typeof formatValue !== 'function') return;
     const state = { visible: false };
     const target = slider.closest('.range-wrapper') || slider;
@@ -1549,21 +1549,15 @@ function attachSliderTooltip(slider, tooltip, { formatValue, trackPointer = fals
         const rect = target.getBoundingClientRect();
         if (!rect || rect.width === 0) return;
         const { min, range } = getSliderBounds(slider);
-        const sliderValue = Number.parseFloat(slider.value);
         let percent;
-        let value;
-        if (trackPointer && Number.isFinite(clientX)) {
+        if (Number.isFinite(clientX)) {
             percent = (clientX - rect.left) / rect.width;
-            percent = Math.min(Math.max(percent, 0), 1);
-            value = min + percent * range;
-        } else if (Number.isFinite(sliderValue)) {
-            percent = (sliderValue - min) / range;
-            percent = Math.min(Math.max(percent, 0), 1);
-            value = sliderValue;
         } else {
-            percent = 0;
-            value = min;
+            const sliderValue = Number.parseFloat(slider.value);
+            percent = Number.isFinite(sliderValue) ? (sliderValue - min) / range : 0;
         }
+        percent = Math.min(Math.max(percent, 0), 1);
+        const value = min + percent * range;
         tooltip.textContent = formatValue({ value, percent, slider });
         tooltip.style.left = `${percent * 100}%`;
     };
@@ -1639,13 +1633,8 @@ function formatIndexTooltipText({ value, percent }) {
     return `${form_time(safeValue)} (${percentText})`;
 }
 
-function formatVolumeTooltipText({ value, slider }) {
-    const { min, range } = getSliderBounds(slider);
-    let safeValue = Number.isFinite(value) ? value : Number.parseFloat(slider.value);
-    if (!Number.isFinite(safeValue)) safeValue = min;
-    const normalized = range ? (safeValue - min) / range : 0;
-    const percent = Math.round(Math.min(Math.max(normalized, 0), 1) * 100);
-    return `Volume: ${percent}%`;
+function formatVolumeTooltipText({ percent }) {
+    return `${Math.round(percent * 100)}%`;
 }
 
 function formatSpeedTooltipText({ value }) {
