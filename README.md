@@ -1,14 +1,68 @@
-# Voxity
-A high-performance PWA music player written entirely in JavaScript. 
+# Voxity - plays music.
+A modern, opinionated, fast, PWA local music player written entirely in JavaScript
 
-I am not good at READMEs, and I don't like duplicating [content from my site (for in the event I change something), so please visit https://exerinity.com/projects/voxity](https://exerinity.com/projects/voxity) to learn more.
+![](https://i.exerinity.com/Voxity_20260218_223009.png)
 
-![](https://vienna.exerinity.dev/ES80EWxqo5.png)
+# Links
+- Try now: https://voxity.dev
+- Release notes: https://voxity.dev/i/release_notes
+- Download: https://github.com/exerinity/voxity.electron/releases
+- More info: https://exerinity.com/projects/voxity
+
+# Some quick features
+- Online lyric searching and displaying, with clickable lines from [LRCLIB](https://lrclib.net) or [Musixmatch](https://www.musixmatch.com)
+- A queue with an intelligent shuffle system and drag-to-reorder
+- Metadata parsing and displaying, courtesy of jsmediatags
+- 10+ themes
+- 3 responsive visualizers with variable FPS
+- An intuitive hotkey system with many binds
+- Integration with the Media Session API
+- WebVTT and SubRip subtitle parsing, on top of LyRiC parsing
+- A basic sleep timer
+- Sound effects for finished queue, error, welcome, and more
+- System notifications when a new song begins (requires permission)
+- Modals above sliders for precise input
+- Click to copy metadata fields, for example, clicking the artist name copies it to your clipboard
+- Variable accent color which applies to the entire UI and visualizer
+- A settings area with many options, with more to come
+- A lyrics browser and editor
+- A rotating tab title which shows various information about the current song to avoid clutter/truncation
+- An error/success toast system in the bottom right corner with an intuitive timer and pause-on-hover
+
+and more!
+
+# About this repository
+The code here is 1:1 of what you recieve when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
+
+Nevertheless, feel free to fork this repository and do whatever you want with it. If you make a cool flavor of Voxity, I'll be more than happy to check it out and maybe even link it!
+
+# Other repositories
+There is also an Electron version of Voxity, available for Windows and some Linux distros (AppImage and deb), which has some extra features like an application menu and more to come to it. 
+
+https://github.com/exerinity/voxity.electron
+
+The proxy used for fetching lyrics from Musixmatch is due to be released. It's really just a basic Express server, that pretends to be a Musixmatch desktop app user... nothing special
 
 # License
 This project is licensed under the MIT license. See the [license](LICENSE) file for details.
 
 # Things used
-~~- **Twemoji**: https://twemoji.twitter.com / https://github.com/twitter/twemoji~~ removed as of v85a
+- ~~**Twemoji**: https://twemoji.twitter.com~~ *removed as of v85a\**
 - **jsmediatags**: https://github.com/aadsm/jsmediatags
-- **Font Awesome**: https://fontawesome.com / https://github.com/FortAwesome/Font-Awesome
+- **Font Awesome**: https://fontawesome.com
+
+\*- what good is an emoji library in a music player? especially with Font Awesome present?
+
+# Parents
+Voxity was birthed in July 2025 after combining these three projects:
+### Basic player
+- A basic video/audio player with the same ethos as Voxity; the speed-volume-scrub sliders and controls // 
+https://player.exerinity.com / https://github.com/exerinity/basic-player
+
+### Visualizer
+- A... visualizer //
+https://visualizer.exerinity.com
+
+### Doom/Incompetech player
+- A concept of a song picker and player, two variants for DOOM and Incompetech (Kevin MacLeod) // 
+https://exerinity.com/doom/ost and [https://](https://demo.player.exerinity.com/)
