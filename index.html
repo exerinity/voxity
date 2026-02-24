@@ -134,7 +134,10 @@
                         <label for="volume" id="volc" title="Click to open a modal for precise input">Volume</label>
                         <div class="main_slide">
                             <span id="vol-min">0</span>
-                            <input id="volume" type="range" min="0" max="2" step="0.01" value="2">
+                            <div class="range-wrapper">
+                                <input id="volume" type="range" min="0" max="2" step="0.01" value="2">
+                                <span id="volume-tooltip" class="tooltip hidden"></span>
+                            </div>
                             <span id="vol-max">1</span>
                         </div>
                     </div>
@@ -142,7 +145,10 @@
                         <label for="speed" id="speedc" title="Click to open a modal for precise input">Speed</label>
                         <div class="main_slide">
                             <span id="spd-min">0.1x</span>
-                            <input id="speed" type="range" min="0.1" max="2" step="0.1" value="1">
+                            <div class="range-wrapper">
+                                <input id="speed" type="range" min="0.1" max="2" step="0.1" value="1">
+                                <span id="speed-tooltip" class="tooltip hidden"></span>
+                            </div>
                             <span id="spd-max">2.0x</span>
                         </div>
                     </div>
