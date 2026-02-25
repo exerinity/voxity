@@ -32,7 +32,7 @@ A modern, opinionated, fast, PWA local music player written entirely in JavaScri
 and more!
 
 ## About this repository
-The code here is 1:1 of what you recieve when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
+The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
 ## Other repositories
 There is also an Electron version of Voxity, available for Windows and some Linux distros (AppImage and deb), which has some extra features like an application menu and more to come to it. 
 
@@ -75,4 +75,4 @@ Instead of donating to me, you should donate to
 - [The Tim Bergling Foundation](https://www.timberglingfoundation.org/donationer)
 - [LRCLIB](https://github.com/sponsors/tranxuanthang)
 
-I'm not affiliated with these, but, developing Voxity does not cost me anything, so I should not recieve anything back for it
+I'm not affiliated with these, but, developing Voxity does not cost me anything, so I should not receive anything back for it
