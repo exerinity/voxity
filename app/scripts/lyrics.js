@@ -11,6 +11,15 @@ let lrc_amount = 16;
 
 const metadata = {};
 
+function notifyAutoAccentController(source) {
+    try {
+        const controller = typeof window !== 'undefined' ? window.VoxityAutoAccent : null;
+        if (controller && typeof controller.handleArtwork === 'function') {
+            controller.handleArtwork(source || '');
+        }
+    } catch { }
+}
+
 const LYRICS_SOURCE_KEYS = Object.freeze({
     LRCLIB: 'lrclib',
     MUSIXMATCH: 'musixmatch',
@@ -94,6 +103,7 @@ function get_meta(file) {
                 cover.classList.remove('hidden');
                 cover.title = metadata.album || metadata.title || 'Cover art';
                 cover.alt = `Cover art for ${metadata.album || metadata.title} by ${metadata.artist}`;
+                notifyAutoAccentController(globalart);
                 if ('mediaSession' in navigator) {
                     try {
                         if (_ms_art_url) { URL.revokeObjectURL(_ms_art_url); _ms_art_url = null; }
@@ -107,6 +117,7 @@ function get_meta(file) {
             } else {
                 globalart = '';
                 cover.classList.add('hidden');
+                notifyAutoAccentController('');
                 if ('mediaSession' in navigator) set_media_session_metadata();
             }
 
@@ -142,6 +153,7 @@ function get_meta(file) {
             document.title = '';
             document.getElementById('cover-art').classList.add('hidden');
             globalart = '';
+            notifyAutoAccentController('');
             if ('mediaSession' in navigator) set_media_session_metadata();
             lastLyricsRequest = null;
             try {
