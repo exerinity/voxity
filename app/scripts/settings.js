@@ -9,6 +9,7 @@
         lyricsSource: 'lrclib',
         songNotifications: false,
         wakeLock: false,
+        autoAccentColor: false,
     });
 
     let values = { ...DEFAULTS };
