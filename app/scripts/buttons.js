@@ -532,6 +532,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 label: 'Acquire screen wakelock',
                 description: 'Prevent the display from sleeping while playing audio'
             },
+            {
+                key: 'autoAccentColor',
+                label: 'Set accent from cover',
+                description: 'Derive the accent color from the dominant color in the current artwork',
+            },
         ];
         const LYRICS_SOURCES = [
             {
@@ -612,6 +617,255 @@ window.addEventListener('DOMContentLoaded', () => {
             } catch { }
             return normalized;
         };
+
+        const applyPreferredAccentColor = () => {
+            const stored = getStoredAccentColor();
+            if (stored) {
+                return applyAccentColor(stored);
+            }
+            return resetAccentColorToTheme();
+        };
+
+        const AutoAccentController = (() => {
+            const CANVAS_SIZE = 128;
+            const MAX_TRACKED_COLORS = 40;
+            const MIN_DOMINANCE_GAP = 5;
+            const RICH_PALETTE_THRESHOLD = 15;
+            const MIN_COLOR_SATURATION = 0.2;
+            const MIN_COLOR_LUMINANCE = 0.3;
+            const MAX_COLOR_LUMINANCE = 0.92;
+            let canvas = null;
+            let ctx = null;
+            let latestArtworkSrc = '';
+            let currentRequestToken = 0;
+
+            const ensureContext = () => {
+                if (ctx) return ctx;
+                try {
+                    canvas = document.createElement('canvas');
+                    canvas.width = CANVAS_SIZE;
+                    canvas.height = CANVAS_SIZE;
+                    ctx = canvas.getContext('2d', { willReadFrequently: true }) || canvas.getContext('2d');
+                } catch {
+                    canvas = null;
+                    ctx = null;
+                }
+                return ctx;
+            };
+
+            const isPreferenceEnabled = () => {
+                if (typeof window === 'undefined' || typeof window.VoxitySettings === 'undefined') {
+                    return false;
+                }
+                return !!window.VoxitySettings.isEnabled('autoAccentColor');
+            };
+
+            const toHex = (value) => value.toString(16).padStart(2, '0');
+            const clampByte = (value) => Math.max(0, Math.min(255, Math.round(value)));
+
+            const lightenColor = (hex) => {
+                if (typeof hex !== 'string') return null;
+                const normalized = hex.trim().replace(/^#/, '');
+                if (!/^[0-9a-f]{3,8}$/i.test(normalized)) return null;
+                const expanded = normalized.length === 3
+                    ? normalized.split('').map(ch => ch + ch).join('')
+                    : normalized.slice(0, 6);
+                const r = parseInt(expanded.slice(0, 2), 16);
+                const g = parseInt(expanded.slice(2, 4), 16);
+                const b = parseInt(expanded.slice(4, 6), 16);
+                const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+                const MIN_LUMINANCE = 0.7;
+                if (luminance >= MIN_LUMINANCE || luminance >= 0.99) {
+                    return `#${expanded}`;
+                }
+                const factor = Math.min(1, (MIN_LUMINANCE - luminance) / (1 - luminance));
+                const lightR = clampByte(r + ((255 - r) * factor));
+                const lightG = clampByte(g + ((255 - g) * factor));
+                const lightB = clampByte(b + ((255 - b) * factor));
+                return `#${toHex(lightR)}${toHex(lightG)}${toHex(lightB)}`;
+            };
+
+            const getColorInfo = (bucket) => {
+                if (!bucket || !bucket.count) return null;
+                const avgR = Math.round(bucket.r / bucket.count);
+                const avgG = Math.round(bucket.g / bucket.count);
+                const avgB = Math.round(bucket.b / bucket.count);
+                const rNorm = avgR / 255;
+                const gNorm = avgG / 255;
+                const bNorm = avgB / 255;
+                const max = Math.max(rNorm, gNorm, bNorm);
+                const min = Math.min(rNorm, gNorm, bNorm);
+                const luminance = 0.2126 * rNorm + 0.7152 * gNorm + 0.0722 * bNorm;
+                let saturation = 0;
+                if (max !== min) {
+                    const l = (max + min) / 2;
+                    const delta = max - min;
+                    if (l > 0.5) {
+                        const denom = 2 - max - min;
+                        saturation = denom === 0 ? 0 : delta / denom;
+                    } else {
+                        const denom = max + min;
+                        saturation = denom === 0 ? 0 : delta / denom;
+                    }
+                }
+                return {
+                    bucket,
+                    hex: `#${toHex(avgR)}${toHex(avgG)}${toHex(avgB)}`,
+                    luminance,
+                    saturation,
+                };
+            };
+
+            const analyzeImageElement = (img) => {
+                const context = ensureContext();
+                if (!context || !canvas) return null;
+                try {
+                    context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                    context.drawImage(img, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                    const imageData = context.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                    const buckets = new Map();
+                    const data = imageData.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const alpha = data[i + 3];
+                        if (alpha < 32) continue;
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        const key = `${r >> 4}-${g >> 4}-${b >> 4}`;
+                        let bucket = buckets.get(key);
+                        if (!bucket) {
+                            bucket = { count: 0, r: 0, g: 0, b: 0 };
+                            buckets.set(key, bucket);
+                        }
+                        bucket.count += 1;
+                        bucket.r += r;
+                        bucket.g += g;
+                        bucket.b += b;
+                    }
+                    if (!buckets.size) return null;
+                    const sortedBuckets = [...buckets.values()]
+                        .sort((a, b) => b.count - a.count)
+                        .slice(0, MAX_TRACKED_COLORS);
+                    if (!sortedBuckets.length) return null;
+                    const colorInfos = sortedBuckets
+                        .map(getColorInfo)
+                        .filter(Boolean);
+                    if (!colorInfos.length) return null;
+                    const hasRichPalette = colorInfos.length >= RICH_PALETTE_THRESHOLD;
+                    if (hasRichPalette) {
+                        const vibrant = colorInfos
+                            .filter(info =>
+                                info.saturation >= MIN_COLOR_SATURATION
+                                && info.luminance >= MIN_COLOR_LUMINANCE
+                                && info.luminance <= MAX_COLOR_LUMINANCE
+                            )
+                            .sort((a, b) => {
+                                if (b.luminance !== a.luminance) return b.luminance - a.luminance;
+                                return b.bucket.count - a.bucket.count;
+                            });
+                        if (vibrant.length) {
+                            return vibrant[0].hex;
+                        }
+                    }
+                    const primary = colorInfos[0];
+                    if (!primary) return null;
+                    const runnerUp = colorInfos[1];
+                    if (runnerUp && (primary.bucket.count - runnerUp.bucket.count) < MIN_DOMINANCE_GAP) {
+                        return null;
+                    }
+                    return primary.hex;
+                } catch {
+                    return null;
+                }
+            };
+
+            const loadImage = (src) => new Promise((resolve, reject) => {
+                if (!src) {
+                    reject(new Error('Missing artwork source'));
+                    return;
+                }
+                try {
+                    const image = new Image();
+                    image.crossOrigin = 'anonymous';
+                    image.onload = () => resolve(image);
+                    image.onerror = reject;
+                    image.src = src;
+                } catch (err) {
+                    reject(err);
+                }
+            });
+
+            const applyFromSource = async (src, token) => {
+                try {
+                    const image = await loadImage(src);
+                    if (token !== currentRequestToken) return;
+                    const detected = analyzeImageElement(image);
+                    if (!detected) {
+                        applyPreferredAccentColor();
+                        return;
+                    }
+                    const lightened = lightenColor(detected) || detected;
+                    applyAccentColor(lightened, { persist: false });
+                } catch {
+                    if (token === currentRequestToken) {
+                        applyPreferredAccentColor();
+                    }
+                }
+            };
+
+            const queueApply = (src) => {
+                currentRequestToken += 1;
+                const token = currentRequestToken;
+                applyFromSource(src, token);
+            };
+
+            const handleArtwork = (src) => {
+                latestArtworkSrc = src || '';
+                if (!src) {
+                    applyPreferredAccentColor();
+                    return;
+                }
+                if (!isPreferenceEnabled()) {
+                    return;
+                }
+                queueApply(src);
+            };
+
+            const syncPreference = () => {
+                if (!isPreferenceEnabled()) {
+                    applyPreferredAccentColor();
+                    return;
+                }
+                if (latestArtworkSrc) {
+                    queueApply(latestArtworkSrc);
+                    return;
+                }
+                applyPreferredAccentColor();
+            };
+
+            return {
+                handleArtwork,
+                syncPreference,
+            };
+        })();
+
+        if (typeof window !== 'undefined') {
+            window.VoxityAutoAccent = AutoAccentController;
+        }
+        try {
+            if (typeof globalart !== 'undefined' && globalart) {
+                AutoAccentController.handleArtwork(globalart);
+            }
+        } catch { }
+
+        document.addEventListener('voxity:settings-changed', (event) => {
+            try {
+                const detail = event?.detail || {};
+                if (detail.key === 'autoAccentColor' || detail.key === '*') {
+                    AutoAccentController.syncPreference();
+                }
+            } catch { }
+        });
 
         const storedAccent = getStoredAccentColor();
         if (storedAccent) {
