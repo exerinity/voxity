@@ -1196,6 +1196,12 @@ function resetPlayerState() {
     elements.index.max = 100;
     if (typeof globalart !== 'undefined') {
         globalart = '';
+        try {
+            const controller = typeof window !== 'undefined' ? window.VoxityAutoAccent : null;
+            if (controller && typeof controller.handleArtwork === 'function') {
+                controller.handleArtwork('');
+            }
+        } catch { }
     }
     if (typeof _ms_art_url !== 'undefined' && _ms_art_url) {
         try { URL.revokeObjectURL(_ms_art_url); } catch { }
