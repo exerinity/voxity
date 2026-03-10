@@ -1,23 +1,26 @@
-const CACHE_NAME = 'voxity88';
+const CACHE_NAME = 'voxity88a';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';
+const fonts = '/app/fonts/';
+const webfonts = '/app/webfonts/';
+
 const FILES_TO_CACHE = [
-  '/', // root
+  '/',
   '/entry',
   '/i/how_pwa',
   '/i/release_notes',
   '/i/imageview',
   '/favicon.ico',
-  '/favicona.png',
   '/manifest.json',
   '/sw.js',
 
-  // media 
-  ms+'/welcome.ogg',
-  ms+'/error.ogg',
-  ms+'/message.ogg',
-  ms+'/done.ogg',
+  // media
+  ms+'welcome.ogg',
+  ms+'error.ogg',
+  ms+'message.ogg',
+  ms+'done.ogg',
+  ms+'time.ogg',
 
   // stylesheets
   cs+'controls.css',
@@ -28,33 +31,73 @@ const FILES_TO_CACHE = [
   cs+'tandem.css',
   cs+'themes.css',
 
-  // scripts
-  sc+'main.js',
-  sc+'pwa.js',
-  sc+'audio.js',
-  sc+'buttons.js',
-  sc+'error.js',
-  sc+'hotkeys.js',
-  sc+'jsmediatags.js',
-  sc+'lyrics.js',
-  sc+'message.js',
-  sc+'title.js',
-  sc+'visualizer.js',
-  sc+'api.js',
-  sc+'text.js',
-  sc+'settings.js',
+  // scripts - library
+  sc+'library/jsmediatags.js',
+
+  // scripts - management
+  sc+'management/elementmap.js',
+  sc+'management/hotkeys.js',
+  sc+'management/initialize.js',
+  sc+'management/notifications.js',
+  sc+'management/play.js',
+  sc+'management/pwa.js',
+  sc+'management/settings.js',
+  sc+'management/sleeptimer.js',
+  sc+'management/tabtitle.js',
+  sc+'management/wakelock.js',
+
+  // scripts - audio
+  sc+'audio/analyzer.js',
+  sc+'audio/event.js',
+  sc+'audio/visualizer.js',
+
+  // scripts - queue
+  sc+'queue/detersubtitles.js',
+  sc+'queue/drag.js',
+  sc+'queue/handler.js',
+  sc+'queue/loading.js',
+  sc+'queue/render.js',
+  sc+'queue/shuffle.js',
+  sc+'queue/statuses.js',
+  sc+'queue/utilities.js',
+
+  // scripts - lyrics
+  sc+'lyrics/engine.js',
+  sc+'lyrics/metadata.js',
+  sc+'lyrics/pastelyrics.js',
+  sc+'lyrics/searchlyrics.js',
+  sc+'lyrics/source.js',
+
+  // scripts - ui
+  sc+'ui/clicktocopy.js',
+  sc+'ui/controls.js',
+  sc+'ui/error.js',
+  sc+'ui/hello.js',
+  sc+'ui/inputmodal.js',
+  sc+'ui/modal.js',
+  sc+'ui/preferences.js',
+  sc+'ui/status.js',
+  sc+'ui/textscroller.js',
+
+  // scripts - misc
+  sc+'miscellaneous/formathelp.js',
+  sc+'miscellaneous/mediasession.js',
+  sc+'miscellaneous/pwachecker.js',
+  sc+'miscellaneous/releasenotes.js',
+  sc+'miscellaneous/router.js',
+  sc+'miscellaneous/statictext.js',
 
   // fonts
-  '/app/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf',
-  '/app/fonts/inter/Inter-VariableFont_opsz,wght.ttf',
+  fonts+'inter/Inter.subset.woff2',
+  fonts+'inter/Inter-Italic.subset.woff2',
+  fonts+'googlesansflex/GoogleSansFlex.subset.woff2',
 
   // webfonts
-  '/app/webfonts/fa-brands-400.woff2',
-  '/app/webfonts/fa-regular-400.woff2',
-  '/app/webfonts/fa-solid-900.woff2',
-  '/app/webfonts/fa-v4compatibility.woff2'
+  webfonts+'fa-brands-400.woff2',
+  webfonts+'fa-regular-400.woff2',
+  webfonts+'fa-solid-900.woff2',
+  webfonts+'fa-v4compatibility.woff2'
 ];
-console.log('Service worker initializing...');
 
 self.addEventListener('install', event => {
   console.log('Installing...');
