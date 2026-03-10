@@ -23,11 +23,11 @@
     <link rel="stylesheet" href="/app/stylesheets/structure.css">
     <link rel="stylesheet" href="/app/stylesheets/tandem.css">
     <link rel="stylesheet" href="/app/stylesheets/themes.css">
-    <script src="/app/scripts/jsmediatags.js" defer></script>
-    <script src="/app/scripts/pwa.js" defer></script> <!-- this is not all of the scripts, some are in the body -->
     <link rel="stylesheet" href="/app/stylesheets/fontawesome.css">
-    <script src="/app/scripts/message.js" defer></script>
-    <script src="/app/scripts/router.js" defer></script>
+    <script src="/app/scripts/library/jsmediatags.js" defer></script>
+    <script src="/app/scripts/management/pwa.js" defer></script>
+    <script src="/app/scripts/ui/modal.js" defer></script>
+    <script src="/app/scripts/miscellaneous/router.js" defer></script>
     <meta name="description" content="A semi-advanced PWA music player that supports any audio file your browser does">
     <meta name="keywords" content="music, player, audio, web audio api, visualizer, lyrics, jsmediatags">
     <meta name="author" content="exerinity.com">
@@ -40,11 +40,11 @@
 
 <body>
     <main>
-        <audio src="/app/media/welcome.ogg" id="welcomesound" preload="auto"></audio>
-        <audio src="/app/media/error.ogg" id="errsound" preload="auto"></audio>
-        <audio src="/app/media/message.ogg" id="msgsound" preload="auto"></audio>
-        <audio src="/app/media/done.ogg" id="donesound" preload="auto"></audio>
-        <audio src="/app/media/time.ogg" id="timesound" preload="auto"></audio>
+        <audio src="/app/media/sfx/welcome.ogg" id="welcomesound" preload="auto"></audio>
+        <audio src="/app/media/sfx/error.ogg" id="errsound" preload="auto"></audio>
+        <audio src="/app/media/sfx/message.ogg" id="msgsound" preload="auto"></audio>
+        <audio src="/app/media/sfx/done.ogg" id="donesound" preload="auto"></audio>
+        <audio src="/app/media/sfx/time.ogg" id="timesound" preload="auto"></audio>
         <!-- this is the "finished rendering" sound from FL Studio -->
         <div id="preemptive_warn"
             style="background: var(--dialog-bg);color: var(--fg);border-radius: 16px;box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 32px;padding: 2rem 2.5rem 1.5rem;max-width: 720px;width: 90vw;position: fixed;font-family: inherit;text-align: center;animation: 0.2s ease 0s 1 normal none running zin;left: 50%;top: 50%;transform: translate(-50%, -50%);">
@@ -57,12 +57,12 @@
                 <div style="margin-bottom:1rem; cursor: default;" id="rescue">
                     <script
                         type="text/javascript">document.write(`Something broke trying to load Voxity. Make sure
-                JavaScript is enabled and that "main.js" can be accessed (i.e., you are not blocking it) before
+                JavaScript is enabled and that "/app/scripts/management/initialize.js" can be accessed (i.e., you are not blocking it) before
                 refreshing. If that still fails, perform a hard refresh with CTRL/Command+Shift+R or <a
                     href="/?cachebuster=9999999999999999999999">try a cache buster</a>.
                 <br><small>PS: Even if you don't see this, everything might still be broken. Good luck, comrade. This
-                    message is only removed by main.js once the page loads. More can go wrong and this box won't catch
-                    it.</small><hr>JavaScript is <strong style="color:green;">enabled</strong>. <a href="/app/scripts/main.js" target="_blank">Please check main.js is accessible</a>.<br><a href="https://exerinity.com/email">I need help!</a>`);</script>
+                    message is only removed by initialize.js once the page loads. More can go wrong and this box won't catch
+                    it.</small><hr>JavaScript is <strong style="color:green;">enabled</strong>. <a href="/app/scripts/management/initialize.js" target="_blank">Please check /app/scripts/management/initialize.js is accessible</a>.<br><a href="https://exerinity.com/email">I need help!</a>`);</script>
                     <!-- for if javascript works, but if something else doesnt -->
                     <noscript>JavaScript is <strong style="color:red;">disabled</strong>. Please enable it to continue.
                         <a href="https://support.google.com/adsense/answer/12654?hl=en" target="_blank">Learn
@@ -192,18 +192,48 @@
             <div id="error" class="hidden"></div>
         </div>
     </main>
-    <script src="/app/scripts/settings.js" defer></script>
-    <script src="/app/scripts/main.js" defer></script>
-    <script src="/app/scripts/audio.js" defer></script>
-    <script src="/app/scripts/visualizer.js" defer></script>
-    <script src="/app/scripts/lyrics.js" defer></script>
-    <script src="/app/scripts/error.js" defer></script>
-    <script src="/app/scripts/hotkeys.js" defer></script>
-    <script src="/app/scripts/buttons.js" defer></script>
-    <script src="/app/scripts/title.js" defer></script>
-    <script src="/app/scripts/api.js" defer></script>
-    <script src="/app/scripts/text.js" defer></script>
-    <!-- this is not all of the scripts, some are in the head -->
+    <script src="/app/scripts/management/settings.js" defer></script>
+    <script src="/app/scripts/management/initialize.js"></script>
+    <script src="/app/scripts/management/hotkeys.js" defer></script>
+    <script src="/app/scripts/management/elementmap.js" defer></script>
+    <script src="/app/scripts/management/sleeptimer.js" defer></script>
+    <script src="/app/scripts/management/tabtitle.js" defer></script>
+
+    <script src="/app/scripts/audio/analyzer.js" defer></script>
+    <script src="/app/scripts/audio/event.js" defer></script>
+    <script src="/app/scripts/audio/visualizer.js" defer></script>
+
+    <script src="/app/scripts/queue/handler.js" defer></script>
+    <script src="/app/scripts/queue/render.js" defer></script>
+    <script src="/app/scripts/queue/drag.js" defer></script>
+    <script src="/app/scripts/queue/shuffle.js" defer></script>
+    <script src="/app/scripts/queue/loading.js" defer></script>
+    <script src="/app/scripts/queue/utilities.js" defer></script>
+    <script src="/app/scripts/queue/statuses.js"></script>
+    <script src="/app/scripts/queue/detersubtitles.js" defer></script>
+
+    <script src="/app/scripts/lyrics/engine.js" defer></script>
+    <script src="/app/scripts/lyrics/metadata.js" defer></script>
+    <script src="/app/scripts/lyrics/source.js" defer></script>
+    <script src="/app/scripts/lyrics/searchlyrics.js" defer></script>
+    <script src="/app/scripts/lyrics/pastelyrics.js" defer></script>
+
+    <script src="/app/scripts/ui/controls.js" defer></script>
+    <script src="/app/scripts/ui/error.js" defer></script>
+    <script src="/app/scripts/ui/inputmodal.js" defer></script>
+    <script src="/app/scripts/ui/preferences.js" defer></script>
+    <script src="/app/scripts/ui/textscroller.js" defer></script>
+    <script src="/app/scripts/ui/clicktocopy.js" defer></script>
+    <script src="/app/scripts/ui/hello.js" defer></script>
+    <script src="/app/scripts/ui/status.js"></script>
+    <script src="/app/scripts/miscellaneous/formathelp.js"></script>
+    <script src="/app/scripts/management/play.js"></script>
+    <script src="/app/scripts/miscellaneous/mediasession.js" defer></script>
+    <script src="/app/scripts/miscellaneous/pwachecker.js" defer></script>
+    <script src="/app/scripts/miscellaneous/releasenotes.js" defer></script>
+    <script src="/app/scripts/miscellaneous/statictext.js" defer></script>
+    <script src="/app/scripts/management/notifications.js"></script>
+    <script src="/app/scripts/management/wakelock.js"></script>
 </body>
 
 </html>
