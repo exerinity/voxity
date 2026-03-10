@@ -1,0 +1,1874 @@
+function relnote() {
+    const modalPromise = msg(`<iframe src="/i/release_notes.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.hrefwindow.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong><br><a href="/i/release_notes?standalone" target="_blank">Open this in new tab</a>'}`, 'Release notes');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/i/release_notes');
+}
+async function pwamsg() {
+    if (isPWA()) {
+        return;
+    }
+
+    if (window.deferredInstallPrompt) {
+        window.deferredInstallPrompt.prompt();
+
+        const { outcome } = await window.deferredInstallPrompt.userChoice;
+        window.deferredInstallPrompt = null;
+
+        if (outcome === "accepted") {
+            throw_error("Thanks for installing Voxity! <i class='fa-solid fa-heart' style='color:red;'></i>", true);
+            try { document.getElementById('installpwa')?.classList.add('hidden'); } catch { }
+        }
+        else {
+            throw_error("Prompt failed - opening the how to");
+            const modalPromise = msg(
+                `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
+                "Install Voxity"
+            );
+            window.VoxityRouter?.setModalRoute(modalPromise, '/i/how_pwa');
+        }
+        return;
+    }
+
+    msg(
+        `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
+        "Install Voxity"
+    );
+}
+
+const SLEEP_TIMER_PRESETS = [
+    { label: '+1 min', seconds: 60 },
+    { label: '+5 min', seconds: 300 },
+    { label: '+15 min', seconds: 900 },
+    { label: '+45 min', seconds: 2700 },
+];
+
+const sleepTimerState = {
+    expiresAt: null,
+    timeoutId: null,
+    intervalId: null,
+};
+
+function getSleepTimerRemainingMs() {
+    if (!sleepTimerState.expiresAt) return 0;
+    return Math.max(0, sleepTimerState.expiresAt - Date.now());
+}
+
+function formatSleepTimerClock(ms) {
+    if (ms <= 0) return '00:00';
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+function formatSleepTimerDuration(ms) {
+    if (ms <= 0) return '0s';
+    const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const parts = [];
+    if (hours) parts.push(`${hours}h`);
+    if (minutes) parts.push(`${minutes}m`);
+    if (seconds || parts.length === 0) parts.push(`${seconds}s`);
+    return parts.join(' ');
+}
+
+function formatLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function resetSleepTimerState() {
+    if (sleepTimerState.timeoutId) {
+        clearTimeout(sleepTimerState.timeoutId);
+        sleepTimerState.timeoutId = null;
+    }
+    if (sleepTimerState.intervalId) {
+        clearInterval(sleepTimerState.intervalId);
+        sleepTimerState.intervalId = null;
+    }
+    sleepTimerState.expiresAt = null;
+}
+
+function updateSleepTimerUi() {
+    const remainingMs = getSleepTimerRemainingMs();
+    const active = Boolean(sleepTimerState.expiresAt && remainingMs > 0);
+    const countdownEl = document.getElementById('sleep_timer_countdown');
+    if (countdownEl) {
+        countdownEl.textContent = active ? formatSleepTimerClock(remainingMs) : '--:--';
+    }
+    const stateEl = document.getElementById('sleep_timer_state');
+    if (stateEl) {
+        stateEl.textContent = active
+            ? `Ongoing`
+            : 'Not running';
+    }
+    const expiresEl = document.getElementById('sleep_timer_expires');
+    if (expiresEl) {
+        if (active) {
+            const expiresDate = new Date(sleepTimerState.expiresAt);
+            const now = new Date();
+            const differentDay = expiresDate.getFullYear() !== now.getFullYear()
+                || expiresDate.getMonth() !== now.getMonth()
+                || expiresDate.getDate() !== now.getDate();
+            const timeString = expiresDate.toLocaleTimeString([], { hour12: true });
+            const dateSuffix = differentDay ? ` on ${formatLocalDate(expiresDate)}` : '';
+            expiresEl.innerHTML = `Finishes at <strong>${timeString}${dateSuffix}</strong>`;
+        } else {
+            expiresEl.textContent = '';
+        }
+    }
+    const activeSection = document.getElementById('sleep_timer_active_section');
+    if (activeSection) {
+        activeSection.style.display = active ? 'flex' : 'none';
+    }
+    const startSection = document.getElementById('sleep_timer_start_section');
+    if (startSection) {
+        startSection.style.display = active ? 'none' : 'flex';
+    }
+    const cancelBtn = document.getElementById('sleep_timer_cancel');
+    if (cancelBtn) {
+        cancelBtn.style.display = active ? 'inline-flex' : 'none';
+    }
+    const inlineBtnLabel = document.getElementById('sleep_timer_button_label');
+    if (inlineBtnLabel) {
+        inlineBtnLabel.textContent = active
+            ? formatSleepTimerClock(remainingMs)
+            : '';
+    }
+}
+
+function ensureSleepTimerTicker() {
+    if (sleepTimerState.intervalId) return;
+    sleepTimerState.intervalId = setInterval(() => {
+        if (!sleepTimerState.expiresAt) {
+            clearInterval(sleepTimerState.intervalId);
+            sleepTimerState.intervalId = null;
+            return;
+        }
+        const remaining = getSleepTimerRemainingMs();
+        if (remaining <= 0) {
+            completeSleepTimer();
+            return;
+        }
+        updateSleepTimerUi();
+    }, 500);
+}
+
+function scheduleSleepTimerFinishTimeout() {
+    if (sleepTimerState.timeoutId) {
+        clearTimeout(sleepTimerState.timeoutId);
+        sleepTimerState.timeoutId = null;
+    }
+    if (!sleepTimerState.expiresAt) return;
+    const remaining = Math.max(0, sleepTimerState.expiresAt - Date.now());
+    sleepTimerState.timeoutId = setTimeout(() => {
+        sleepTimerState.timeoutId = null;
+        completeSleepTimer();
+    }, remaining);
+    ensureSleepTimerTicker();
+}
+
+function startSleepTimer(seconds) {
+    const secs = Math.round(Number(seconds));
+    if (!Number.isFinite(secs) || secs <= 0) {
+        throw_error('Must be at least 1 second');
+        return false;
+    }
+    sleepTimerState.expiresAt = Date.now() + (secs * 1000);
+    scheduleSleepTimerFinishTimeout();
+    updateSleepTimerUi();
+    const remaining = getSleepTimerRemainingMs();
+    stat_up(`<i class="fa-solid fa-moon"></i> Sleep timer set (${formatSleepTimerDuration(remaining)} remaining)`);
+    return true;
+}
+
+function extendSleepTimer(seconds) {
+    const secs = Math.round(Number(seconds));
+    if (!Number.isFinite(secs) || secs <= 0) {
+        return false;
+    }
+    if (!sleepTimerState.expiresAt) {
+        return startSleepTimer(secs);
+    }
+    sleepTimerState.expiresAt += secs * 1000;
+    scheduleSleepTimerFinishTimeout();
+    updateSleepTimerUi();
+    const remaining = getSleepTimerRemainingMs();
+    stat_up(`<i class="fa-solid fa-moon"></i> Sleep timer extended (${formatSleepTimerDuration(secs * 1000)} added, ${formatSleepTimerDuration(remaining)} left)`);
+    return true;
+}
+
+function cancelSleepTimer(showFeedback = true) {
+    if (!sleepTimerState.expiresAt) {
+        return false;
+    }
+    resetSleepTimerState();
+    updateSleepTimerUi();
+    if (showFeedback) {
+        stat_up('<i class="fa-solid fa-moon"></i> Sleep timer cancelled');
+    }
+    return true;
+}
+
+function completeSleepTimer() {
+    if (!sleepTimerState.expiresAt) {
+        resetSleepTimerState();
+        updateSleepTimerUi();
+        return;
+    }
+    resetSleepTimerState();
+    updateSleepTimerUi();
+    try {
+        elements.player.pause();
+    } catch { }
+    const timerSoundEnabled = typeof shouldPlaySoundEffects === 'function'
+        ? shouldPlaySoundEffects()
+        : true;
+    if (timerSoundEnabled) {
+        try {
+            if (elements.time_sound) {
+                elements.time_sound.volume = elements.player.volume || 1; // to avoid blasting someone sound asleep hahah
+                if (typeof playUiSound === 'function') {
+                    playUiSound(elements.time_sound);
+                } else {
+                    elements.time_sound.currentTime = 0;
+                    elements.time_sound.play();
+                }
+            }
+        } catch { }
+    }
+    try {
+        msg('Your sleep timer has reached zero, <a href="/i/sleep_timer" onclick="event.preventDefault(); closeTopModal(); openSleepTimerModal();">but you can always add more time</a>', "Time's up");
+    } catch { }
+}
+
+async function openSleepTimerModal() {
+    const quickButtons = SLEEP_TIMER_PRESETS.map(btn => `<button type="button" class="sleep-timer-quick-button" data-sleep-timer-add="${btn.seconds}">${btn.label}</button>`).join('');
+    const modal = await msg(`
+        <div class="sleep-timer-modal">
+            <div id="sleep_timer_active_section" class="sleep-timer-card">
+                <p id="sleep_timer_state" class="sleep-timer-state">No sleep timer active</p>
+                <div id="sleep_timer_countdown" class="sleep-timer-countdown">--:--</div>
+                <small id="sleep_timer_expires" class="sleep-timer-expires"></small>
+            </div>
+            <div id="sleep_timer_start_section" class="sleep-timer-card">
+                <label for="sleep_timer_minutes" class="sleep-timer-label">How long?</label>
+                <div class="sleep-timer-input-row">
+                    <input id="sleep_timer_minutes" class="sleep-timer-input" type="number" min="1" value="15">
+                    <span class="sleep-timer-input-suffix">minutes</span>
+                </div>
+                <button id="sleep_timer_start" type="button" class="sleep-timer-primary-btn">Start</button>
+            </div>
+            <div class="sleep-timer-card">
+                <p class="sleep-timer-quick-label">Add (more) time</p>
+                <div id="sleep_timer_quick_add" class="sleep-timer-quick-grid">
+                    ${quickButtons}
+                </div>
+            </div>
+            <button id="sleep_timer_cancel" type="button" class="sleep-timer-cancel-btn">Cancel sleep timer</button>
+        </div>
+    `, 'Sleep timer');
+    window.VoxityRouter?.setModalRoute(modal, '/sleep_timer');
+
+    setTimeout(() => {
+        const root = modal?.overlay || document;
+        const minutesInput = root.querySelector('#sleep_timer_minutes');
+        const startBtn = root.querySelector('#sleep_timer_start');
+        const quickBtns = root.querySelectorAll('[data-sleep-timer-add]');
+        const cancelBtn = root.querySelector('#sleep_timer_cancel');
+
+        const handleStart = () => {
+            if (!minutesInput) return;
+            const minutes = parseFloat(minutesInput.value);
+            if (isNaN(minutes) || minutes <= 0) {
+                throw_error('Must be at least 1 minute');
+                minutesInput.focus();
+                return;
+            }
+            startSleepTimer(minutes * 60);
+            updateSleepTimerUi();
+            try { minutesInput.blur(); } catch { }
+        };
+
+        if (startBtn && minutesInput) {
+            startBtn.addEventListener('click', handleStart);
+            minutesInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleStart();
+                }
+            });
+        }
+
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const seconds = Number(btn.getAttribute('data-sleep-timer-add')) || 0;
+                extendSleepTimer(seconds);
+                updateSleepTimerUi();
+            });
+        });
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                const cancelled = cancelSleepTimer();
+                if (!cancelled) {
+                    throw_error('No sleep timer to cancel - this button should not be visible currently, but whatever.');
+                }
+                updateSleepTimerUi();
+            });
+        }
+
+        updateSleepTimerUi();
+        if (minutesInput && !sleepTimerState.expiresAt) {
+            minutesInput.focus();
+        }
+    }, 0);
+}
+
+const sleepTimerTrigger = document.getElementById('open_sleep_timer_modal');
+if (sleepTimerTrigger) {
+    sleepTimerTrigger.addEventListener('click', debounce(() => {
+        openSleepTimerModal();
+    }));
+}
+
+updateSleepTimerUi();
+
+
+document.getElementById('plps').addEventListener('click', debounce(() => {
+    if (!metadata.title && !metadata.artist) {
+        return throw_error('No track playing!');
+    }
+    if (elements.player.paused) {
+        elements.player.play();
+        document.getElementById('plps').innerHTML = '<i class="fa-solid fa-pause"></i>';
+        stat_up('<i class="fa-solid fa-circle-play"></i> Resumed playback');
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'playing'; } catch { }
+        }
+    } else {
+        elements.player.pause();
+        document.getElementById('plps').innerHTML = '<i class="fa-solid fa-play"></i>';
+        stat_up('<i class="fa-solid fa-circle-pause"></i> Paused playback');
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'paused'; } catch { }
+        }
+    }
+}));
+
+document.getElementById('rwd').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
+    const dur = elements.player.duration || 0;
+    const t = Math.max(0, (elements.player.currentTime || 0) - 10);
+    elements.player.currentTime = t;
+    elements.index.value = t;
+    stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: ${form_time(t)} / ${form_time(dur)}`);
+}));
+
+document.getElementById('branding').addEventListener('click', debounce(() => {
+    const modalPromise = msg(about_content, "About Voxity");
+    window.VoxityRouter?.setModalRoute(modalPromise, '/about');
+    return modalPromise;
+}));
+
+const queueHead = document.getElementById('queuehead');
+if (queueHead) {
+    queueHead.addEventListener('click', debounce(() => {
+        calqueue();
+    }));
+
+    const scrollCurrentTrackIntoView = debounce(() => {
+        if (!scrollCurrentQueueItemIntoView()) {
+            throw_error('No track playing!');
+        }
+    });
+
+    queueHead.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+        scrollCurrentTrackIntoView();
+    });
+
+    queueHead.addEventListener('auxclick', (event) => {
+        if (event.button !== 1) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (typeof openQueueSearchModal === 'function') {
+            openQueueSearchModal();
+        }
+    });
+}
+
+document.getElementById('fwd').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
+    const dur = elements.player.duration || 0;
+    const t = Math.min(dur, (elements.player.currentTime || 0) + 10);
+    elements.player.currentTime = t;
+    elements.index.value = t;
+    stat_up(`<i class="fa-solid fa-music"></i> Scrubbing to: <strong>${form_time(t)}</strong> / <strong>${form_time(dur)}</strong>`);
+}));
+
+document.getElementById('stop').addEventListener('click', debounce(() => {
+    restr();
+}));
+
+function restr() {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
+    elements.player.currentTime = 0;
+    elements.index.value = 0;
+    stat_up('<i class="fa-solid fa-arrow-rotate-left"></i> Restarted the track');
+}
+
+document.getElementById('hotkeys').addEventListener('click', debounce(() => {
+    const modalPromise = msg(hotkeys_content, 'List of hotkeys');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/i/hotkeys');
+}));
+
+
+try {
+    const installBtn = document.getElementById('installpwa');
+    if (installBtn && typeof pwamsg === 'function') {
+        installBtn.addEventListener('click', debounce(() => {
+            pwamsg();
+        }));
+        if (!isPWA() && window.deferredInstallPrompt) {
+            installBtn.classList.remove('hidden');
+        }
+    }
+} catch { }
+
+
+document.getElementById('cover-art').addEventListener('click', debounce(() => {
+    if (!globalart) return;
+
+    const modalPromise = msg(
+        `<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart">`,
+        act_truncate(metadata.album || metadata.title || "Cover art")
+    );
+    window.VoxityRouter?.setModalRoute(modalPromise, '/i/imageview');
+
+    setTimeout(() => {
+        const img = document.getElementById('msgart');
+        if (!img) return;
+
+        img.onclick = () => {
+            let blobUrl = globalart;
+
+            if (globalart.startsWith('data:')) {
+                const res = globalart.split(',');
+                const mime = res[0].match(/:(.*?);/)[1];
+                const bstr = atob(res[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) u8arr[n] = bstr.charCodeAt(n);
+                const blob = new Blob([u8arr], { type: mime });
+                blobUrl = URL.createObjectURL(blob);
+            }
+
+            const name = encodeURIComponent(metadata.title || metadata.album || 'Voxity art viewer');
+            window.open(`/i/imageview.html?img=${encodeURIComponent(blobUrl)}&name=${name}`, '_blank');
+        };
+    }, 0);
+}));
+
+window.addEventListener('DOMContentLoaded', () => {
+    (function settingsModal() {
+        const THEMES = [
+            { 'dim': true, 'label': 'Dim' },
+            { 'lights-out': true, 'label': 'Lights out' },
+            { 'high-contrast': true, 'label': 'High contrast' },
+            { 'red': true, 'label': 'Red' },
+            { 'blue': true, 'label': 'Blue' },
+            { 'green': true, 'label': 'Green' },
+            { 'light': true, 'label': 'Light' },
+            { 'synthwave': true, 'label': 'Synthwave' },
+            { 'neon-purple': true, 'label': 'Neon purple' },
+            { 'neon-blue': true, 'label': 'Neon blue' },
+            { 'paradise': true, 'label': 'Paradise' },
+        ];
+
+        const VIZ_OPTIONS = [
+            { v: 'spectrum', l: 'Spectrum' },
+            { v: 'waveform', l: 'Waveform' },
+            { v: 'circular', l: 'Circular' },
+            { v: 'none', l: 'Off' },
+        ];
+        const DEFAULT_ROTATION_INTERVAL = 5;
+        const PREFERENCE_TOGGLES = [
+            {
+                key: 'soundEffects',
+                label: 'Enable sound effects',
+                description: 'For error messages and finished notifications',
+            },
+            {
+                key: 'titleRotation',
+                label: 'Enable title rotation',
+                description: 'Rotate the tab title with current song metadata',
+            },
+            {
+                key: 'staticSongTitle',
+                label: 'Show static song title',
+                description: 'If rotation is disabled, show info statically',
+            },
+            {
+                key: 'autoLyrics',
+                label: 'Load lyrics automatically',
+                description: 'Automatically query lyrics when a track starts',
+            },
+            {
+                key: 'songNotifications',
+                label: 'System song notifications',
+                description: 'Send a notification when the track changes',
+                requiresPermission: 'notification',
+            },
+            {
+                key: 'wakeLock',
+                label: 'Acquire screen wakelock',
+                description: 'Prevent the display from sleeping while playing audio'
+            },
+            {
+                key: 'autoAccentColor',
+                label: 'Set accent from cover',
+                description: 'Derive the accent color from the dominant color in the current artwork',
+            },
+        ];
+        const LYRICS_SOURCES = [
+            {
+                key: 'lrclib',
+                label: 'LRCLIB.net',
+                note: 'Stable, more precise lookups, but crowd-sourced, so could be wrong for lesser known songs',
+            },
+            {
+                key: 'musixmatch',
+                label: 'Musixmatch.com',
+                note: 'Unstable, less precise lookups, but professional enterprise lyrics, so spot-on for popular songs, rough for others',
+            },
+        ];
+        const key = 'au_theme';
+        const ACCENT_COLOR_STORAGE_KEY = 'au_accent_color';
+        const DEFAULT_ACCENT_COLOR = '#8000ff';
+        const btn = document.getElementById('settings');
+        let currentTheme = 'lights-out';
+
+        const normalizeAccentColor = (value) => {
+            if (typeof value !== 'string') return null;
+            const trimmed = value.trim();
+            if (!trimmed) return null;
+            return /^#[0-9a-f]{3,8}$/i.test(trimmed) ? trimmed.toLowerCase() : null;
+        };
+
+        const getStoredAccentColor = () => {
+            try {
+                return normalizeAccentColor(localStorage.getItem(ACCENT_COLOR_STORAGE_KEY));
+            } catch {
+                return null;
+            }
+        };
+
+        const getInlineAccentColor = () => normalizeAccentColor(document.documentElement.style.getPropertyValue('--lyric-color'));
+
+        const getComputedAccentColor = () => {
+            try {
+                if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') return null;
+                return normalizeAccentColor(window.getComputedStyle(document.documentElement).getPropertyValue('--lyric-color'));
+            } catch {
+                return null;
+            }
+        };
+
+        const resolveAccentColor = () => getStoredAccentColor() || getInlineAccentColor() || getComputedAccentColor() || DEFAULT_ACCENT_COLOR;
+
+        const applyAccentColor = (value, { persist = false } = {}) => {
+            const normalized = normalizeAccentColor(value);
+            if (!normalized) return null;
+            document.documentElement.style.setProperty('--lyric-color', normalized);
+            try { viz_color = normalized; } catch { }
+            try {
+                const visualizer = document.getElementById('visualizer');
+                if (visualizer) {
+                    visualizer.style.backgroundColor = normalized;
+                }
+            } catch { }
+            if (persist) {
+                try { localStorage.setItem(ACCENT_COLOR_STORAGE_KEY, normalized); } catch { }
+            }
+            return normalized;
+        };
+
+        const resetAccentColorToTheme = () => {
+            try { document.documentElement.style.removeProperty('--lyric-color'); } catch { }
+            try { localStorage.removeItem(ACCENT_COLOR_STORAGE_KEY); } catch { }
+            let normalized = getComputedAccentColor();
+            if (!normalized) {
+                normalized = DEFAULT_ACCENT_COLOR;
+            }
+            try { viz_color = normalized; } catch { }
+            try {
+                const visualizer = document.getElementById('visualizer');
+                if (visualizer) {
+                    visualizer.style.removeProperty('background-color');
+                }
+            } catch { }
+            return normalized;
+        };
+
+        const applyPreferredAccentColor = () => {
+            const stored = getStoredAccentColor();
+            if (stored) {
+                return applyAccentColor(stored);
+            }
+            return resetAccentColorToTheme();
+        };
+
+        const AutoAccentController = (() => {
+            const CANVAS_SIZE = 128;
+            const MAX_TRACKED_COLORS = 40;
+            const MIN_DOMINANCE_GAP = 5;
+            const RICH_PALETTE_THRESHOLD = 15;
+            const MIN_COLOR_SATURATION = 0.2;
+            const MIN_COLOR_LUMINANCE = 0.3;
+            const MAX_COLOR_LUMINANCE = 0.92;
+            let canvas = null;
+            let ctx = null;
+            let latestArtworkSrc = '';
+            let currentRequestToken = 0;
+
+            const ensureContext = () => {
+                if (ctx) return ctx;
+                try {
+                    canvas = document.createElement('canvas');
+                    canvas.width = CANVAS_SIZE;
+                    canvas.height = CANVAS_SIZE;
+                    ctx = canvas.getContext('2d', { willReadFrequently: true }) || canvas.getContext('2d');
+                } catch {
+                    canvas = null;
+                    ctx = null;
+                }
+                return ctx;
+            };
+
+            const isPreferenceEnabled = () => {
+                if (typeof window === 'undefined' || typeof window.VoxitySettings === 'undefined') {
+                    return false;
+                }
+                return !!window.VoxitySettings.isEnabled('autoAccentColor');
+            };
+
+            const toHex = (value) => value.toString(16).padStart(2, '0');
+            const clampByte = (value) => Math.max(0, Math.min(255, Math.round(value)));
+
+            const lightenColor = (hex) => {
+                if (typeof hex !== 'string') return null;
+                const normalized = hex.trim().replace(/^#/, '');
+                if (!/^[0-9a-f]{3,8}$/i.test(normalized)) return null;
+                const expanded = normalized.length === 3
+                    ? normalized.split('').map(ch => ch + ch).join('')
+                    : normalized.slice(0, 6);
+                const r = parseInt(expanded.slice(0, 2), 16);
+                const g = parseInt(expanded.slice(2, 4), 16);
+                const b = parseInt(expanded.slice(4, 6), 16);
+                const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+                const MIN_LUMINANCE = 0.7;
+                if (luminance >= MIN_LUMINANCE || luminance >= 0.99) {
+                    return `#${expanded}`;
+                }
+                const factor = Math.min(1, (MIN_LUMINANCE - luminance) / (1 - luminance));
+                const lightR = clampByte(r + ((255 - r) * factor));
+                const lightG = clampByte(g + ((255 - g) * factor));
+                const lightB = clampByte(b + ((255 - b) * factor));
+                return `#${toHex(lightR)}${toHex(lightG)}${toHex(lightB)}`;
+            };
+
+            const getColorInfo = (bucket) => {
+                if (!bucket || !bucket.count) return null;
+                const avgR = Math.round(bucket.r / bucket.count);
+                const avgG = Math.round(bucket.g / bucket.count);
+                const avgB = Math.round(bucket.b / bucket.count);
+                const rNorm = avgR / 255;
+                const gNorm = avgG / 255;
+                const bNorm = avgB / 255;
+                const max = Math.max(rNorm, gNorm, bNorm);
+                const min = Math.min(rNorm, gNorm, bNorm);
+                const luminance = 0.2126 * rNorm + 0.7152 * gNorm + 0.0722 * bNorm;
+                let saturation = 0;
+                if (max !== min) {
+                    const l = (max + min) / 2;
+                    const delta = max - min;
+                    if (l > 0.5) {
+                        const denom = 2 - max - min;
+                        saturation = denom === 0 ? 0 : delta / denom;
+                    } else {
+                        const denom = max + min;
+                        saturation = denom === 0 ? 0 : delta / denom;
+                    }
+                }
+                return {
+                    bucket,
+                    hex: `#${toHex(avgR)}${toHex(avgG)}${toHex(avgB)}`,
+                    luminance,
+                    saturation,
+                };
+            };
+
+            const analyzeImageElement = (img) => {
+                const context = ensureContext();
+                if (!context || !canvas) return null;
+                try {
+                    context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                    context.drawImage(img, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                    const imageData = context.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                    const buckets = new Map();
+                    const data = imageData.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const alpha = data[i + 3];
+                        if (alpha < 32) continue;
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        const key = `${r >> 4}-${g >> 4}-${b >> 4}`;
+                        let bucket = buckets.get(key);
+                        if (!bucket) {
+                            bucket = { count: 0, r: 0, g: 0, b: 0 };
+                            buckets.set(key, bucket);
+                        }
+                        bucket.count += 1;
+                        bucket.r += r;
+                        bucket.g += g;
+                        bucket.b += b;
+                    }
+                    if (!buckets.size) return null;
+                    const sortedBuckets = [...buckets.values()]
+                        .sort((a, b) => b.count - a.count)
+                        .slice(0, MAX_TRACKED_COLORS);
+                    if (!sortedBuckets.length) return null;
+                    const colorInfos = sortedBuckets
+                        .map(getColorInfo)
+                        .filter(Boolean);
+                    if (!colorInfos.length) return null;
+                    const hasRichPalette = colorInfos.length >= RICH_PALETTE_THRESHOLD;
+                    if (hasRichPalette) {
+                        const vibrant = colorInfos
+                            .filter(info =>
+                                info.saturation >= MIN_COLOR_SATURATION
+                                && info.luminance >= MIN_COLOR_LUMINANCE
+                                && info.luminance <= MAX_COLOR_LUMINANCE
+                            )
+                            .sort((a, b) => {
+                                if (b.luminance !== a.luminance) return b.luminance - a.luminance;
+                                return b.bucket.count - a.bucket.count;
+                            });
+                        if (vibrant.length) {
+                            return vibrant[0].hex;
+                        }
+                    }
+                    const primary = colorInfos[0];
+                    if (!primary) return null;
+                    const runnerUp = colorInfos[1];
+                    if (runnerUp && (primary.bucket.count - runnerUp.bucket.count) < MIN_DOMINANCE_GAP) {
+                        return null;
+                    }
+                    return primary.hex;
+                } catch {
+                    return null;
+                }
+            };
+
+            const loadImage = (src) => new Promise((resolve, reject) => {
+                if (!src) {
+                    reject(new Error('Missing artwork source'));
+                    return;
+                }
+                try {
+                    const image = new Image();
+                    image.crossOrigin = 'anonymous';
+                    image.onload = () => resolve(image);
+                    image.onerror = reject;
+                    image.src = src;
+                } catch (err) {
+                    reject(err);
+                }
+            });
+
+            const applyFromSource = async (src, token) => {
+                try {
+                    const image = await loadImage(src);
+                    if (token !== currentRequestToken) return;
+                    const detected = analyzeImageElement(image);
+                    if (!detected) {
+                        applyPreferredAccentColor();
+                        return;
+                    }
+                    const lightened = lightenColor(detected) || detected;
+                    applyAccentColor(lightened, { persist: false });
+                } catch {
+                    if (token === currentRequestToken) {
+                        applyPreferredAccentColor();
+                    }
+                }
+            };
+
+            const queueApply = (src) => {
+                currentRequestToken += 1;
+                const token = currentRequestToken;
+                applyFromSource(src, token);
+            };
+
+            const handleArtwork = (src) => {
+                latestArtworkSrc = src || '';
+                if (!src) {
+                    applyPreferredAccentColor();
+                    return;
+                }
+                if (!isPreferenceEnabled()) {
+                    return;
+                }
+                queueApply(src);
+            };
+
+            const syncPreference = () => {
+                if (!isPreferenceEnabled()) {
+                    applyPreferredAccentColor();
+                    return;
+                }
+                if (latestArtworkSrc) {
+                    queueApply(latestArtworkSrc);
+                    return;
+                }
+                applyPreferredAccentColor();
+            };
+
+            return {
+                handleArtwork,
+                syncPreference,
+            };
+        })();
+
+        if (typeof window !== 'undefined') {
+            window.VoxityAutoAccent = AutoAccentController;
+        }
+        try {
+            if (typeof globalart !== 'undefined' && globalart) {
+                AutoAccentController.handleArtwork(globalart);
+            }
+        } catch { }
+
+        document.addEventListener('voxity:settings-changed', (event) => {
+            try {
+                const detail = event?.detail || {};
+                if (detail.key === 'autoAccentColor' || detail.key === '*') {
+                    AutoAccentController.syncPreference();
+                }
+            } catch { }
+        });
+
+        const storedAccent = getStoredAccentColor();
+        if (storedAccent) {
+            applyAccentColor(storedAccent);
+        }
+
+        const getThemeName = (themeObj) => Object.keys(themeObj).find(key => key !== 'label') || '';
+        const getThemeLabel = (themeName) => {
+            const found = THEMES.find(themeObj => getThemeName(themeObj) === themeName);
+            return found?.label || themeName.replace(/-/g, ' ');
+        };
+
+        function apply(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try {
+                localStorage.setItem(key, theme);
+            } catch { }
+            currentTheme = theme;
+        }
+
+        function updateSettingsTooltip(theme) {
+            if (!btn) return;
+            const label = getThemeLabel(theme);
+            btn.title = `Open settings (theme: ${label})`;
+        }
+
+        async function openSettingsModal({ focusViz = false } = {}) {
+            const current = document.documentElement.getAttribute('data-theme') || currentTheme;
+            const currentViz = (document.getElementById('viz-mode')?.value) || 'spectrum';
+            const accentValue = resolveAccentColor();
+            const hasSettingsApi = typeof window.VoxitySettings !== 'undefined';
+            const fpsValue = (function () {
+                try {
+                    const stored = parseInt(localStorage.getItem('au_fps'));
+                    if (!isNaN(stored) && stored >= 1 && stored <= 300) return stored;
+                } catch (e) { }
+                try {
+                    if (typeof FPS !== 'undefined' && Number(FPS)) return Number(FPS);
+                } catch (e) { }
+                return 60;
+            })();
+            const lrcValue = (function () {
+                try {
+                    const stored = parseInt(localStorage.getItem('au_lrc_amount'));
+                    if (!isNaN(stored) && stored >= 1 && stored <= 48) return stored;
+                } catch (e) { }
+                try {
+                    if (typeof lrc_amount !== 'undefined' && Number(lrc_amount)) return Number(lrc_amount);
+                } catch (e) { }
+                return 16;
+            })();
+            const rotationIntervalValue = (function () {
+                if (!hasSettingsApi) return DEFAULT_ROTATION_INTERVAL;
+                const stored = Number(window.VoxitySettings.get('titleRotationInterval'));
+                if (!Number.isFinite(stored)) return DEFAULT_ROTATION_INTERVAL;
+                return Math.min(240, Math.max(1, Math.round(stored)));
+            })();
+            const selectedLyricsSource = (function () {
+                if (!hasSettingsApi) return 'lrclib';
+                const stored = window.VoxitySettings.get('lyricsSource');
+                return stored === 'musixmatch' ? 'musixmatch' : 'lrclib';
+            })();
+            const supportsWakeLock = typeof navigator !== 'undefined' && 'wakeLock' in navigator;
+            const modal = await msg(`
+                <div class="voxity-settings-modal">
+                    <section class="voxity-settings-section">
+                        <h3>Appearance</h3>
+                        <div class="voxity-settings-field">
+                            <label for="theme_select">Theme</label>
+                            <select id="theme_select" class="voxity-settings-control">
+                                ${THEMES.map(t => {
+                const themeName = getThemeName(t);
+                if (!themeName) return '';
+                const label = t.label;
+                const selected = current === themeName ? 'selected' : '';
+                return `<option value="${themeName}" ${selected}>${label}</option>`;
+            }).join('')}
+                            </select>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="accent_color">Accent color</label>
+                            <div class="voxity-settings-color-row">
+                                <input id="accent_color" type="color" value="${accentValue}" class="voxity-settings-control voxity-settings-color">
+                                <button type="button" id="accent_color_reset" class="voxity-settings-reset" title="Reset to the current theme default" aria-label="Reset accent color to default"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="voxity-settings-section">
+                        <h3>Audio feedback</h3>
+                        <div class="voxity-settings-field">
+                            <label for="fps_slider">Visualizer FPS</label>
+                            <div class="voxity-settings-slider">
+                                <input id="fps_slider" type="range" min="1" max="300" value="${fpsValue}">
+                                <input id="fps_number" type="number" min="1" max="300" value="${fpsValue}" class="voxity-settings-control voxity-settings-number">
+                            </div>
+                            <small class="voxity-settings-small">1-300 frames per second</small>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="lrc_slider">Lyrics amount</label>
+                            <div class="voxity-settings-slider">
+                                <input id="lrc_slider" type="range" min="1" max="48" value="${lrcValue}">
+                                <input id="lrc_number" type="number" min="1" max="48" value="${lrcValue}" class="voxity-settings-control voxity-settings-number">
+                            </div>
+                            <small class="voxity-settings-small">Number of lyric lines visible (1-48)</small>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="pref_titleRotationInterval">Title rotation speed</label>
+                            <div class="voxity-settings-slider">
+                                <input type="range" id="pref_titleRotationInterval" min="1" max="240" value="${rotationIntervalValue}" ${hasSettingsApi ? '' : 'disabled'}>
+                                <input type="number" id="pref_titleRotationInterval_number" min="1" max="240" value="${rotationIntervalValue}" class="voxity-settings-control voxity-settings-number" ${hasSettingsApi ? '' : 'disabled'}>
+                            </div>
+                            <small class="voxity-settings-small">Seconds between title changes (1-240)</small>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="vizmode_select">Visualizer mode</label>
+                            <select id="vizmode_select" class="voxity-settings-control">
+                                ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
+                            </select>
+                            <small class="voxity-settings-small">Tip: click the visualizer to reopen this panel</small>
+                        </div>
+                    </section>
+                    <section class="voxity-settings-section">
+                        <h3>Preferences</h3>
+                        ${hasSettingsApi ? '' : '<p class="voxity-settings-note">Not allowed</p>'}
+                        <div class="voxity-settings-toggles">
+                            ${PREFERENCE_TOGGLES.map(toggle => {
+                const checked = hasSettingsApi && window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
+                const disabled = hasSettingsApi ? '' : 'disabled';
+                const supportMessage = toggle.key === 'wakeLock' && !supportsWakeLock
+                    ? '<p class="voxity-settings-small">Wake Lock API not supported in this browser</p>'
+                    : '';
+                return `<div class="voxity-settings-toggle"${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                            <input type="checkbox" id="pref_${toggle.key}" ${checked} ${disabled}>
+                                            <div>
+                                                <label for="pref_${toggle.key}">${toggle.label}</label>
+                                                <p>${toggle.description}</p>
+                                                ${supportMessage}
+                                            </div>
+                                        </div>`;
+            }).join('')}
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label>Lyrics source</label>
+                            <div class="voxity-settings-lyrics-options">
+                                ${LYRICS_SOURCES.map(source => {
+                const checked = source.key === selectedLyricsSource ? 'checked' : '';
+                const disabled = hasSettingsApi ? '' : 'disabled';
+                return `<label class="voxity-settings-lyrics-option"${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                                    <input type="radio" name="lyrics_source" value="${source.key}" data-label="${source.label}" ${checked} ${disabled}>
+                                                    <div>
+                                                        <strong>${source.label}</strong>
+                                                        <p class="voxity-settings-small">${source.note}</p>
+                                                    </div>
+                                                </label>`;
+            }).join('')}
+                            </div>
+                        </div>
+                    </section>
+                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>
+                </div>
+            `, 'Voxity settings');
+            window.VoxityRouter?.setModalRoute(modal, '/settings');
+
+            setTimeout(() => {
+                const select = document.getElementById('theme_select');
+                const acin = document.getElementById('accent_color');
+                const accentResetBtn = document.getElementById('accent_color_reset');
+                const vizSelect = document.getElementById('vizmode_select');
+                const hiddenViz = document.getElementById('viz-mode');
+                const fpsSlider = document.getElementById('fps_slider');
+                const fpsNumber = document.getElementById('fps_number');
+                const lrcSlider = document.getElementById('lrc_slider');
+                const lrcNumber = document.getElementById('lrc_number');
+                const rotationSlider = document.getElementById('pref_titleRotationInterval');
+                const rotationNumber = document.getElementById('pref_titleRotationInterval_number');
+                const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
+                const lyricsSourceInputs = Array.from(document.querySelectorAll('input[name="lyrics_source"]'));
+
+                const requestNotificationPermission = async () => {
+                    if (typeof window === 'undefined' || typeof Notification === 'undefined') {
+                        throw_error('This browser does not seem to support notifications');
+                        return false;
+                    }
+                    if (Notification.permission === 'granted') {
+                        return true;
+                    }
+                    if (Notification.permission === 'denied') {
+                        throw_error('You blocked notifications!');
+                        return false;
+                    }
+                    try {
+                        const result = await Notification.requestPermission();
+                        if (result !== 'granted') {
+                            throw_error('You disallowed notifications!', false);
+                        }
+                        return result === 'granted';
+                    } catch {
+                        throw_error('Something failed enabling notifications, why not try again?');
+                        return false;
+                    }
+                };
+
+                if (select) {
+                    if (!focusViz) {
+                        select.focus();
+                    }
+                    select.addEventListener('change', () => {
+                        const next = select.value;
+                        apply(next);
+                        updateSettingsTooltip(next);
+                    });
+                }
+
+                if (acin) {
+                    acin.addEventListener('input', () => {
+                        const applied = applyAccentColor(acin.value, { persist: true });
+                        if (applied) {
+                            modal_title_up(`Accent color set to ${applied}`);
+                        }
+                    });
+                }
+
+                if (accentResetBtn) {
+                    accentResetBtn.addEventListener('click', () => {
+                        const resetValue = resetAccentColorToTheme();
+                        if (resetValue && acin) {
+                            acin.value = resetValue;
+                        }
+                        if (resetValue) {
+                            modal_title_up(`Accent color reset to ${resetValue}`);
+                        }
+                    });
+                }
+
+                if (vizSelect) {
+                    if (focusViz || !select) {
+                        vizSelect.focus();
+                    }
+                    const applyChange = () => {
+                        if (!hiddenViz) return;
+                        hiddenViz.value = vizSelect.value;
+                        hiddenViz.dispatchEvent(new Event('change', { bubbles: true }));
+                        modal_title_up(`Visualizer mode: ${vizSelect.options[vizSelect.selectedIndex]?.text || vizSelect.value}`, true);
+                    };
+                    vizSelect.addEventListener('change', applyChange);
+                }
+
+                if (fpsSlider && fpsNumber) {
+                    const syncFPS = (v) => {
+                        const num = parseInt(v, 10);
+                        const val = (isNaN(num) ? 60 : Math.max(1, Math.min(300, num)));
+                        try { fpsSlider.value = val; } catch { }
+                        try { fpsNumber.value = val; } catch { }
+                        try { FPS = val; } catch { }
+                        try { localStorage.setItem('au_fps', String(val)); } catch { }
+                        try {
+                            const ev = new Event('fpschange', { bubbles: true });
+                            window.dispatchEvent(ev);
+                        } catch { }
+                        try { modal_title_up(`Visualizer FPS: ${val}`); } catch { }
+                    };
+
+                    fpsSlider.addEventListener('input', () => syncFPS(fpsSlider.value));
+                    fpsNumber.addEventListener('change', () => syncFPS(fpsNumber.value));
+                }
+
+                if (lrcSlider && lrcNumber) {
+                    const syncLRC = (v) => {
+                        const num = parseInt(v, 10);
+                        const val = (isNaN(num) ? 16 : Math.max(1, Math.min(48, num)));
+                        try { lrcSlider.value = val; } catch { }
+                        try { lrcNumber.value = val; } catch { }
+                        try { lrc_amount = val; } catch { }
+                        try { localStorage.setItem('au_lrc_amount', String(val)); } catch { }
+                        try {
+                            const ev = new Event('lrcamountchange', { bubbles: true });
+                            window.dispatchEvent(ev);
+                        } catch { }
+                        try { modal_title_up(`Showing up to ${val} lines`); } catch { }
+                    };
+
+                    lrcSlider.addEventListener('input', () => syncLRC(lrcSlider.value));
+                    lrcNumber.addEventListener('change', () => syncLRC(lrcNumber.value));
+                }
+
+                if (settingsApi) {
+                    const normalizeLyricsSource = (value) => value === 'musixmatch' ? 'musixmatch' : 'lrclib';
+                    const syncLyricsSourceInputs = (value) => {
+                        const normalized = normalizeLyricsSource(value);
+                        lyricsSourceInputs.forEach(input => {
+                            input.checked = input.value === normalized;
+                        });
+                        return normalized;
+                    };
+                    const ensureWakeLockPreference = async (checked) => {
+                        const controller = typeof window !== 'undefined' ? window.VoxityWakeLock : null;
+                        if (!controller) {
+                            if (checked) {
+                                throw_error('Wake locks are not available right now');
+                                return false;
+                            }
+                            return true;
+                        }
+                        if (checked) {
+                            if (!controller.supported()) {
+                                throw_error('Wake locks are not supported in this browser yet');
+                                return false;
+                            }
+                            return controller.enable();
+                        }
+                        await controller.disable();
+                        return true;
+                    };
+
+                    if (lyricsSourceInputs.length) {
+                        syncLyricsSourceInputs(settingsApi.get('lyricsSource'));
+                        lyricsSourceInputs.forEach(input => {
+                            input.addEventListener('change', () => {
+                                if (!input.checked) return;
+                                const normalized = syncLyricsSourceInputs(input.value);
+                                settingsApi.set('lyricsSource', normalized);
+                                try {
+                                    const label = input.dataset.label || normalized;
+                                    modal_title_up(`Lyrics source: ${label}`);
+                                } catch { }
+                            });
+                        });
+                    }
+
+                    PREFERENCE_TOGGLES.forEach(toggle => {
+                        const input = document.getElementById(`pref_${toggle.key}`);
+                        if (!input) return;
+                        input.checked = settingsApi.isEnabled(toggle.key);
+                        input.addEventListener('change', async () => {
+                            if (toggle.requiresPermission === 'notification' && input.checked) {
+                                const granted = await requestNotificationPermission();
+                                if (!granted) {
+                                    input.checked = false;
+                                    return;
+                                }
+                            }
+                            if (toggle.key === 'wakeLock') {
+                                const wakeLockAllowed = await ensureWakeLockPreference(input.checked);
+                                if (!wakeLockAllowed) {
+                                    input.checked = false;
+                                    return;
+                                }
+                            }
+                            settingsApi.set(toggle.key, input.checked);
+                        });
+                    });
+
+                    if (rotationSlider && rotationNumber) {
+                        const clampInterval = (value) => {
+                            const num = Number(value);
+                            if (!Number.isFinite(num)) return DEFAULT_ROTATION_INTERVAL;
+                            return Math.min(240, Math.max(1, Math.round(num)));
+                        };
+                        const syncRotationInputs = (value, { announce = false } = {}) => {
+                            const normalized = clampInterval(value);
+                            rotationSlider.value = normalized;
+                            rotationNumber.value = normalized;
+                            if (announce) {
+                                try {
+                                    modal_title_up(`Title rotation speed: ${normalized}s`);
+                                } catch { }
+                            }
+                            return normalized;
+                        };
+                        const persistRotationInterval = (value, { announce = false } = {}) => {
+                            const normalized = syncRotationInputs(value, { announce });
+                            settingsApi.set('titleRotationInterval', normalized);
+                        };
+
+                        syncRotationInputs(rotationSlider.value);
+                        rotationSlider.addEventListener('input', () => {
+                            syncRotationInputs(rotationSlider.value, { announce: true });
+                        });
+                        rotationSlider.addEventListener('change', () => {
+                            persistRotationInterval(rotationSlider.value);
+                        });
+                        rotationNumber.addEventListener('change', () => {
+                            persistRotationInterval(rotationNumber.value, { announce: true });
+                        });
+                    }
+                }
+
+                updateSleepTimerUi();
+            }, 0);
+        }
+
+        try {
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                apply(stored);
+            } else {
+                apply(currentTheme);
+            }
+        } catch {
+            apply(currentTheme);
+        }
+
+        try {
+            const f = parseInt(localStorage.getItem('au_fps'));
+            if (!isNaN(f)) {
+                const clamped = Math.max(1, Math.min(300, f));
+                try { FPS = clamped; } catch { }
+            }
+        } catch { }
+
+        try {
+            const la = parseInt(localStorage.getItem('au_lrc_amount'));
+            if (!isNaN(la)) {
+                const clamped = Math.max(1, Math.min(48, la));
+                try { lrc_amount = clamped; } catch { }
+            }
+        } catch { }
+
+        updateSettingsTooltip(document.documentElement.getAttribute('data-theme') || currentTheme);
+
+        if (btn) {
+            btn.addEventListener('click', debounce(() => {
+                openSettingsModal();
+            }));
+        }
+
+        ['vizmode', 'visualizer'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('click', debounce(() => {
+                    openSettingsModal({ focusViz: true });
+                }));
+            }
+        });
+    })();
+});
+
+document.getElementById('pastelrc').addEventListener('click', debounce(() => {
+    if (!metadata.title && !metadata.artist) {
+        return throw_error('No track playing!');
+    }
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+            <p style="margin: 0; color: #888;">They must be in LRC format - you can find them on <a href="https://lrclib.net" target="_blank" rel="noopener">LRCLIB</a> or other lyrics sites.</p>
+            <textarea id="lrc_textarea" placeholder="[00:00.00] Start\n[00:10.50] Next line" rows="10" 
+                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 0.95rem;"></textarea>
+            <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                <button id="lrc_clear" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear</button>
+                <button id="lrc_apply" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Apply</button>
+            </div><br><small style="color: #888;">You can drag and drop a .lrc or .srt/.vtt file to the dropzone or search LRCLIB for lyrics by pressing <strong><i class="fa-solid fa-magnifying-glass"></i> Search lyrics</strong></small>
+        </div>
+    `, 'Paste your own lyrics');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/lyrics/edit');
+
+    setTimeout(() => {
+        const ta = document.getElementById('lrc_textarea');
+        if (lrc_data) ta.value = lrc_data.map(item => {
+            const time = item.time;
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            const milliseconds = Math.floor((time * 100) % 100);
+            const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+            return `[${formattedTime}] ${item.text}`;
+        }).join('\n');
+        const apply = document.getElementById('lrc_apply');
+        const clr = document.getElementById('lrc_clear');
+
+        if (ta) {
+            ta.focus();
+        }
+
+        if (clr) {
+            clr.addEventListener('click', () => {
+                ta.value = '';
+                ta.focus();
+            });
+        }
+
+        if (apply) {
+            const da = () => {
+                const raw = (ta.value || '').trim();
+                if (!raw) {
+                    return throw_error('No lyrics to apply!');
+                }
+                try {
+                    let parsed = lrc_parse(raw);
+                    if (!parsed || parsed.length === 0) {
+                        parsed = raw.split('\n').map(line => ({ time: 0, text: line }));
+                    }
+                    parsed = parsed.filter(l => l && typeof l.text === 'string').sort((a, b) => a.time - b.time);
+                    if (parsed.length === 0) {
+                        return throw_error('No usable lines found!');
+                    }
+                    skipLyricsUpdate = false;
+                    lrc_wipe();
+                    lrc_data = parsed;
+                    update_lyrics();
+                    throw_error('Applied pasted lyrics', true);
+                } catch (e) {
+                    console.error(e);
+                    throw_error('Failed to parse LRC');
+                }
+            };
+
+            apply.addEventListener('click', da);
+            ta?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    da();
+                }
+            });
+        }
+    }, 0);
+}));
+
+document.getElementById('status').addEventListener('click', debounce(() => {
+    if (!metadata.title && !metadata.artist) {
+        const modalPromise = msg(about_content, "About Voxity");
+        window.VoxityRouter?.setModalRoute(modalPromise, '/about');
+        return modalPromise;
+    }
+    const name = metadata.title + ' by ' + metadata.artist;
+    navigator.clipboard.writeText(name).then(() => {
+        throw_error(`Copied song to clipboard`, true);
+    }).catch(err => {
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
+    });
+}));
+
+document.getElementById('np2').addEventListener('click', debounce(() => {
+    if (!metadata.title) {
+        return throw_error('No title to copy!');
+    }
+    navigator.clipboard.writeText(metadata.title).then(() => {
+        throw_error('Copied title to clipboard', true);
+    }).catch(err => {
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
+    });
+}));
+
+document.getElementById('artist').addEventListener('click', debounce(() => {
+    if (!metadata.artist) {
+        return throw_error('No artist to copy!');
+    }
+    navigator.clipboard.writeText(metadata.artist).then(() => {
+        throw_error('Copied artist to clipboard', true);
+    }).catch(err => {
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
+    });
+}));
+
+document.getElementById('album').addEventListener('click', debounce(() => {
+    if (!metadata.album) {
+        return throw_error('No album to copy!');
+    }
+    navigator.clipboard.writeText(metadata.album).then(() => {
+        throw_error('Copied album to clipboard', true);
+    }).catch(err => {
+        throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
+    });
+}));
+
+document.getElementById('volc').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
+    const cur_vol = Math.round(elements.player.volume * 100);
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+            <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input id="vol_inp" type="number" min="0" max="100" value="${cur_vol}" 
+                        style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
+                    <button id="set_vol" 
+                        style="padding: 10px 20px; background: #333333; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                        Set
+                    </button>
+                </div>
+                <small style="color: #888;" id="footer">current: ${cur_vol}%</small>
+            </div>
+        </div>
+    `, 'Set volume');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/control/volume');
+
+    setTimeout(() => {
+        const input = document.getElementById('vol_inp');
+        const btn = document.getElementById('set_vol');
+
+        if (input && btn) {
+            input.focus();
+            input.select();
+
+            const set_vol = () => {
+                const value = parseInt(input.value);
+                if (isNaN(value) || value < 0 || value > 100) {
+                    throw_error('Out of range');
+                    return;
+                }
+                elements.vol.value = value * 2;
+                elements.player.volume = value / 100;
+
+                let icon = '<i class="fa-solid fa-volume-high"></i>';
+                if (value === 0) icon = '<i class="fa-solid fa-volume-xmark"></i>';
+                else if (value < 33) icon = '<i class="fa-solid fa-volume-off"></i>';
+                else if (value < 66) icon = '<i class="fa-solid fa-volume-low"></i>';
+
+                throw_error(`Volume set to: ${value}% ${icon}`, true);
+                document.getElementById('footer').innerHTML = `current: ${value}%`;
+                elements.vol.value = elements.player.volume * 2;
+            };
+
+            btn.addEventListener('click', set_vol);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') set_vol();
+            });
+        }
+    }, 0);
+}));
+
+document.getElementById('speedc').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
+    const cur_spd = elements.speed.value;
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+            <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input id="spd_inp" type="number" min="0.1" max="14.0" step="0.1" value="${cur_spd}" 
+                        style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
+                    <button id="set_spd" 
+                        style="padding: 10px 20px; background: #333333; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                        Set
+                    </button>
+                </div>
+                <small style="color: #888;" id="footer">current: ${cur_spd}x - min: 0.1x, max: 14.0x</small>
+            </div>
+        </div>
+    `, 'Set speed');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/control/speed');
+
+    setTimeout(() => {
+        const input = document.getElementById('spd_inp');
+        const btn = document.getElementById('set_spd');
+
+        if (input && btn) {
+            input.focus();
+            input.select();
+
+            const set_spd = () => {
+                const value = parseFloat(input.value);
+                if (isNaN(value) || value < 0.1 || value > 14.0) {
+                    throw_error('Speed must be between 0.1 and 14.0!');
+                    return;
+                }
+                elements.speed.value = value;
+                elements.player.playbackRate = value;
+
+                let icon = '<i class="fa-solid fa-gauge-high fa-flip-horizontal"></i>';
+                if (value >= 1.5) icon = '<i class="fa-solid fa-gauge-high"></i>';
+                else if (value >= 0.5) icon = '<i class="fa-solid fa-gauge"></i>';
+
+                throw_error(`Speed set to: ${value}x ${icon}`, true);
+                document.getElementById('footer').innerHTML = `current: ${value}x - min: 0.1x, max: 14.0x`;
+            };
+
+            btn.addEventListener('click', set_spd);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') set_spd();
+            });
+        }
+    }, 0);
+}));
+
+document.getElementById('prog').addEventListener('click', debounce(() => {
+    if (!elements.player.currentTime) return throw_error('No track playing!');
+    const dur = elements.player.duration || 0;
+    const cur = elements.player.currentTime || 0;
+
+    if (dur === 0) {
+        return throw_error('No track loaded!');
+    }
+
+    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+            <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input id="ind_inp" type="number" min="0" max="${Math.floor(dur)}" value="${Math.floor(cur)}" 
+                        style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
+                    <button id="set_ind" 
+                        style="padding: 10px 20px; background: #333333; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                        Jump
+                    </button>
+                </div>
+                <small style="color: #888;" id="footer">current: ${Math.floor(cur)}s / duration: ${Math.floor(dur)}s</small>
+            </div>
+        </div>
+    `, 'Set playback time');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/control/time');
+
+    setTimeout(() => {
+        const input = document.getElementById('ind_inp');
+        const btn = document.getElementById('set_ind');
+
+        if (input && btn) {
+            input.focus();
+            input.select();
+
+            const set_ind = () => {
+                const val = parseInt(input.value);
+                if (isNaN(val) || val < 0 || val > dur) {
+                    throw_error(`Out of range`);
+                    return;
+                }
+                elements.player.currentTime = val;
+                elements.index.value = val;
+
+                throw_error(`Set index to: ${form_time(val)} / ${form_time(dur)}`, true);
+                document.getElementById('footer').innerHTML = `current: ${Math.floor(val)}s / duration: ${Math.floor(dur)}s`;
+
+            };
+
+            btn.addEventListener('click', set_ind);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') set_ind();
+            });
+        }
+    }, 0);
+}));
+
+document.getElementById('searchlrclib').addEventListener('click', debounce(async () => {
+    if (!metadata.title && !metadata.artist) {
+        return throw_error('No track playing!');
+    }
+
+    const modal = await msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+            <input id="lrcse" placeholder="${metadata.title}" 
+                style="padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+            <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+            </div><br>
+            <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
+        </div>
+    `, 'Search for lyrics');
+    window.VoxityRouter?.setModalRoute(modal, '/lyrics/search');
+
+    setTimeout(() => {
+        const sin = document.getElementById('lrcse');
+        sin.value = `${metadata.title || ''} ${metadata.artist || ''}`.trim() || '';
+        const sbt = document.getElementById('lrsea');
+
+        if (sbt) {
+            sbt.addEventListener('click', async () => {
+                let query = sin.value.trim();
+                if (!query) {
+                    query = metadata.title;
+                }
+
+                try {
+                    modal.setTitle('Searching...');
+                    const response = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
+                    const results = await response.json();
+
+                    if (results.length === 0) {
+                        modal.setTitle('Search for lyrics');
+                        return throw_error('No results');
+                    }
+
+                    modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                            ${results.slice(0, 10).map((result, index) => `
+                                <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                    <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
+                                </p>
+                            `).join('')}
+                        </div>
+                    `);
+                    modal.setTitle('Results');
+                    try { lastResults = results.slice(0, 10); } catch { lastResults = null; }
+                    try {
+                        modal.setContent(`<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                <button id="back_to_search" style="padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;">Back</button>
+                                <span style="color:#aaa; font-size:0.9rem;">${(lastResults || []).length} result(s)</span>
+                            </div>
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                                ${(lastResults || results || []).slice(0, 10).map((result) => `
+                                    <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                        <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
+                                    </p>
+                                `).join('')}
+                            </div>
+                        `);
+                    } catch { }
+
+                    setTimeout(() => {
+                        document.getElementById('back_to_search')?.addEventListener('click', () => {
+                            modal.setTitle('Search for lyrics');
+                            modal.setContent(`
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+                                    <input id="lrcse" placeholder="${metadata.title}" 
+                                        style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+                                    <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                                        <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+                                    </div><br>
+                                    <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
+                                </div>
+                            `);
+                            setTimeout(() => {
+                                const sin2 = document.getElementById('lrcse');
+                                if (sin2) sin2.value = metadata.title || '';
+                                document.getElementById('lrsea')?.addEventListener('click', async () => {
+                                    let query2 = (sin2?.value || '').trim();
+                                    if (!query2) query2 = metadata.title;
+                                    try {
+                                        modal.setTitle('Searching...');
+                                        const response2 = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query2)}`);
+                                        const results2 = await response2.json();
+                                        if (!Array.isArray(results2) || results2.length === 0) {
+                                            modal.setTitle('No results');
+                                            return;
+                                        }
+                                        try { lastResults = results2.slice(0, 10); } catch { }
+                                        modal.setTitle('Results');
+                                        modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults || []).length} result(s)</span>\n                                            </div>\n                                            <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                ${(lastResults || []).map((result) => `\n                                                    <p data-id=\"${result.id}\" style=\"cursor: pointer; margin: 0.5rem 0;\">\n                                                        <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})\n                                                    </p>\n                                                `).join('')}\n                                            </div>`);
+                                    } catch (e) { throw_error(e); }
+                                });
+                            }, 0);
+                        });
+                        document.querySelectorAll('[data-id]').forEach(p => {
+                            p.addEventListener('click', async () => {
+                                const id = p.dataset.id;
+                                try {
+                                    modal.setTitle('Loading...');
+                                    const flrs = await fetch(`https://lrclib.net/api/get/${id}`);
+                                    const flcd = await flrs.json();
+
+                                    if (flcd.syncedLyrics || flcd.plainLyrics) {
+                                        modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                                                <pre style="white-space: pre-wrap; color: white;">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
+                                            </div>
+                                            <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top: 1rem;">
+                                                <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
+                                            </div>
+                                        `);
+                                        modal.setTitle('Preview lyrics');
+
+                                        setTimeout(() => {
+                                            try {
+                                                const cont = modal.overlay?.querySelector('#msg-content');
+                                                const foot = cont?.querySelector('div[style*="justify-content:flex-end"]');
+                                                if (foot) {
+                                                    const back = document.createElement('button');
+                                                    back.id = 'back_to_results';
+                                                    back.textContent = 'Back';
+                                                    back.style.padding = '10px 16px';
+                                                    back.style.background = '#333';
+                                                    back.style.color = 'white';
+                                                    back.style.border = 'none';
+                                                    back.style.borderRadius = '6px';
+                                                    back.style.cursor = 'pointer';
+                                                    foot.prepend(back);
+                                                    back.addEventListener('click', () => {
+                                                        modal.setTitle('Results');
+                                                        const listHtml = (lastResults || []).map((r) => `
+                                                            <p data-id="${r.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                                                <strong>${r.trackName}</strong> by ${r.artistName} (${r.albumName})
+                                                            </p>
+                                                        `).join('');
+                                                        modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                                <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                                <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults || []).length} result(s)</span>\n                                                            </div>\n                                                            <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                                ${listHtml}\n                                                            </div>`);
+                                                        setTimeout(() => {
+                                                            document.getElementById('back_to_search')?.addEventListener('click', () => {
+                                                                modal.setTitle('Search for lyrics');
+                                                                modal.setContent(`
+                                                                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+                                                                        <input id="lrcse" placeholder="${metadata.title}" 
+                                                                            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+                                                                        <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                                                                            <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+                                                                        </div><br>
+                                                                        <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
+                                                                    </div>
+                                                                `);
+                                                                setTimeout(() => {
+                                                                    const sin2 = document.getElementById('lrcse');
+                                                                    if (sin2) sin2.value = metadata.title || '';
+                                                                    document.getElementById('lrsea')?.addEventListener('click', async () => {
+                                                                        let query2 = (sin2?.value || '').trim();
+                                                                        if (!query2) query2 = metadata.title;
+                                                                        try {
+                                                                            modal.setTitle('Searching...');
+                                                                            const response2 = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query2)}`);
+                                                                            const results2 = await response2.json();
+                                                                            if (!Array.isArray(results2) || results2.length === 0) {
+                                                                                modal.setTitle('No results');
+                                                                                return;
+                                                                            }
+                                                                            try { lastResults = results2.slice(0, 10); } catch { }
+                                                                            modal.setTitle('Results');
+                                                                            modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                                                        <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                                                        <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults || []).length} result(s)</span>\n                                                                                    </div>\n                                                                                    <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                                                        ${(lastResults || []).map((result) => `\n                                                                                            <p data-id=\"${result.id}\" style=\"cursor: pointer; margin: 0.5rem 0;\">\n                                                                                                <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})\n                                                                                            </p>\n                                                                                        `).join('')}\n                                                                                    </div>`);
+                                                                        } catch (e) { throw_error(e); }
+                                                                    });
+                                                                }, 0);
+                                                            });
+
+                                                            document.querySelectorAll('[data-id]').forEach(p => {
+                                                                p.addEventListener('click', async () => {
+                                                                    const id = p.dataset.id;
+                                                                    try {
+                                                                        modal.setTitle('Loading...');
+                                                                        const flrs = await fetch(`https://lrclib.net/api/get/${id}`);
+                                                                        const flcd = await flrs.json();
+
+                                                                        if (flcd.syncedLyrics || flcd.plainLyrics) {
+                                                                            modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                                                                                        <pre style="white-space: pre-wrap; color: white;">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
+                                                                                    </div>
+                                                                                    <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top: 1rem;">
+                                                                                        <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
+                                                                                    </div>
+                                                                                `);
+                                                                            modal.setTitle('Preview lyrics');
+
+                                                                            setTimeout(() => {
+                                                                                try {
+                                                                                    const cont = modal.overlay?.querySelector('#msg-content');
+                                                                                    const foot = cont?.querySelector('div[style*="justify-content:flex-end"]');
+                                                                                    if (foot) {
+                                                                                        const back2 = document.createElement('button');
+                                                                                        back2.id = 'back_to_results';
+                                                                                        back2.textContent = 'Back';
+                                                                                        back2.style.padding = '10px 16px';
+                                                                                        back2.style.background = '#333';
+                                                                                        back2.style.color = 'white';
+                                                                                        back2.style.border = 'none';
+                                                                                        back2.style.borderRadius = '6px';
+                                                                                        back2.style.cursor = 'pointer';
+                                                                                        foot.prepend(back2);
+                                                                                        back2.addEventListener('click', () => {
+                                                                                            back.click();
+                                                                                        });
+                                                                                    }
+                                                                                } catch { }
+                                                                                const insb2 = document.getElementById('insert_lyrics');
+                                                                                if (insb2) {
+                                                                                    insb2.addEventListener('click', () => {
+                                                                                        let parsed = [];
+                                                                                        if (flcd?.syncedLyrics && typeof flcd.syncedLyrics === 'string') {
+                                                                                            parsed = lrc_parse(flcd.syncedLyrics);
+                                                                                        } else if (flcd?.plainLyrics && typeof flcd.plainLyrics === 'string') {
+                                                                                            parsed = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
+                                                                                        }
+                                                                                        parsed = (parsed || []).filter(l => l && typeof l.text === 'string').sort((a, b) => a.time - b.time);
+                                                                                        if (!parsed || parsed.length === 0) {
+                                                                                            return throw_error('No usable lines found!');
+                                                                                        }
+                                                                                        skipLyricsUpdate = false;
+                                                                                        try { isLyricsLoading = false; } catch { }
+                                                                                        lrc_wipe();
+                                                                                        lrc_data = parsed;
+                                                                                        update_lyrics();
+                                                                                        modal.setTitle('Inserted lyrics');
+                                                                                    });
+                                                                                }
+                                                                            }, 0);
+                                                                        } else {
+                                                                            throw_error('No lyrics found');
+                                                                            modal.setTitle('Results');
+                                                                        }
+                                                                    } catch (e) {
+                                                                        throw_error(e);
+                                                                    }
+                                                                });
+                                                            });
+                                                        }, 0);
+                                                    });
+                                                }
+                                            } catch { }
+                                            const insbA = document.getElementById('insert_lyrics');
+                                            if (insbA) {
+                                                insbA.addEventListener('click', () => {
+                                                    let parsed = [];
+                                                    if (flcd?.syncedLyrics && typeof flcd.syncedLyrics === 'string') {
+                                                        parsed = lrc_parse(flcd.syncedLyrics);
+                                                    } else if (flcd?.plainLyrics && typeof flcd.plainLyrics === 'string') {
+                                                        parsed = flcd.plainLyrics.split('\n').map(line => ({ time: 0, text: line }));
+                                                    }
+                                                    parsed = (parsed || []).filter(l => l && typeof l.text === 'string').sort((a, b) => a.time - b.time);
+                                                    if (!parsed || parsed.length === 0) {
+                                                        return throw_error('No usable lines found!');
+                                                    }
+                                                    skipLyricsUpdate = false;
+                                                    try { isLyricsLoading = false; } catch { }
+                                                    lrc_wipe();
+                                                    lrc_data = parsed;
+                                                    update_lyrics();
+                                                    modal.setTitle('Inserted lyrics');
+                                                });
+                                            }
+                                        }, 0);
+                                    } else {
+                                        throw_error('No lyrics found');
+                                        modal.setTitle('Results');
+                                    }
+                                } catch (e) {
+                                    throw_error(e);
+                                }
+                            });
+                        });
+                    }, 0);
+                } catch (e) {
+                    throw_error(e);
+                }
+            });
+        }
+    }, 0);
+}));
