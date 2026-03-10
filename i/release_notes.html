@@ -7,9 +7,10 @@
     <style>
         @font-face {
             font-family: 'GSansFlex';
-            src: url('/app/fonts/googlesansflex/GoogleSansFlex-VariableFont_GRAD\,ROND\,opsz\,slnt\,wdth\,wght.ttf') format('truetype');
+            src: url('/app/fonts/googlesansflex/GoogleSansFlex.subset.woff2') format('woff2');
             font-weight: 100 900;
             font-style: normal;
+            font-display: swap;
         }
 
         html,
@@ -56,21 +57,111 @@
                 title="DM me on Twitter">let me know!</a></p>
         <h1>2026</h1>
         <h2>March</h2>
+        <h3>10th (v88a)</h3>
+        <ul>
+            <li>Massively split up all script files into modules</li>
+        </ul>
+        <details>
+            <summary>Old</summary>
+            <pre>
+scripts/
+├── api.js
+├── audio.js
+├── buttons.js
+├── error.js
+├── hotkeys.js
+├── jsmediatags.js
+├── lyrics.js
+├── main.js
+├── message.js
+├── pwa.js
+├── router.js
+├── settings.js
+├── text.js
+├── title.js
+└── visualizer.js</pre>
+        </details>
+        <details>
+            <summary>New</summary>
+            <pre>
+scripts/
+├── audio/
+│   ├── analyzer.js
+│   ├── event.js
+│   └── visualizer.js
+├── library/
+│   └── jsmediatags.js
+├── lyrics/
+│   ├── engine.js
+│   ├── metadata.js
+│   ├── pastelyrics.js
+│   ├── searchlyrics.js
+│   └── source.js
+├── management/
+│   ├── elementmap.js
+│   ├── hotkeys.js
+│   ├── initialize.js
+│   ├── notifications.js
+│   ├── play.js
+│   ├── pwa.js
+│   ├── settings.js
+│   ├── sleeptimer.js
+│   ├── tabtitle.js
+│   └── wakelock.js
+├── miscellaneous/
+│   ├── formathelp.js
+│   ├── mediasession.js
+│   ├── pwachecker.js
+│   ├── releasenotes.js
+│   ├── router.js
+│   └── statictext.js
+├── queue/
+│   ├── detersubtitles.js
+│   ├── drag.js
+│   ├── handler.js
+│   ├── loading.js
+│   ├── render.js
+│   ├── shuffle.js
+│   ├── statuses.js
+│   └── utilities.js
+└── ui/
+    ├── clicktocopy.js
+    ├── controls.js
+    ├── error.js
+    ├── hello.js
+    ├── inputmodal.js
+    ├── modal.js
+    ├── preferences.js
+    ├── status.js
+    └── textscroller.js</pre>
+        </details>
+        <ul>
+            <li>Changed the font from a TrueType to a WOFF2 which should massively improve loading time</li>
+            <li>Removed the 404 page (you will just get served the app)</li>
+        </ul>
         <h3>3rd (v88)</h3>
         <h4>(Probably) Voxity's final update</h4>
-        <p>I hate to say this, but I think Voxity is finally, truly, definitively finished. I just don't know what else to make for it. A few
-            months ago, I said I would be finishing and archiving it, and so I did. But a few days later, I pulled it
+        <p>I hate to say this, but I think Voxity is finally, truly, definitively finished. I just don't know what
+            else
+            to make for it. A few
+            months ago, I said I would be finishing and archiving it, and so I did. But a few days later, I pulled
+            it
             back out of the dump, and resurrected it. I'm so glad I did. Months later, Voxity has gone from an
-            experiment to a proper music player that probably outperforms the Spotify desktop app in raw features. But I
-            think it's that time again. <strong>Voxity will probably soon be placed in an archived state.</strong> It
-            still feels unreal to be the sole developer of something like this. This is how it looked 6 months ago:</p>
+            experiment to a proper music player that probably outperforms the Spotify desktop app in raw features.
+            But I
+            think it's that time again. <strong>Voxity will probably soon be placed in an archived state.</strong>
+            It
+            still feels unreal to be the sole developer of something like this. This is how it looked 6 months ago:
+        </p>
         <a href="https://i.exerinity.com/ES80EWxqo5.png" target="_blank"><img
                 src="https://i.exerinity.com/ES80EWxqo5.png"></a>
         <ul>
             <li>Added a new setting that updates the accent color based on the cover art (crudely)</li>
         </ul>
         <p>
-            If there isn't another update in 3 weeks, consider it archived. And if so, I will compile a list of links to the corresponding versions per update.
+            If there isn't another update in 3 weeks, consider it archived. And if so, I will compile a list of
+            links to
+            the corresponding versions per update.
         </p>
         <h2>February</h2>
         <h3>24th (v87)</h3>
@@ -111,39 +202,47 @@
             <li>Added a new slider to settings: title rotation speed</li>
             <li>Added a new boolean to settings: show static song title</li>
             <li>Refreshed the settings modal</li>
-            <li>New function: modal_title_up, same as stat_up, but for the title of the first (if any) open modal</li>
+            <li>New function: modal_title_up, same as stat_up, but for the title of the first (if any) open modal
+            </li>
         </ul>
         <h3>6th (v84c)</h3>
         <ul>
             <li>Fixed a bizarre issue where HTML tags would leak into the metadata, hopefully</li>
             <li>Fixed the textbox in the Search lyrics modal being slightly too wide</li>
             <li>Notifications are now delivered silently (because Windows 11 notifications are stupid)</li>
-            <li>Instead of not showing any of the broken songs when loading if over 10, they are now in a dropdown</li>
+            <li>Instead of not showing any of the broken songs when loading if over 10, they are now in a dropdown
+            </li>
             <li>Other small adjustments</li>
         </ul>
         <h3>5th (v84b)</h3>
         <ul>
-            <li>Strengthened the error box if JS is disabled / main.js is blocked (and probably overengineering it)</li>
+            <li>Strengthened the error box if JS is disabled / main.js is blocked (and probably overengineering it)
+            </li>
             <li>Added <strong>CTRL + F</strong> to the list of hotkeys (I forgot)</li>
         </ul>
         <h3>2nd (v84a)</h3>
-        <p>Switched default font from Inter to Google Sans Flex (the Inter files remain, this may revert, just testing
+        <p>Switched default font from Inter to Google Sans Flex (the Inter files remain, this may revert, just
+            testing
             it out)</p>
         <h2>January</h2>
         <h3>26th (v84)</h3>
-        <p>New queue searching function: middle-click the queue header or press CTRL+F to enter it (or the button)</p>
+        <p>New queue searching function: middle-click the queue header or press CTRL+F to enter it (or the button)
+        </p>
         <h3>21st (v83a)</h3>
         <ul>
-            <li>Voxity now waits 100 milliseconds between loading tracks, rudimental performance tweak (you can change
+            <li>Voxity now waits 100 milliseconds between loading tracks, rudimental performance tweak (you can
+                change
                 this by changing the durationLoadDelay value; might integrate to settings)</li>
             <li>Removed "Search " and "Paste " from the two lyrics-related buttons; the icons are kinda
                 self-explanatory, plus the title text</li>
         </ul>
         <h3>17th (v83)</h3>
         <ul>
-            <li>Secondary (right for most) clicking the queue header now scrolls the current track into view (for huge
+            <li>Secondary (right for most) clicking the queue header now scrolls the current track into view (for
+                huge
                 queues)</li>
-            <li>More changes to the visualizer engine: removed the fake "none" option (so none is truly none), more high
+            <li>More changes to the visualizer engine: removed the fake "none" option (so none is truly none), more
+                high
                 resolution, spectrum is default again, circular is centered and more spiky</li>
         </ul>
         <h3>15th (v82)</h3>
@@ -153,7 +252,8 @@
                 <a href="https://voxity.exerinity.com">voxity.exerinity.com</a> now redirects to the new domain.
             </li>
             <li>Added a sleep timer function, press the moon next to the trash can</li>
-            <li>You can now see time remaining of a track by clicking the duration label in the scrubber (toggles)</li>
+            <li>You can now see time remaining of a track by clicking the duration label in the scrubber (toggles)
+            </li>
             <li>Tamed the "mobile not recommended" message (im sorry to dilute the fun)</li>
         </ul>
         <h3>14th (v81d)</h3>
@@ -175,9 +275,11 @@
         <p>The status now shows "X% done" when scrubbing</p>
         <h3>8th (v81)</h3>
         <ul>
-            <li>There are new sliders in the settings modal to set the amount of lyrics shown and visualizer FPS</li>
+            <li>There are new sliders in the settings modal to set the amount of lyrics shown and visualizer FPS
+            </li>
             <li>The status updates have been changed to show bold text in most of the messages</li>
-            <li>In regards to the art viewer update in v80a, the image is now opened in a blob, which should work better
+            <li>In regards to the art viewer update in v80a, the image is now opened in a blob, which should work
+                better
             </li>
             <li>
                 <details>
@@ -197,9 +299,11 @@
         </ul>
         <h3>4th (v80b)</h3>
         <ul>
-            <li>Rewritten the visualizer engine (that has been the same since v1) to (hopefully) be more lightweight and
+            <li>Rewritten the visualizer engine (that has been the same since v1) to (hopefully) be more lightweight
+                and
                 use less CPU</li>
-            <li>Unsupported files are now properly handled and reported back to you instead of breaking the player - the
+            <li>Unsupported files are now properly handled and reported back to you instead of breaking the player -
+                the
                 process is, if a duration cannot be loaded, it is not a supported audio file and thus will not add
                 <a href="https://i.exerinity.com/vivaldi_20260104_220808.png" target="_blank"><img
                         src="https://i.exerinity.com/vivaldi_20260104_220808.png" style="max-width: 100%"
@@ -210,12 +314,15 @@
         <h3>2nd (v80a)</h3>
         <ul>
             <li>Added a small catch to the <a href="/i/release_notes">release notes</a> and the <a href="/i/how_pwa">how
-                    to install</a> pages where if the page is opened in standalone, a "back to Voxity" gets added to the
+                    to install</a> pages where if the page is opened in standalone, a "back to Voxity" gets added to
+                the
                 top</li>
             <li>The amount of lyrics actively shown can now be modified by changing the "lrc_amount" variable in the
                 console (proper modifier soon)</li>
-            <li>Added a rudimentary method of fixing "window.open" on the cover art viewer not working on Chromium with
-                a new page which basically does the same thing (this might not work, very possibly a 414 error and may
+            <li>Added a rudimentary method of fixing "window.open" on the cover art viewer not working on Chromium
+                with
+                a new page which basically does the same thing (this might not work, very possibly a 414 error and
+                may
                 even upset the Service Worker)</li>
         </ul>
         <h3>1st (v80)</h3>
@@ -231,7 +338,8 @@
         <ul>
             <li>Voxity now triggers the "Unsaved changes will be lost" dialogue if something is playing and the app
                 isn't installed as a PWA</li>
-            <li><strong>Waveform</strong> is again the default visualizer mode and <strong>Lights out</strong> is the
+            <li><strong>Waveform</strong> is again the default visualizer mode and <strong>Lights out</strong> is
+                the
                 default theme</li>
         </ul>
         <h3>24th (v79b)</h3>
@@ -245,9 +353,12 @@
         </ul>
         </p>
         <h3>17th (v79)</h3>
-        <p>A new diagnostic function has been added which attempts to manually load Font Awesome. Because, on my iPhone
-            and old iMac, icons would not load locally, but they would externally, so, it loads from Cloudflare.<br>It
-            can be found in the about box (by pressing Voxity on the left/right of the screen), the settings box, and
+        <p>A new diagnostic function has been added which attempts to manually load Font Awesome. Because, on my
+            iPhone
+            and old iMac, icons would not load locally, but they would externally, so, it loads from
+            Cloudflare.<br>It
+            can be found in the about box (by pressing Voxity on the left/right of the screen), the settings box,
+            and
             the welcome box if you haven't already visited (or deleted the "hai" object locally)</p>
         <h3>12th (v78a)</h3>
         <p>Brought the release notes and "how to install PWA" document local</p>
@@ -268,7 +379,8 @@
             <li>Added optional system notifications that send when a(nother) song begins</li>
             <li>A bug that spawned from v76 has been fixed where if you drag-and-dropped multiple files (not a full
                 folder), only one file would get added</li>
-            <li>A bug where if you drag-and-drop an entire folder, things like subtitle files and images get added to
+            <li>A bug where if you drag-and-drop an entire folder, things like subtitle files and images get added
+                to
                 the queue</li>
             <li>If the file does not have full metadata, lyrics are now no longer automatically queried</li>
             <li>You can now press <strong>Escape</strong> to close an open modal</li>
@@ -287,9 +399,12 @@
         </ul>
         <h3>3rd (v75)</h3>
         <ul>
-            <li>New cursor rules:<br>-- When hovering over a slider, the cursor has changed from <code>ew-resize</code>
-                to <code>grab</code><br>--- When grabbing a slider, the cursor changes to <code>grabbing</code><br>--
-                Cover art from <code>pointer</code> to <code>zoom-in</code><br>-- Metadata from <code>pointer</code> to
+            <li>New cursor rules:<br>-- When hovering over a slider, the cursor has changed from
+                <code>ew-resize</code>
+                to <code>grab</code><br>--- When grabbing a slider, the cursor changes to
+                <code>grabbing</code><br>--
+                Cover art from <code>pointer</code> to <code>zoom-in</code><br>-- Metadata from <code>pointer</code>
+                to
                 <code>copy</code><br>-- The queue header and visualizer canvas now shows <code>pointer</code>
             </li>
             <li>Hyperlinks are now underlined</li>
@@ -302,7 +417,8 @@
         <h3>30th (v74)</h3>
         <ul>
             <li>New theme: <strong>Neon purple</strong></li>
-            <li>Fixed a bug where if a song was marked as instrumental, and the Search lyrics modal is used, lyrics did
+            <li>Fixed a bug where if a song was marked as instrumental, and the Search lyrics modal is used, lyrics
+                did
                 not show upon insertion</li>
         </ul>
         <h3>28th (v73)</h3>
@@ -311,7 +427,8 @@
         </ul>
         <h3>18th (v72.5)</h3>
         <ul>
-            <li>Reverted Musixmatch back to LRCLIB. My server got banned, and the lyrics were horrible. Does this count
+            <li>Reverted Musixmatch back to LRCLIB. My server got banned, and the lyrics were horrible. Does this
+                count
                 as an actual version? Ah, who gives a shit, my left shoe.</li>
         </ul>
         <h3>17th (v72)</h3>
@@ -321,7 +438,8 @@
         </ul>
         <h3>16th (v71)</h3>
         <ul>
-            <li>Changed main lyrics source from LRCLIB to Musixmatch<br>This is very experimental and will likely not
+            <li>Changed main lyrics source from LRCLIB to Musixmatch<br>This is very experimental and will likely
+                not
                 remain</li>
         </ul>
         <h3>14th (v70.5)</h3>
@@ -336,7 +454,8 @@
         <h3>11th (v69)</h3>
         <ul>
             <li>The "Clear queue" button now actually clears the queue instead of refreshing the page</li>
-            <li>"fka Audion" has been removed from the welcome and about boxes as I have deactivated my Bluesky account
+            <li>"fka Audion" has been removed from the welcome and about boxes as I have deactivated my Bluesky
+                account
                 (it linked to a post there)</li>
             <li>Cleaned up old unused code</li>
         </ul>
@@ -348,7 +467,8 @@
         <h3>31st (v66)</h3>
         <ul>
             <li>Added new theme: <strong>Neon blue</strong></li>
-            <li>Small tweak to lyrics, if previously it was marked as instrumental, lyrics would be switched off. From
+            <li>Small tweak to lyrics, if previously it was marked as instrumental, lyrics would be switched off.
+                From
                 here, if you paste lyrics, that is overridden and lyrics are re-enabled. (previously, nothing would
                 happen)</li>
         </ul>
@@ -361,11 +481,13 @@
         <h3>26th (v64)</h3>
         <ul>
             <li>Fixed the lyrics modal getting stuck, hopefully</li>
-            <li>Changed location of sound effects from <code>/sound.ogg</code> to <code>/app/media/sound.ogg</code></li>
+            <li>Changed location of sound effects from <code>/sound.ogg</code> to <code>/app/media/sound.ogg</code>
+            </li>
         </ul>
         <h3>20th (v63)</h3>
         <ul>
-            <li>Small update, the <strong>Themes</strong> selector now show proper names instead of their variable names
+            <li>Small update, the <strong>Themes</strong> selector now show proper names instead of their variable
+                names
             </li>
             <li>Cleaned up old code</li>
         </ul>
@@ -377,7 +499,8 @@
             <li>Fixed a bug where the modal for precise input on sliders would not update the sliders</li>
             <li>Amplified the "scrolling tab title" to stop when the audio is paused or finished and generally just
                 strengthening it</li>
-            <li>The "Search lyrics" button has been revamped: instead of creating multiple popups, it edits the same one
+            <li>The "Search lyrics" button has been revamped: instead of creating multiple popups, it edits the same
+                one
             </li>
             <li>With that, the modal module now has an API to edit the content of an existing modal</li>
         </ul>
@@ -394,14 +517,16 @@
         <h3>13th (v59)</h3>
         <h4>Renaming from <strong>Audion</strong> to <strong>Voxity</strong>... why?</h4>
         <ul>
-            <li>"Audion" is two other music-related things: an old music player created by Panic, you know, the guys who
+            <li>"Audion" is two other music-related things: an old music player created by Panic, you know, the guys
+                who
                 made Playdate; and also, a French music advertisement platform (<a href="https://www.audion.fm"
                     target="_blank">https://www.audion.fm</a>)</li>
             <li>"Audion" sounds bland and runs counter to my <a href="https://ex3.icu" target="_blank">usual</a> <a
                     href="https://pigeon.exerinity.com/" target="_blank">creative</a> <a
                     href="https://exerinity.dev/projects/redsky" target="_blank">naming</a> conventions</li>
         </ul>
-        <p>"Voxity" is derived from the Latin word "vox", noun, feminine, meaning voice, sound, or utterance, and also
+        <p>"Voxity" is derived from the Latin word "vox", noun, feminine, meaning voice, sound, or utterance, and
+            also
             the last three letters of my username (exerin<strong>ity</strong>)</p>
         <h3>12th (v58)</h3>
         <ul>
@@ -416,8 +541,10 @@
         </ul>
         <h3>11th (v57)</h3>
         <ul>
-            <li>Added new hotkeys: <strong>Z</strong> to go to previous track / restart current and <strong>X</strong>
-                to go to next track</li>
+            <li>Added new hotkeys: <strong>Z</strong> to go to previous track / restart current and
+                <strong>X</strong>
+                to go to next track
+            </li>
             <li>Fixed Font Awesome not being cached by the Service Worker, resulting in no icons when offline</li>
         </ul>
         <h3>10th (v56)</h3>
@@ -441,7 +568,8 @@
         </ul>
         <h3>26th (v53)</h3>
         <ul>
-            <li>The previous button now restarts the track instead of saying <strong>no</strong> if you are at the start
+            <li>The previous button now restarts the track instead of saying <strong>no</strong> if you are at the
+                start
                 of the queue</li>
             <li>Removed the stars background, it was quite useless and bulky</li>
             <li>Added a finished sound, <code>TADA.wav</code> from Windows ME</li>
@@ -449,7 +577,8 @@
         <h3>25th (v52)</h3>
         <ul>
             <li>You can now click on the visualizer itself to change the mode, alongside the dedicated button</li>
-            <li>Added a title field to the message box function, as in, "Theme settings" instead of just "Audion"</li>
+            <li>Added a title field to the message box function, as in, "Theme settings" instead of just "Audion"
+            </li>
             <li><strong>Spectrum</strong> is now the default visualizer instead of <strong>Waveform</strong></li>
             <li>Added <strong>Search lyrics</strong> button and lyrics browser</li>
         </ul>
@@ -499,7 +628,8 @@
         </ul>
         <h3>4th (v42)</h3>
         <ul>
-            <li>Certain miscellaneous buttons have been moved to their own division, instead of all being crammed in one
+            <li>Certain miscellaneous buttons have been moved to their own division, instead of all being crammed in
+                one
             </li>
             <li>Added new themes: <strong>blue</strong> and <strong>high-contrast</strong> (which is basically
                 lights-out, only makes accent yellow)</li>
@@ -518,13 +648,15 @@
             </li>
             <li>Added <strong>Paste lyrics</strong> button and handler</li>
             <li>Removed a lot of redundant old unused code</li>
-            <li>Redone the error box module, instead of a static ephemeral red box, it now has a countdown that stops on
+            <li>Redone the error box module, instead of a static ephemeral red box, it now has a countdown that
+                stops on
                 hover and overall better look</li>
         </ul>
         <h2>August</h2>
         <h3>31st (v39)</h3>
         <ul>
-            <li>Added new hotkeys: numerical keys (0 to 9) jump to the corresponding percentage of the track (4 to 40%),
+            <li>Added new hotkeys: numerical keys (0 to 9) jump to the corresponding percentage of the track (4 to
+                40%),
                 and also, <strong>T</strong> to toggle loop</li>
             <li>If nothing is playing, most buttons are now disabled until something plays</li>
             <li>Audion is now less harsh on mobile users, instead of outright denying them entry; it just warns them
@@ -532,7 +664,8 @@
         </ul>
         <h3>29th (v38)</h3>
         <ul>
-            <li>Added new hotkeys: <strong>K</strong> to play/pause, <strong>J</strong> &amp; <strong>A</strong> to go
+            <li>Added new hotkeys: <strong>K</strong> to play/pause, <strong>J</strong> &amp; <strong>A</strong> to
+                go
                 back 10 seconds, <strong>L</strong> &amp; <strong>D</strong> to go forward 10 seconds,
                 <strong>W</strong> &amp; <strong>S</strong> for volume up/down
             </li>
@@ -559,7 +692,8 @@
         <h3>22nd (v33)</h3>
         <ul>
             <li>Added new hotkey: <strong>R</strong> to restart track</li>
-            <li>Added a catch for Chromium browsers with the full-sized album art popup; directing you to right click
+            <li>Added a catch for Chromium browsers with the full-sized album art popup; directing you to right
+                click
                 and press Open image in new tab</li>
             <li>Made it so hotkeys cannot be used while a text box is focused to prevent inteference</li>
         </ul>
@@ -594,18 +728,21 @@
         </ul>
         <h3>13th (v27)</h3>
         <ul>
-            <li>Added an instrumental check to searching lyrics, if instrumental is returned, it says so, rather than
+            <li>Added an instrumental check to searching lyrics, if instrumental is returned, it says so, rather
+                than
                 returning "no results"</li>
         </ul>
         <h3>11th (v26)</h3>
         <ul>
             <li>
-                <h3><a href="#" target="_blank">Audion is now a <strong>Progressive Web App</strong>, meaning it works
+                <h3><a href="#" target="_blank">Audion is now a <strong>Progressive Web App</strong>, meaning it
+                        works
                         offline!</a></h3>
             </li>
             <li>Brought JSMediaTags and Font Awesome local</li>
             <li>Changed font from <a href="https://twitter.com/twitter/status/1425505311650111492"
-                    target="_blank"><strong>Chirp</strong> by Twitter</a> to <strong>Inter</strong> from Google Fonts
+                    target="_blank"><strong>Chirp</strong> by Twitter</a> to <strong>Inter</strong> from Google
+                Fonts
             </li>
         </ul>
         <h3>10th (v25)</h3>
@@ -647,7 +784,8 @@
         </ul>
         <h3>27th (v1 to 18)</h3>
         <h4>Initial upload to current repository</h4>
-        <p>Previously, it was <em>*just*</em> on Cloudflare Pages, but I took that down and uploaded it to GitHub. The
+        <p>Previously, it was <em>*just*</em> on Cloudflare Pages, but I took that down and uploaded it to GitHub.
+            The
             rest is history...</p>
         <h1><a href="#i">Back to top</a></h1>
     </div>
