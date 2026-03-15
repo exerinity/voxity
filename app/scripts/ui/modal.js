@@ -1,4 +1,4 @@
-async function msg(text, tbartext) {
+async function msg(text, tbartext, canClose = true, canDrag = true) {
     const overlay = document.createElement('div');
     overlay.classList.add('voxity-modal');
     overlay.style.position = 'fixed';
@@ -36,29 +36,14 @@ async function msg(text, tbartext) {
     title.style.fontSize = '1.2rem';
     title.style.fontWeight = 'bold';
     title.style.color = 'var(--fg)';
-    title.style.cursor = 'move';
+    title.style.cursor = canDrag ? 'move' : 'default';
     title.style.display = 'flex';
     title.style.alignItems = 'center';
     title.style.height = '24px';
     title.style.userSelect = 'none';
     const initialTitleText = tbartext || "Voxity";
     let currentTitleText = initialTitleText;
-    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> ${initialTitleText}`
-
-    const close = document.createElement('button');
-    close.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-    close.setAttribute('aria-label', 'Close');
-    close.style.position = 'absolute';
-    close.style.top = '12px';
-    close.style.right = '16px';
-    close.style.background = 'none';
-    close.style.border = 'none';
-    close.style.fontSize = '1.3rem';
-    close.style.cursor = 'pointer';
-    close.style.color = 'var(--error-bg)';
-    close.style.transition = 'color 0.2s';
-    close.onmouseenter = () => close.style.color = 'var(--fg)';
-    close.onmouseleave = () => close.style.color = 'var(--error-bg)';
+    title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> ${initialTitleText}`;
 
     let modalApi = null;
     let isClosed = false;
@@ -92,52 +77,58 @@ async function msg(text, tbartext) {
         }, 250);
     };
 
-    close.onclick = closeModal;
+    if (canClose) {
+        const close = document.createElement('button');
+        close.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        close.setAttribute('aria-label', 'Close');
+        close.style.position = 'absolute';
+        close.style.top = '12px';
+        close.style.right = '16px';
+        close.style.background = 'none';
+        close.style.border = 'none';
+        close.style.fontSize = '1.3rem';
+        close.style.cursor = 'pointer';
+        close.style.color = 'var(--error-bg)';
+        close.style.transition = 'color 0.2s';
+        close.onmouseenter = () => close.style.color = 'var(--fg)';
+        close.onmouseleave = () => close.style.color = 'var(--error-bg)';
+        close.onclick = closeModal;
+        box.appendChild(close);
+    }
 
-    let isDragging = false;
-    let offsetX = 0;
-    let offsetY = 0;
+    if (canDrag) {
+        let isDragging = false;
+        let offsetX = 0;
+        let offsetY = 0;
 
-    title.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        offsetX = e.clientX - box.getBoundingClientRect().left;
-        offsetY = e.clientY - box.getBoundingClientRect().top;
-        document.body.style.userSelect = 'none';
-    });
+        title.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - box.getBoundingClientRect().left;
+            offsetY = e.clientY - box.getBoundingClientRect().top;
+            document.body.style.userSelect = 'none';
+        });
 
-    document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
             let newLeft = e.clientX - offsetX;
             let newTop = e.clientY - offsetY;
             const rect = box.getBoundingClientRect();
-            const width = rect.width;
-            const height = rect.height;
-            const maxLeft = window.innerWidth - width;
-            const maxTop = window.innerHeight - height;
-            if (newLeft < 0) newLeft = 0;
-            if (newTop < 0) newTop = 0;
-            if (newLeft > maxLeft) newLeft = maxLeft;
-            if (newTop > maxTop) newTop = maxTop;
-            box.style.left = `${newLeft}px`;
-            box.style.top = `${newTop}px`;
-        }
-    });
+            const maxLeft = window.innerWidth - rect.width;
+            const maxTop = window.innerHeight - rect.height;
+            box.style.left = `${Math.min(Math.max(0, newLeft), maxLeft)}px`;
+            box.style.top = `${Math.min(Math.max(0, newTop), maxTop)}px`;
+        });
 
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-        document.body.style.userSelect = '';
-    });
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.userSelect = '';
+        });
+    }
 
     const eiv = () => {
         const rect = box.getBoundingClientRect();
-        let left = rect.left;
-        let top = rect.top;
-        const maxLeft = Math.max(0, window.innerWidth - rect.width);
-        const maxTop = Math.max(0, window.innerHeight - rect.height);
-        if (left < 0) left = 0;
-        if (top < 0) top = 0;
-        if (left > maxLeft) left = maxLeft;
-        if (top > maxTop) top = maxTop;
+        const left = Math.min(Math.max(0, rect.left), Math.max(0, window.innerWidth - rect.width));
+        const top = Math.min(Math.max(0, rect.top), Math.max(0, window.innerHeight - rect.height));
         box.style.left = `${left}px`;
         box.style.top = `${top}px`;
     };
@@ -163,25 +154,26 @@ async function msg(text, tbartext) {
     footer.className = 'pop';
     footer.style.alignItems = 'center';
 
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'bu';
-    closeBtn.textContent = 'Close';
-    closeBtn.style.background = 'var(--btn-bg)';
-    closeBtn.style.color = 'var(--fg)';
-    closeBtn.addEventListener('click', closeModal);
+    if (canClose) {
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'bu';
+        closeBtn.textContent = 'Close';
+        closeBtn.style.background = 'var(--btn-bg)';
+        closeBtn.style.color = 'var(--fg)';
+        closeBtn.addEventListener('click', closeModal);
+        footer.appendChild(closeBtn);
+    }
 
-    footer.appendChild(closeBtn);
     content.appendChild(contentBody);
     content.appendChild(footer);
 
     box.appendChild(title);
-    box.appendChild(close);
     box.appendChild(content);
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
     overlay.addEventListener('click', e => {
-        if (e.target === overlay) closeModal();
+        if (canClose && e.target === overlay) closeModal();
     });
 
     if (!document.getElementById('msg-modal-animations')) {
@@ -192,17 +184,14 @@ async function msg(text, tbartext) {
                 from { transform: scale(0.7); opacity: 0; }
                 to { transform: scale(1); opacity: 1; }
             }
-
             @keyframes zout {
                 from { transform: scale(1); opacity: 1; }
                 to { transform: scale(0.7); opacity: 0; }
             }
-
             @keyframes fin {
                 from { opacity: 0; }
                 to { opacity: 1; }
             }
-
             @keyframes fout {
                 from { opacity: 1; }
                 to { opacity: 0; }
@@ -210,12 +199,13 @@ async function msg(text, tbartext) {
         `;
         document.head.appendChild(style);
     }
+
     modalApi = {
         overlay,
         close: () => closeModal(),
         setTitle: (text) => {
             const nextTitle = text || 'Voxity';
-            title.innerHTML = `<i class=\"fa-solid fa-tower-broadcast\" style=\"color: var(--lyric-color); margin-right: 0.5em;\"></i> ${nextTitle}`;
+            title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> ${nextTitle}`;
             currentTitleText = nextTitle;
         },
         getTitle: () => currentTitleText,
@@ -224,6 +214,7 @@ async function msg(text, tbartext) {
             try { eiv(); } catch { }
         }
     };
+
     window.__voxityModals = window.__voxityModals || [];
     window.__voxityModals.push(modalApi);
     try {
@@ -231,8 +222,10 @@ async function msg(text, tbartext) {
             detail: { modal: modalApi },
         }));
     } catch { }
+
     return modalApi;
 }
+
 function closeTopModal() {
     const stack = window.__voxityModals;
     if (!stack || stack.length === 0) return false;
