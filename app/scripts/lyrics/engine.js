@@ -51,7 +51,7 @@ function lrc_play(lrc_currents, act_index) {
             p.addEventListener('click', () => {
                 player.currentTime = line.time;
                 if (player.paused) player.play().catch(() => { });
-                stat_up(`<i class="fa-solid fa-frog"></i> Jumping to "${line.text.slice(0, 25) + '...'}" at ${Math.floor(line.time / 60)}:${String(Math.floor(line.time % 60)).padStart(2, '0')}...`);
+                stat_up(`<i class="fa-solid fa-frog"></i> Jumping to "${line.text.slice(0, 25)}" at ${Math.floor(line.time / 60)}:${String(Math.floor(line.time % 60)).padStart(2, '0')}...`);
             });
         }
 
