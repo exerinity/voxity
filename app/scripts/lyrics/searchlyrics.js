@@ -1,3 +1,5 @@
+// This file does not contain the logic for actually searching lyrics; but instead for the Search lyrics button
+
 document.getElementById('searchlrclib').addEventListener('click', debounce(async () => {
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');
