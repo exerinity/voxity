@@ -1,18 +1,5 @@
-<!DOCTYPE HTML>
-<HTML lang="en">
-<!--
-   Welcome to the source code of Voxity! Since this does not obfuscate or hide behind frameworks or build steps,
-   everything I write for the app is right here. Well, not here, but it's in the stylesheets and scripts below.
-   On a side note, considering I am the only one working on it purely for fun, please don't expect any perfect corporate-grade polished code; that's not what this is about.
-   This is my passion project; I made it because I like JavaScript and FLACs. Simple enough, right? Well...
-
-   If you have any questions, comments or concerns, please reach out to me on Twitter: https://exerinity.com/twitter (or just @exerinity_)
-   or email me: https://exerinity.com/email (or, decode it: the name is "me", at my website that ends in dot com, super simple)
--->
-
-<!-- Copyright 2025-2026 exerinity.com - This application is licensed under the MIT license.
-     Read the LICENSE file (https://github.com/exerinity/voxity/blob/main/LICENSE) or https://voxity.dev/LICENSE.txt for more information.
--->
+<!doctype html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -45,7 +32,6 @@
         <audio src="/app/media/sfx/message.ogg" id="msgsound" preload="auto"></audio>
         <audio src="/app/media/sfx/done.ogg" id="donesound" preload="auto"></audio>
         <audio src="/app/media/sfx/time.ogg" id="timesound" preload="auto"></audio>
-        <!-- this is the "finished rendering" sound from FL Studio -->
         <div id="preemptive_warn"
             style="background: var(--dialog-bg);color: var(--fg);border-radius: 16px;box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 32px;padding: 2rem 2.5rem 1.5rem;max-width: 720px;width: 90vw;position: fixed;font-family: inherit;text-align: center;animation: 0.2s ease 0s 1 normal none running zin;left: 50%;top: 50%;transform: translate(-50%, -50%);">
             <div
@@ -63,10 +49,9 @@
                 <br><small>PS: Even if you don't see this, everything might still be broken. Good luck, comrade. This
                     message is only removed by initialize.js once the page loads. More can go wrong and this box won't catch
                     it.</small><hr>JavaScript is <strong style="color:green;">enabled</strong>. <a href="/app/scripts/management/initialize.js" target="_blank">Please check /app/scripts/management/initialize.js is accessible</a>.<br><a href="https://exerinity.com/email">I need help!</a>`);</script>
-                    <!-- for if javascript works, but if something else doesnt -->
                     <noscript>JavaScript is <strong style="color:red;">disabled</strong>. Please enable it to continue.
                         <a href="https://support.google.com/adsense/answer/12654?hl=en" target="_blank">Learn
-                            how...</a></noscript> <!-- for simply if javascript is disabled -->
+                            how...</a></noscript>
                 </div>
             </div>
         </div>
@@ -192,12 +177,14 @@
             <div id="error" class="hidden"></div>
         </div>
     </main>
+
     <script src="/app/scripts/management/settings.js" defer></script>
     <script src="/app/scripts/management/initialize.js"></script>
     <script src="/app/scripts/management/hotkeys.js" defer></script>
     <script src="/app/scripts/management/elementmap.js" defer></script>
     <script src="/app/scripts/management/sleeptimer.js" defer></script>
     <script src="/app/scripts/management/tabtitle.js" defer></script>
+    <script src="/app/scripts/management/play.js"></script>
 
     <script src="/app/scripts/audio/analyzer.js" defer></script>
     <script src="/app/scripts/audio/event.js" defer></script>
@@ -226,14 +213,15 @@
     <script src="/app/scripts/ui/clicktocopy.js" defer></script>
     <script src="/app/scripts/ui/hello.js" defer></script>
     <script src="/app/scripts/ui/status.js"></script>
+
     <script src="/app/scripts/miscellaneous/formathelp.js"></script>
-    <script src="/app/scripts/management/play.js"></script>
     <script src="/app/scripts/miscellaneous/mediasession.js" defer></script>
     <script src="/app/scripts/miscellaneous/pwachecker.js" defer></script>
     <script src="/app/scripts/miscellaneous/releasenotes.js" defer></script>
     <script src="/app/scripts/miscellaneous/statictext.js" defer></script>
     <script src="/app/scripts/management/notifications.js"></script>
     <script src="/app/scripts/management/wakelock.js"></script>
+
 </body>
 
 </html>
