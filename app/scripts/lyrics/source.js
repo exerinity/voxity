@@ -160,9 +160,12 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
     lrc_wipe();
     const sourceKey = getPreferredLyricsSource();
     const sourceLabel = getLyricsSourceLabel(sourceKey);
-    stat_up(`<i class="fa-solid fa-magnifying-glass"></i> Searching ${sourceLabel}...`);
 
-    lrc_con.innerHTML = '<div class="spinner"></div>';
+    lrc_con.innerHTML = `
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="spinner"></div>
+    <span>Searching ${sourceLabel}...</span>
+  </div>`;
     try {
         const fetcher = sourceKey === LYRICS_SOURCE_KEYS.MUSIXMATCH ? fetchLyricsFromMusixmatch : fetchLyricsFromLrclib;
         const result = await fetcher({ trackName, artistName, albumName, duration, signal });
