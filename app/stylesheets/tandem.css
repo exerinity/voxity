@@ -189,6 +189,7 @@
     border-top-color: var(--link);
     border-radius: 50%;
     animation: spin 1s linear infinite;
+    display: inline-block;
 }
 
 @keyframes spin {
