@@ -45,7 +45,7 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
   <i style="font-size:0.9rem;color:#888;">You can also scroll your mouse over the sliders</i>
   `;
 
-const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.dev" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
+const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.com" target="_blank" rel="noopener">exerinity</a>. It is not designed to replace or compete with any native players; but rather to be a fast quick way for casual listening.</p>
         <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a href="/i/release_notes" onclick="event.preventDefault(); relnote()" style="cursor: pointer">Release notes</a><br>
                 <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">
           ${isPWA() ? "Voxity is currently installed as a PWA, nice!" : "Tip: You should install Voxity as a PWA. <a href='/i/how_pwa' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
