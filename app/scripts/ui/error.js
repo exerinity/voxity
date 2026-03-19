@@ -1,7 +1,7 @@
 const max = 5;
 const c = document.createElement('div');
 c.style.position = 'fixed';
-c.style.bottom = '20px';
+c.style.top = '20px';
 c.style.right = '20px';
 c.style.display = 'flex';
 c.style.flexDirection = 'column-reverse';
@@ -10,7 +10,7 @@ c.style.zIndex = '2147483647';
 document.body.appendChild(c);
 
 function throw_error(msg, ok = false) {
-    const dur = 5000;
+    const dur = 8000;
 
     const box = document.createElement('div');
     box.className = 'error-box';
