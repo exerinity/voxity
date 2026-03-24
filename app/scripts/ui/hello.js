@@ -21,9 +21,9 @@ if (typeof localStorage !== 'undefined') {
             welcome();
         }, 2500);
 
-        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Voxity!');
+        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome to Voxity!', 10000);
     } else {
-        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Voxity!');
+        stat_up('<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Welcome back to Voxity!', 7500);
     }
 }
 

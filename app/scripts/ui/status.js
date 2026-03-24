@@ -6,6 +6,7 @@ function stat_up(msg, ac = true) {
         if (stat_out) {
             clearTimeout(stat_out);
         }
+        const delay = typeof ac === 'number' ? ac : 2500;
         stat_out = setTimeout(() => {
             if (!elements.player.src) {
                 elements.status.innerHTML = `<i class="fa-solid fa-tower-broadcast bop"></i> Voxity`;
@@ -18,7 +19,7 @@ function stat_up(msg, ac = true) {
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Voxity';
             }
             stat_out = null;
-        }, 2500);
+        }, delay);
     }
 }
 
