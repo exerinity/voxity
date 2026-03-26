@@ -9,6 +9,8 @@ let lastLyricsRequest = null;
 const lrc_con = document.getElementById('lyrics');
 let lrc_amount = 16;
 const metadata = {};
+let faviconObjectUrl = null;
+let defaultFaviconHref = null;
 
 function get_meta(file) {
     jsmediatags.read(file, {
@@ -43,6 +45,7 @@ function get_meta(file) {
                 cover.title = metadata.album || metadata.title || 'Cover art';
                 cover.alt = `Cover art for ${metadata.album || metadata.title} by ${metadata.artist}`;
                 notifyAutoAccentController(globalart);
+                updateFaviconFromArtwork(metadata.picture);
                 if ('mediaSession' in navigator) {
                     try {
                         if (_ms_art_url) { URL.revokeObjectURL(_ms_art_url); _ms_art_url = null; }
@@ -57,6 +60,7 @@ function get_meta(file) {
                 globalart = '';
                 cover.classList.add('hidden');
                 notifyAutoAccentController('');
+                updateFaviconFromArtwork(null);
                 if ('mediaSession' in navigator) set_media_session_metadata();
             }
 
@@ -93,6 +97,7 @@ function get_meta(file) {
             document.getElementById('cover-art').classList.add('hidden');
             globalart = '';
             notifyAutoAccentController('');
+            updateFaviconFromArtwork(null);
             if ('mediaSession' in navigator) set_media_session_metadata();
             lastLyricsRequest = null;
             try {
@@ -112,3 +117,64 @@ function notifyAutoAccentController(source) {
         }
     } catch { }
 }
+
+function shouldUseDynamicFavicon() {
+    if (typeof isElectron === 'function' && isElectron()) {
+        return false;
+    }
+    if (typeof window === 'undefined' || typeof window.VoxitySettings === 'undefined') {
+        return true;
+    }
+    try {
+        return !!window.VoxitySettings.isEnabled('dynamicFavicon');
+    } catch {
+        return true;
+    }
+}
+
+function updateFaviconFromArtwork(picture) {
+    if (typeof document === 'undefined') return;
+    let link = document.querySelector("link[rel*='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head?.appendChild(link);
+    }
+    if (!link) return;
+    if (!defaultFaviconHref) {
+        defaultFaviconHref = link.href || '/favicon.ico';
+    }
+    const restoreDefaultFavicon = () => {
+        if (faviconObjectUrl) {
+            try { URL.revokeObjectURL(faviconObjectUrl); } catch { }
+            faviconObjectUrl = null;
+        }
+        link.href = defaultFaviconHref;
+    };
+    if (!shouldUseDynamicFavicon()) {
+        restoreDefaultFavicon();
+        return;
+    }
+    if (!picture || !picture.data) {
+        restoreDefaultFavicon();
+        return;
+    }
+    try {
+        const blob = new Blob([new Uint8Array(picture.data)], { type: picture.format || 'image/png' });
+        if (faviconObjectUrl) {
+            try { URL.revokeObjectURL(faviconObjectUrl); } catch { }
+        }
+        faviconObjectUrl = URL.createObjectURL(blob);
+        link.href = faviconObjectUrl;
+    } catch {
+        restoreDefaultFavicon();
+    }
+}
+
+document.addEventListener('voxity:settings-changed', (event) => {
+    if (!event || !event.detail) return;
+    const key = event.detail.key;
+    if (key === '*' || key === 'dynamicFavicon') {
+        updateFaviconFromArtwork(metadata.picture || null);
+    }
+});
