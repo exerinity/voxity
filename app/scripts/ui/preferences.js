@@ -21,6 +21,7 @@ window.addEventListener('DOMContentLoaded', () => {
             { v: 'none', l: 'Off' },
         ];
         const DEFAULT_ROTATION_INTERVAL = 5;
+        const isElectronEnv = typeof isElectron === 'function' && isElectron();
         const PREFERENCE_TOGGLES = [
             {
                 key: 'soundEffects',
@@ -57,6 +58,13 @@ window.addEventListener('DOMContentLoaded', () => {
                 key: 'autoAccentColor',
                 label: 'Set accent from cover',
                 description: 'Derive the accent color from the dominant color in the current artwork',
+            },
+            {
+                key: 'dynamicFavicon',
+                label: 'Make favicon cover art',
+                description: 'Replace the browser tab icon with the current artwork',
+                disableIfElectron: true,
+                disabledNote: 'You are running the Electron version of Voxity',
             },
         ];
         const LYRICS_SOURCES = [
@@ -514,11 +522,20 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div class="voxity-settings-toggles">
                             ${PREFERENCE_TOGGLES.map(toggle => {
                 const checked = hasSettingsApi && window.VoxitySettings.isEnabled(toggle.key) ? 'checked' : '';
-                const disabled = hasSettingsApi ? '' : 'disabled';
-                const supportMessage = toggle.key === 'wakeLock' && !supportsWakeLock
-                    ? '<p class="voxity-settings-small">Wake Lock API not supported in this browser</p>'
-                    : '';
-                return `<div class="voxity-settings-toggle"${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                const disabledBySettings = !hasSettingsApi;
+                const disabledByElectron = toggle.disableIfElectron && isElectronEnv;
+                const disabled = (disabledBySettings || disabledByElectron) ? 'disabled' : '';
+                const supportMessages = [];
+                if (toggle.key === 'wakeLock' && !supportsWakeLock) {
+                    supportMessages.push('<p class="voxity-settings-small">Wake Lock API not supported in this browser</p>');
+                }
+                if (disabledByElectron && toggle.disabledNote) {
+                    supportMessages.push(`<p class="voxity-settings-small">${toggle.disabledNote}</p>`);
+                }
+                const supportMessage = supportMessages.join('');
+                const wrapperDisabledAttr = (disabledBySettings || disabledByElectron) ? ' data-disabled="true"' : '';
+                const disabledTitleAttr = disabledByElectron && toggle.disabledNote ? ` title="${toggle.disabledNote}"` : '';
+                return `<div class="voxity-settings-toggle"${wrapperDisabledAttr}${disabledTitleAttr}>
                                             <input type="checkbox" id="pref_${toggle.key}" ${checked} ${disabled}>
                                             <div>
                                                 <label for="pref_${toggle.key}">${toggle.label}</label>
@@ -720,6 +737,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         const input = document.getElementById(`pref_${toggle.key}`);
                         if (!input) return;
                         input.checked = settingsApi.isEnabled(toggle.key);
+                        if (input.disabled) return;
                         input.addEventListener('change', async () => {
                             if (toggle.requiresPermission === 'notification' && input.checked) {
                                 const granted = await requestNotificationPermission();
