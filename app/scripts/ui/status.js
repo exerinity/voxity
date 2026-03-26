@@ -12,10 +12,10 @@ function stat_up(msg, ac = true) {
                 elements.status.innerHTML = `<i class="fa-solid fa-tower-broadcast bop"></i> Voxity`;
                 elements.branding.innerHTML = null;
             } else if (elements.player.paused) {
-                elements.status.innerHTML = `<i class="fa-solid fa-circle-pause fa-fade"></i> Now paused: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
+                elements.status.innerHTML = `<i class="fa-solid fa-circle-pause fa-fade"></i> Now paused: <strong>${act_truncate(metadata.title || 'Unknown track', 120)}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast bop"></i> Voxity';
             } else {
-                elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> Now playing: <strong>${metadata.title || 'Unknown track'}</strong> by ${metadata.artist || 'Unknown artist'}`;
+                elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> Now playing: <strong>${act_truncate(metadata.title || 'Unknown track', 120)}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Voxity';
             }
             stat_out = null;
