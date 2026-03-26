@@ -58,24 +58,37 @@ function scrollCurrentQueueItemIntoView(options = {}) {
     }
     activeItem.classList.add('focus');
 
-    const scrollOptions = {
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'nearest',
-    };
-    if (options && typeof options === 'object') {
-        if (options.behavior) scrollOptions.behavior = options.behavior;
-        if (options.block) scrollOptions.block = options.block;
-        if (options.inline) scrollOptions.inline = options.inline;
+    const scrollContainer = list.closest('.queue-container') || list;
+    const block = (options && options.block) || 'center';
+    const scrollTop = scrollContainer.scrollTop;
+    const containerHeight = scrollContainer.clientHeight;
+
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const itemRect = activeItem.getBoundingClientRect();
+    const relativeTop = (itemRect.top - containerRect.top) + scrollTop;
+    const itemHeight = itemRect.height || activeItem.offsetHeight || 0;
+    const itemBottom = relativeTop + itemHeight;
+    const maxScroll = Math.max(0, scrollContainer.scrollHeight - containerHeight);
+    const isFullyVisible = relativeTop >= scrollTop && itemBottom <= scrollTop + containerHeight;
+
+    let targetScrollTop = scrollTop;
+    if (block === 'start') {
+        targetScrollTop = relativeTop;
+    } else if (block === 'end') {
+        targetScrollTop = itemBottom - containerHeight;
+    } else if (block === 'nearest') {
+        if (!isFullyVisible) {
+            targetScrollTop = relativeTop < scrollTop ? relativeTop : (itemBottom - containerHeight);
+        }
+    } else {
+        // default to centering the item
+        targetScrollTop = relativeTop - ((containerHeight - itemHeight) / 2);
     }
 
-    try {
-        activeItem.scrollIntoView(scrollOptions);
-    } catch {
-        try {
-            activeItem.scrollIntoView();
-        } catch { }
+    if (!isFinite(targetScrollTop)) {
+        targetScrollTop = 0;
     }
+    scrollContainer.scrollTop = Math.max(0, Math.min(maxScroll, targetScrollTop));
 
     return true;
 }
