@@ -68,6 +68,7 @@ https://exerinity.com/doom/ost and https://demo.player.exerinity.com/
 - **Windows Media Player** for the rotating tab title logic, in the mini player
 - **Winamp** for the status bar system (https://files.exerinity.com/Voxity_20260224_203314.mp4)
 - **VLC media player** for the notifications (...kinda)
+- **foobar2000** for the tagline "plays music." (it is a carbon copy from its buttons found at https://www.foobar2000.org/support) (im sorry)
 
 ## Donate
 Instead of donating to me, you should donate to
