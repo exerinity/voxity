@@ -37,6 +37,77 @@ function isAudioFile(file) {
     return AUDIO_EXTENSIONS.has(ext);
 }
 
+function padTwo(n) { return String(n).padStart(2, '0'); }
+
+function secondsFromHms(hms) {
+    const v = hms.replace(',', '.').trim();
+    const parts = v.split(':').map(Number);
+    if (parts.length === 3) {
+        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    } else if (parts.length === 2) {
+        return parts[0] * 60 + parts[1];
+    }
+    return parseFloat(v) || 0;
+}
+
+function formatLrcTimestamp(secs) {
+    const mm = Math.floor(secs / 60);
+    const ssFloat = secs % 60;
+    const ss = ssFloat.toFixed(2);
+    return `${padTwo(mm)}:${ss.padStart(5, '0')}`;
+}
+
+function srt_to_lrc(srt) {
+    const blocks = srt.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
+    const out = [];
+    for (const block of blocks) {
+        const timeMatch = block.match(/(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})\s*-->\s*(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})/);
+        if (!timeMatch) continue;
+        const start = timeMatch[1];
+        const textLines = block
+            .split(/\r?\n/)
+            .filter((line, idx) => {
+                const trimmed = line.trim();
+                if (!trimmed) return false;
+                if (idx === 0 && /^\d+$/.test(trimmed)) return false;
+                return !/-->/.test(trimmed);
+            });
+        let text = textLines.join(' ').replace(/<[^>]+>/g, '').trim();
+        text = text.replace(/(\d{1,2}:){2}\d{2}[,\.]\d{1,3}\s*-->\s*(\d{1,2}:){2}\d{2}[,\.]\d{1,3}/g, '').trim();
+        if (!text) continue;
+        const secs = secondsFromHms(start);
+        out.push(`[${formatLrcTimestamp(secs)}]${text}`);
+    }
+    return out.join('\n');
+}
+
+function vtt_to_lrc(vtt) {
+    const content = vtt.replace(/^WEBVTT[\s\S]*?\n\n/, '');
+    const blocks = content.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
+    const out = [];
+    for (const block of blocks) {
+        const timeMatch = block.match(/(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}\s*-->\s*(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}/);
+        const tsLine = (block.split(/\r?\n/).find(l => /-->/.test(l)) || '').trim();
+        if (!tsLine) continue;
+        const startMatch = tsLine.match(/(\d{1,2}:)?\d{1,2}:\d{2}[\.,]\d{1,3}/);
+        if (!startMatch) continue;
+        const start = startMatch[0];
+        const textLines = block
+            .split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(line => line && !/-->/.test(line));
+        while (textLines.length && /^\d+$/.test(textLines[0])) {
+            textLines.shift();
+        }
+        let text = textLines.join(' ').replace(/<[^>]+>/g, '').trim();
+        text = text.replace(/(\d{1,2}:){1,2}\d{2}[,\.]\d{1,3}\s*-->\s*(\d{1,2}:){1,2}\d{2}[,\.]\d{1,3}/g, '').trim();
+        if (!text) continue;
+        const secs = secondsFromHms(start);
+        out.push(`[${formatLrcTimestamp(secs)}]${text}`);
+    }
+    return out.join('\n');
+}
+
 function quf(fileList, options = {}) {
     const opts = options && typeof options === 'object' ? options : {};
     const { ignoreInvalid = false } = opts;
@@ -50,54 +121,9 @@ function quf(fileList, options = {}) {
     if (!ignoreInvalid && files.length === 1 && isLyricsFile(files[0])) {
         const name = files[0].name || '';
         const lower = name.toLowerCase();
-        function padTwo(n) { return String(n).padStart(2, '0'); }
-        function secondsFromHms(hms) {
-            const v = hms.replace(',', '.').trim();
-            const parts = v.split(':').map(Number);
-            if (parts.length === 3) {
-                return parts[0] * 3600 + parts[1] * 60 + parts[2];
-            } else if (parts.length === 2) {
-                return parts[0] * 60 + parts[1];
-            }
-            return parseFloat(v) || 0;
-        }
-        function formatLrcTimestamp(secs) {
-            const mm = Math.floor(secs / 60);
-            const ssFloat = secs % 60;
-            const ss = ssFloat.toFixed(2);
-            return `${padTwo(mm)}:${ss.padStart(5, '0')}`;
-        }
-        function srt_to_lrc(srt) {
-            const blocks = srt.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
-            const out = [];
-            for (const block of blocks) {
-                const timeMatch = block.match(/(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})\s*-->\s*(\d{1,2}:\d{2}:\d{2}[,\.]\d{1,3})/);
-                if (!timeMatch) continue;
-                const start = timeMatch[1];
-                const text = block.split(/\r?\n/).slice(1).join(' ').replace(/<[^>]+>/g, '').trim();
-                if (!text) continue;
-                const secs = secondsFromHms(start);
-                out.push(`[${formatLrcTimestamp(secs)}]${text}`);
-            }
-            return out.join('\n');
-        }
-        function vtt_to_lrc(vtt) {
-            const content = vtt.replace(/^WEBVTT[\s\S]*?\n\n/, '');
-            const blocks = content.split(/\r?\n\r?\n/).map(b => b.trim()).filter(Boolean);
-            const out = [];
-            for (const block of blocks) {
-                const timeMatch = block.match(/(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}\s*-->\s*(\d{1,2}:)?\d{1,2}:\d{2}\.\d{3}/);
-                const tsLine = (block.split(/\r?\n/).find(l => /-->/.test(l)) || '').trim();
-                if (!tsLine) continue;
-                const startMatch = tsLine.match(/(\d{1,2}:)?\d{1,2}:\d{2}[\.,]\d{1,3}/);
-                if (!startMatch) continue;
-                const start = startMatch[0];
-                const text = block.split(/\r?\n/).filter(l => !/-->/.test(l)).slice(1).join(' ').replace(/<[^>]+>/g, '').trim() || block.split(/\r?\n/).filter(l => !/-->/.test(l)).join(' ').replace(/<[^>]+>/g, '').trim();
-                if (!text) continue;
-                const secs = secondsFromHms(start);
-                out.push(`[${formatLrcTimestamp(secs)}]${text}`);
-            }
-            return out.join('\n');
+
+        if (typeof lyricsAbortController !== 'undefined' && lyricsAbortController) {
+            try { lyricsAbortController.abort(); } catch { }
         }
 
         const reader = new FileReader();
