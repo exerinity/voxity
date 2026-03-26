@@ -10,6 +10,7 @@
         songNotifications: false,
         wakeLock: false,
         autoAccentColor: false,
+        dynamicFavicon: true,
     });
 
     let values = { ...DEFAULTS };
