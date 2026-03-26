@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', () => {
             { v: 'none', l: 'Off' },
         ];
         const DEFAULT_ROTATION_INTERVAL = 5;
-        const isElectronEnv = typeof isElectron === 'function' && isElectron();
+        const isElectronEnv = isElectron();
         const PREFERENCE_TOGGLES = [
             {
                 key: 'soundEffects',
