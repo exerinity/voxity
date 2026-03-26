@@ -149,7 +149,9 @@ let lyricsAbortController = null;
 async function get_lyrics(trackName, artistName, albumName, duration) {
     const start = Date.now();
     if (lyricsAbortController) {
-        lyricsAbortController.abort();
+        try {
+            lyricsAbortController.abort();
+        } catch { }
     }
 
     lyricsAbortController = new AbortController();
@@ -165,28 +167,31 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
   <div style="display:flex;align-items:center;gap:8px;">
     <div class="spinner"></div>
     <span>Searching ${sourceLabel}...</span>
-  </div>`;
+    </div>`;
     try {
         const fetcher = sourceKey === LYRICS_SOURCE_KEYS.MUSIXMATCH ? fetchLyricsFromMusixmatch : fetchLyricsFromLrclib;
         const result = await fetcher({ trackName, artistName, albumName, duration, signal });
         if (result && result.kind === 'instrumental') {
             skipLyricsUpdate = true;
-            isLyricsLoading = false;
             stat_up(`<i class="fa-solid fa-microphone-lines-slash"></i> This song is an instrumental (${sourceLabel}, ${Date.now() - start}ms)`);
             lrc_con.innerHTML = 'This song is an instrumental';
             const instrumentalLine = lrc_parse('Instrumental')[0];
             lrc_data = instrumentalLine ? [instrumentalLine] : [];
+            lyricsAbortController = null;
+            isLyricsLoading = false;
             return lrc_data;
         }
         if (result && result.kind === 'synced' && typeof result.lyrics === 'string') {
             lrc_data = lrc_parse(result.lyrics);
             stat_up(`<i class="fa-solid fa-check"></i> Found lyrics for <strong>${metadata.title}</strong> by <strong>${metadata.artist}</strong> via ${sourceLabel} in ${Date.now() - start}ms`);
+            lyricsAbortController = null;
             isLyricsLoading = false;
             update_lyrics();
             return;
         }
         if (result && result.kind === 'plain' && typeof result.lyrics === 'string') {
             lrc_data = result.lyrics.split('\n').map(line => ({ time: 0, text: line }));
+            lyricsAbortController = null;
             isLyricsLoading = false;
             update_lyrics();
             stat_up(`<i class="fa-solid fa-minus"></i> Found unsynced lyrics for <strong>${metadata.title}</strong> by <strong>${metadata.artist}</strong> via ${sourceLabel} in ${Date.now() - start}ms`);
@@ -195,16 +200,20 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
         stat_up(`<i class="fa-solid fa-xmark"></i> No lyrics found via ${sourceLabel} (${Date.now() - start}ms)`);
         lrc_con.innerHTML = '';
         lrc_data = [];
+        lyricsAbortController = null;
         isLyricsLoading = false;
     } catch (e) {
         if (signal.aborted) {
-            null;
+            lyricsAbortController = null;
+            isLyricsLoading = false;
+            return;
         } else {
             stat_up(`<i class="fa-solid fa-xmark"></i> Error loading lyrics`);
             throw_error(`Lyrics could not load:<br>${e}<br>You are likely offline.`);
         }
         lrc_con.innerHTML = '';
         lrc_data = [];
+        lyricsAbortController = null;
         isLyricsLoading = false;
     }
 }
