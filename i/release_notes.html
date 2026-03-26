@@ -57,6 +57,18 @@
                 title="DM me on Twitter">let me know!</a></p>
         <h1>2026</h1>
         <h2>March</h2>
+        <h3>26th (v89)</h3>
+        <ul>
+            <li>New setting: "Make favicon cover art" - this is a revival of what Voxity used to have, but it only worked on Firefox.. and only just.. and wasn't togglable...</li>
+            <small>(it cannot be used in Electron)</small>
+            <li>The "right click to bring current song playing in the queue" has been fixed: previously it would get stuck almost 90% of the time; now it immediately brings it into view</li>
+            <li>The "Now playing" in the status bar is now truncated to 120 characters</li>
+            <li>The animated text scroller now dynamically adjusts how long to spend animating based on how long the content is</li>
+            <li>The VTT and SRT parsers can now be called in the console, vtt_to_lrc and srt_to_lrc</li>
+            <li>Timestamps no longer leak into SRT parsing</li>
+            <li>If a lyrics request is in-flight and you drop in a subtitle file, the request is aborted</li>
+            <li>The "actual" truncate function (that actually truncates with ...) can now vary how much to truncate by, do <strong>act_truncate(content, length)</strong>, so <strong>act_truncate(metadata.title, 30)</strong></li>
+        </ul>
         <h3>24th (v88c)</h3>
         <ul>
             <li>New startup sound</li>
