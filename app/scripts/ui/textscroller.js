@@ -57,6 +57,23 @@ function clearScrollSetup(textEl) {
     delete textEl.dataset.scrollDirection;
 }
 
+function computeScrollDuration(textEl, distance, containerWidth) {
+    const minDuration = 2.5;
+    const maxDuration = 28;
+    const threshold = maxtruncate();
+    const charCount = textEl.textContent ? textEl.textContent.length : 0;
+    const extraChars = Math.max(0, charCount - threshold);
+    const normalizedChars = Math.min(1, extraChars / Math.max(1, threshold * 3));
+    const charDuration = minDuration + (maxDuration - minDuration) * normalizedChars;
+
+    const distanceDuration = Math.min(
+        maxDuration,
+        Math.max(minDuration, Math.abs(distance) / Math.max(20, containerWidth * 0.15))
+    );
+
+    return Math.max(charDuration, distanceDuration);
+}
+
 function queueScrollRefresh() {
     if (scrollRefreshQueued) return;
     scrollRefreshQueued = true;
@@ -83,7 +100,7 @@ function queueScrollRefresh() {
             const distance = containerWidth - textWidth;
             textEl.classList.add('is-scrolling');
             textEl.style.setProperty('--scroll-distance', `${distance}px`);
-            const duration = Math.min(20, Math.max(6, Math.abs(distance) / 40));
+            const duration = computeScrollDuration(textEl, distance, containerWidth);
             textEl.style.setProperty('--scroll-duration', `${duration.toFixed(2)}s`);
             ensureScrollSetup(textEl);
         });
@@ -114,8 +131,10 @@ function truncate(text) {
     `;
 }
 
-function act_truncate(text) {
-    const truncate_max = maxtruncate();
+function act_truncate(text, customMax) {
+    const truncate_max = Number.isFinite(customMax) && customMax > 0
+        ? Math.floor(customMax)
+        : maxtruncate();
 
     if (text.length <= truncate_max) {
         return text;
