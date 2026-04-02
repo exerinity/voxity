@@ -167,10 +167,50 @@ function clea() {
     shufflePool = [];
     shuffleHistory = [];
     pt++;
+
+    if (typeof clean === 'function') {
+        try { clean(); } catch { }
+    }
+    if (typeof frame_id !== 'undefined' && frame_id) {
+        try { cancelAnimationFrame(frame_id); } catch { }
+        frame_id = null;
+    }
+
+    try { elements.player.pause(); } catch { }
     resetPlayerState();
+
+    if (stat_out) {
+        clearTimeout(stat_out);
+        stat_out = null;
+    }
+    if (elements.status) {
+        elements.status.innerHTML = `<i class="fa-solid fa-tower-broadcast bop"></i> Voxity`;
+    }
+    if (elements.branding) {
+        elements.branding.innerHTML = null;
+    }
+
     rqueue();
+
+    const queuePlaceholderItem = '<li class="queue-item placeholder">The queue is empty <i class="fa-solid fa-tower-broadcast fa-beat bop"></i></li>';
+    const queueContainerMarkup = `
+        <ul id="queue-list" class="queue-list">
+            ${queuePlaceholderItem}
+        </ul>
+    `.trim();
+
+    const queueContainer = document.getElementById('queue-container');
+    if (queueContainer) {
+        queueContainer.innerHTML = queueContainerMarkup;
+        const refreshedList = queueContainer.querySelector('#queue-list');
+        if (refreshedList) {
+            elements.queueList = refreshedList;
+        }
+    } else if (elements.queueList) {
+        elements.queueList.innerHTML = queuePlaceholderItem;
+    }
+
     calqueue();
-    stat_up('<i class="fa-solid fa-broom"></i> Queue cleared');
     throw_error('Cleared', true);
 }
 
