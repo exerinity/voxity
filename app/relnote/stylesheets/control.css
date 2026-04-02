@@ -1,0 +1,85 @@
+ @font-face {
+     font-family: 'GSansFlex';
+     src: url('/app/fonts/googlesansflex/GoogleSansFlex.subset.woff2') format('woff2');
+     font-weight: 100 900;
+     font-style: normal;
+     font-display: swap;
+ }
+
+ html,
+ body {
+     height: 100%;
+     margin: 0;
+     background: #000;
+     color: #fff;
+     font-family: 'GSansFlex', sans-serif;
+ }
+
+ #i {
+     max-width: 960px;
+     margin: 40px auto;
+     padding: 0 20px;
+     line-height: 1.6
+ }
+
+ #i img {
+     max-width: 100%
+ }
+
+ a,
+ a:visited,
+ a:hover {
+     color: rgb(96, 197, 255);
+ }
+
+ img.emoji {
+     width: 1em;
+     height: 1em;
+     vertical-align: middle;
+ }
+
+ #sticky-headings {
+     position: sticky;
+     top: 0;
+     background: rgba(0, 0, 0, 0.9);
+     padding: 10px 0;
+     margin-bottom: 20px;
+     z-index: 5;
+     border-top: 1px solid rgba(255, 255, 255, 0.1);
+     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+     opacity: 0;
+     transition: opacity 0.2s ease;
+     display: flex;
+     flex-wrap: wrap;
+     gap: 6px 16px;
+     align-items: center;
+ }
+
+ #sticky-headings.is-active {
+     opacity: 1;
+ }
+
+ #sticky-headings .sticky-year {
+     font-size: 22px;
+     font-weight: 600;
+ }
+
+ #sticky-headings .sticky-month {
+     font-size: 15px;
+     color: #aaa;
+ }
+
+ #sticky-headings .sticky-actions,
+ #sticky-headings .sticky-actions a {
+     font-size: 14px;
+     margin-left: auto;
+     color: white;
+ }
+
+ #sticky-headings .sticky-actions {
+     display: none;
+ }
+
+ #sticky-headings .sticky-actions.is-visible {
+     display: block;
+ }
