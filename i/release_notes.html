@@ -4,47 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>Release notes</title>
-    <style>
-        @font-face {
-            font-family: 'GSansFlex';
-            src: url('/app/fonts/googlesansflex/GoogleSansFlex.subset.woff2') format('woff2');
-            font-weight: 100 900;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            background: #000;
-            color: #fff;
-            font-family: 'GSansFlex', sans-serif;
-        }
-
-        #i {
-            max-width: 960px;
-            margin: 40px auto;
-            padding: 0 20px;
-            line-height: 1.6
-        }
-
-        #i img {
-            max-width: 100%
-        }
-
-        a,
-        a:visited,
-        a:hover {
-            color: rgb(140, 0, 255);
-        }
-
-        img.emoji {
-            width: 1em;
-            height: 1em;
-            vertical-align: middle;
-        }
-    </style>
+    <link rel="stylesheet" href="/app/relnote/stylesheets/control.css">
 </head>
 
 <body>
@@ -55,36 +15,164 @@
         <p>All previous builds are kept archived. If you want the URL of a specific date, <a
                 href="https://twitter.com/messages/compose?recipient_id=1988378945625223168" target="_blank"
                 title="DM me on Twitter">let me know!</a></p>
+        <details>
+            <summary>
+                List
+            </summary>
+            <ul>
+                <li><a href="#v90">v90 - April 2, 2026</a></li>
+                <li><a href="#v89">v89 - March 26, 2026</a></li>
+                <li><a href="#v88c">v88c - March 24, 2026</a></li>
+                <li><a href="#patch">Patch - March 19, 2026</a></li>
+                <li><a href="#v88b">v88b - March 15, 2026</a></li>
+                <li><a href="#v88a">v88a - March 10, 2026</a></li>
+                <li><a href="#v88">v88 - March 3, 2026</a></li>
+                <li><a href="#v87">v87 - February 24, 2026</a></li>
+                <li><a href="#v86c">v86c - February 19, 2026</a></li>
+                <li><a href="#v86b">v86b - February 18, 2026</a></li>
+                <li><a href="#v86a">v86a - February 2026</a></li>
+                <li><a href="#v86">v86 - February 16, 2026</a></li>
+                <li><a href="#v85a">v85a - February 14, 2026</a></li>
+                <li><a href="#v85">v85 - February 13, 2026</a></li>
+                <li><a href="#v84c">v84c - February 6, 2026</a></li>
+                <li><a href="#v84b">v84b - February 5, 2026</a></li>
+                <li><a href="#v84a">v84a - February 2, 2026</a></li>
+                <li><a href="#v84">v84 - January 26, 2026</a></li>
+                <li><a href="#v83a">v83a - January 21, 2026</a></li>
+                <li><a href="#v83">v83 - January 17, 2026</a></li>
+                <li><a href="#v82">v82 - January 15, 2026</a></li>
+                <li><a href="#v81d">v81d - January 14, 2026</a></li>
+                <li><a href="#v81c">v81c - January 13, 2026</a></li>
+                <li><a href="#v81b">v81b - January 2026</a></li>
+                <li><a href="#v81a">v81a - January 9, 2026</a></li>
+                <li><a href="#v81">v81 - January 8, 2026</a></li>
+                <li><a href="#v80b">v80b - January 4, 2026</a></li>
+                <li><a href="#v80a">v80a - January 2, 2026</a></li>
+                <li><a href="#v80">v80 - January 1, 2026</a></li>
+                <li><a href="#v79d">v79d - December 27, 2025</a></li>
+                <li><a href="#v79c">v79c - December 25, 2025</a></li>
+                <li><a href="#v79b">v79b - December 24, 2025</a></li>
+                <li><a href="#v79a">v79a - December 21, 2025</a></li>
+                <li><a href="#v79">v79 - December 17, 2025</a></li>
+                <li><a href="#v78a">v78a - December 12, 2025</a></li>
+                <li><a href="#v78">v78 - December 2025</a></li>
+                <li><a href="#v77">v77 - December 7, 2025</a></li>
+                <li><a href="#v76">v76 - December 6, 2025</a></li>
+                <li><a href="#v75">v75 - December 3, 2025</a></li>
+                <li><a href="#v74">v74 - November 30, 2025</a></li>
+                <li><a href="#v73">v73 - November 28, 2025</a></li>
+                <li><a href="#v72-5">v72.5 - November 18, 2025</a></li>
+                <li><a href="#v72">v72 - November 17, 2025</a></li>
+                <li><a href="#v71">v71 - November 16, 2025</a></li>
+                <li><a href="#v70-5">v70.5 - November 14, 2025</a></li>
+                <li><a href="#v70">v70 - November 2025</a></li>
+                <li><a href="#v69">v69 - November 11, 2025</a></li>
+                <li><a href="#v68">v68 - November 5, 2025</a></li>
+                <li><a href="#v66">v66 - October 31, 2025</a></li>
+                <li><a href="#v65">v65 - October 29, 2025</a></li>
+                <li><a href="#v64">v64 - October 26, 2025</a></li>
+                <li><a href="#v63">v63 - October 20, 2025</a></li>
+                <li><a href="#v62">v62 - October 18, 2025</a></li>
+                <li><a href="#v61">v61 - October 17, 2025</a></li>
+                <li><a href="#v60">v60 - October 15, 2025</a></li>
+                <li><a href="#v59">v59 - October 13, 2025</a></li>
+                <li><a href="#v58">v58 - October 12, 2025</a></li>
+                <li><a href="#v57">v57 - October 11, 2025</a></li>
+                <li><a href="#v56">v56 - October 10, 2025</a></li>
+                <li><a href="#v55">v55 - October 9, 2025</a></li>
+                <li><a href="#v54">v54 - September 27, 2025</a></li>
+                <li><a href="#v53">v53 - September 26, 2025</a></li>
+                <li><a href="#v52">v52 - September 25, 2025</a></li>
+                <li><a href="#v51">v51 - September 24, 2025</a></li>
+                <li><a href="#v50">v50 - September 20, 2025</a></li>
+                <li><a href="#v49">v49 - September 19, 2025</a></li>
+                <li><a href="#v48">v48 - September 17, 2025</a></li>
+                <li><a href="#v47">v47 - September 15, 2025</a></li>
+                <li><a href="#v46">v46 - September 12, 2025</a></li>
+                <li><a href="#v45">v45 - September 11, 2025</a></li>
+                <li><a href="#v44">v44 - September 10, 2025</a></li>
+                <li><a href="#v43">v43 - September 8, 2025</a></li>
+                <li><a href="#v42">v42 - September 4, 2025</a></li>
+                <li><a href="#v41">v41 - September 2, 2025</a></li>
+                <li><a href="#v40">v40 - September 1, 2025</a></li>
+                <li><a href="#v39">v39 - August 31, 2025</a></li>
+                <li><a href="#v38">v38 - August 29, 2025</a></li>
+                <li><a href="#v37">v37 - August 28, 2025</a></li>
+                <li><a href="#v36">v36 - August 27, 2025</a></li>
+                <li><a href="#v35">v35 - August 26, 2025</a></li>
+                <li><a href="#v34">v34 - August 23, 2025</a></li>
+                <li><a href="#v33">v33 - August 22, 2025</a></li>
+                <li><a href="#v32">v32 - August 21, 2025</a></li>
+                <li><a href="#v31">v31 - August 19, 2025</a></li>
+                <li><a href="#v30">v30 - August 18, 2025</a></li>
+                <li><a href="#v29">v29 - August 17, 2025</a></li>
+                <li><a href="#v28">v28 - August 15, 2025</a></li>
+                <li><a href="#v27">v27 - August 13, 2025</a></li>
+                <li><a href="#v26">v26 - August 11, 2025</a></li>
+                <li><a href="#v25">v25 - August 10, 2025</a></li>
+                <li><a href="#v24">v24 - August 9, 2025</a></li>
+                <li><a href="#v23">v23 - August 5, 2025</a></li>
+                <li><a href="#v22">v22 - August 4, 2025</a></li>
+                <li><a href="#v21">v21 - July 30, 2025</a></li>
+                <li><a href="#v20">v20 - July 29, 2025</a></li>
+                <li><a href="#v19">v19 - July 28, 2025</a></li>
+                <li><a href="#intro">Intro - July 27, 2025</a></li>
+            </ul>
+        </details>
+        <div id="sticky-headings" aria-live="polite">
+            <div class="sticky-year"></div>
+            <div class="sticky-month"></div>
+            <div class="sticky-actions">
+                <a href="/">&#8592; Return to Voxity</a>
+            </div>
+        </div>
         <h1>2026</h1>
-        <h2>March</h2>
-        <h3>26th (v89)</h3>
+        <h2>April</h2>
+        <h3 id="v90">2nd (v90)</h3>
+        <p>
+            Voxity v90! Wow! I wonder what v100 will bring. If I ever get there. Anyway,
+        </p>
         <ul>
-            <li>New setting: "Make favicon cover art" - this is a revival of what Voxity used to have, but it only worked on Firefox.. and only just.. and wasn't togglable...</li>
+            <li>The Clear button now properly clears: it stops playback, resets the queue, kills analyzers, etc</li>
+            <li>Heavily revamped the Release notes page: there is a new list of versions, a new sticky banner showing month and year, better styling in some places</li>
+            <li>Visualizer canvas now disappears when disabled instead of leaving a black box with nothing going on</li>
+        </ul>
+        <h2>March</h2>
+        <h3 id="v89">26th (v89)</h3>
+        <ul>
+            <li>New setting: "Make favicon cover art" - this is a revival of what Voxity used to have, but it only
+                worked on Firefox.. and only just.. and wasn't togglable...</li>
             <small>(it cannot be used in Electron)</small>
-            <li>The "right click to bring current song playing in the queue" has been fixed: previously it would get stuck almost 90% of the time; now it immediately brings it into view</li>
+            <li>The "right click to bring current song playing in the queue" has been fixed: previously it would get
+                stuck almost 90% of the time; now it immediately brings it into view</li>
             <li>The "Now playing" in the status bar is now truncated to 120 characters</li>
-            <li>The animated text scroller now dynamically adjusts how long to spend animating based on how long the content is</li>
+            <li>The animated text scroller now dynamically adjusts how long to spend animating based on how long the
+                content is</li>
             <li>The VTT and SRT parsers can now be called in the console, vtt_to_lrc and srt_to_lrc</li>
             <li>Timestamps no longer leak into SRT parsing</li>
             <li>If a lyrics request is in-flight and you drop in a subtitle file, the request is aborted</li>
-            <li>The "actual" truncate function (that actually truncates with ...) can now vary how much to truncate by, do <strong>act_truncate(content, length)</strong>, so <strong>act_truncate(metadata.title, 30)</strong></li>
+            <li>The "actual" truncate function (that actually truncates with ...) can now vary how much to truncate by,
+                do <strong>act_truncate(content, length)</strong>, so <strong>act_truncate(metadata.title, 30)</strong>
+            </li>
         </ul>
-        <h3>24th (v88c)</h3>
+        <h3 id="v88c">24th (v88c)</h3>
         <ul>
             <li>New startup sound</li>
-            <li><strong>stat_up</strong> can now be given a duration to clear (and is used for the "Welcome (back) to Voxity!")</li>
+            <li><strong>stat_up</strong> can now be given a duration to clear (and is used for the "Welcome (back) to
+                Voxity!")</li>
         </ul>
-        <h3>19th (Patch)</h3>
+        <h3 id="patch">19th (Patch)</h3>
         <p>
             The toast notification now shows in the top right. Ever since the toast system was added; it has always been
-            in the bottom right, but after v44, it kinda stood over something very important... maybe I'll make it so you can pick later on.
+            in the bottom right, but after v44, it kinda stood over something very important... maybe I'll make it so
+            you can pick later on.
         </p>
-        <h3>15th (v88b)</h3>
+        <h3 id="v88b">15th (v88b)</h3>
         <p>
             Small changes that I don't really know how to describe. Check the GitHub repo if you care.<br><br>Also,
             Voxity is probably not gonna be "archived". That was a bit too dramatic, I guess. It's fine.
         </p>
-        <h3>10th (v88a)</h3>
+        <h3 id="v88a">10th (v88a)</h3>
         <ul>
             <li>Massively split up all script files into modules</li>
         </ul>
@@ -166,7 +254,7 @@ scripts/
             <li>Changed the font from a TrueType to a WOFF2 which should massively improve loading time</li>
             <li>Removed the 404 page (you will just get served the app)</li>
         </ul>
-        <h3>3rd (v88)</h3>
+        <h3 id="v88">3rd (v88)</h3>
         <h4>(Probably) Voxity's final update</h4>
         <p>I hate to say this, but I think Voxity is finally, truly, definitively finished. I just don't know what
             else
@@ -191,40 +279,40 @@ scripts/
             the corresponding versions per update.
         </p>
         <h2>February</h2>
-        <h3>24th (v87)</h3>
+        <h3 id="v87">24th (v87)</h3>
         <ul>
             <li>Added a tooltip to the sliders</li>
             <a href="https://i.exerinity.com/vivaldi_20260224_211747.png" target="_blank"><img
                     src="https://i.exerinity.com/vivaldi_20260224_211747.png"></a>
             <li>Refreshed the sleep timer modal styling</li>
         </ul>
-        <h3>19th (v86c)</h3>
+        <h3 id="v86c">19th (v86c)</h3>
         <p>
             Added a Reset to current theme default button in the theme settings
         </p>
-        <h3>18th (v86b)</h3>
+        <h3 id="v86b">18th (v86b)</h3>
         <ul>
             <li>Added new theme: <strong>Paradise</strong> (thanks to <a href="https://twitter.com/antlerhaver"
                     target="_blank">@antlerhaver</a> on Twitter)</li>
             <li>Accent color is now remembered in settings</li>
         </ul>
-        <h3>v86a</h3>
+        <h3 id="v86a">v86a</h3>
         <ul>
             <li>Added an Acquire screen wakelock toggle to the settings modal</li>
             <li>Refreshed the <a href="404" target="_blank">404 page</a></li>
         </ul>
-        <h3>16th (v86)</h3>
+        <h3 id="v86">16th (v86)</h3>
         <ul>
             <li>Returned Musixmatch lyrics, alongside LRCLIB (you can pick in Settings)</li>
             <li>Improved the styles in Settings, they now cooperate with the theme and generally look better</li>
             <li>Added a SPA router, so opening various modals will update the URL</li>
         </ul>
-        <h3>14th (v85a)</h3>
+        <h3 id="v85a">14th (v85a)</h3>
         <ul>
             <li>Small changes to the font awesome loader and settings modal</li>
             <li>Removed Twemoji</li>
         </ul>
-        <h3>13th (v85)</h3>
+        <h3 id="v85">13th (v85)</h3>
         <ul>
             <li>Added a new slider to settings: title rotation speed</li>
             <li>Added a new boolean to settings: show static song title</li>
@@ -232,7 +320,7 @@ scripts/
             <li>New function: modal_title_up, same as stat_up, but for the title of the first (if any) open modal
             </li>
         </ul>
-        <h3>6th (v84c)</h3>
+        <h3 id="v84c">6th (v84c)</h3>
         <ul>
             <li>Fixed a bizarre issue where HTML tags would leak into the metadata, hopefully</li>
             <li>Fixed the textbox in the Search lyrics modal being slightly too wide</li>
@@ -241,21 +329,21 @@ scripts/
             </li>
             <li>Other small adjustments</li>
         </ul>
-        <h3>5th (v84b)</h3>
+        <h3 id="v84b">5th (v84b)</h3>
         <ul>
             <li>Strengthened the error box if JS is disabled / main.js is blocked (and probably overengineering it)
             </li>
             <li>Added <strong>CTRL + F</strong> to the list of hotkeys (I forgot)</li>
         </ul>
-        <h3>2nd (v84a)</h3>
+        <h3 id="v84a">2nd (v84a)</h3>
         <p>Switched default font from Inter to Google Sans Flex (the Inter files remain, this may revert, just
             testing
             it out)</p>
         <h2>January</h2>
-        <h3>26th (v84)</h3>
+        <h3 id="v84">26th (v84)</h3>
         <p>New queue searching function: middle-click the queue header or press CTRL+F to enter it (or the button)
         </p>
-        <h3>21st (v83a)</h3>
+        <h3 id="v83a">21st (v83a)</h3>
         <ul>
             <li>Voxity now waits 100 milliseconds between loading tracks, rudimental performance tweak (you can
                 change
@@ -263,7 +351,7 @@ scripts/
             <li>Removed "Search " and "Paste " from the two lyrics-related buttons; the icons are kinda
                 self-explanatory, plus the title text</li>
         </ul>
-        <h3>17th (v83)</h3>
+        <h3 id="v83">17th (v83)</h3>
         <ul>
             <li>Secondary (right for most) clicking the queue header now scrolls the current track into view (for
                 huge
@@ -272,7 +360,7 @@ scripts/
                 high
                 resolution, spectrum is default again, circular is centered and more spiky</li>
         </ul>
-        <h3>15th (v82)</h3>
+        <h3 id="v82">15th (v82)</h3>
         <h4>Voxity has moved to its own domain!</h4>
         <ul>
             <li>From now on, Voxity is hosted at <a href="https://voxity.dev">voxity.dev</a>. The old
@@ -283,7 +371,7 @@ scripts/
             </li>
             <li>Tamed the "mobile not recommended" message (im sorry to dilute the fun)</li>
         </ul>
-        <h3>14th (v81d)</h3>
+        <h3 id="v81d">14th (v81d)</h3>
         <ul>
             <li>Refreshed the system notifications layout</li>
             <li>There is now an Electron build of Voxity available on <a
@@ -294,13 +382,13 @@ scripts/
                     src="https://i.exerinity.com/Discord_20260115_163656.png" style="max-width: 100%"
                     alt="Discord Rich Presence showing Voxity playing a song"></a>
         </ul>
-        <h3>13th (v81c)</h3>
+        <h3 id="v81c">13th (v81c)</h3>
         <p>Refreshed icons and added install button</p>
-        <h3>v81b</h3>
+        <h3 id="v81b">v81b</h3>
         <p>Attempting to prompt the browser to install the PWA instead of a "learn how" in the about modal</p>
-        <h3>9th (v81a)</h3>
+        <h3 id="v81a">9th (v81a)</h3>
         <p>The status now shows "X% done" when scrubbing</p>
-        <h3>8th (v81)</h3>
+        <h3 id="v81">8th (v81)</h3>
         <ul>
             <li>There are new sliders in the settings modal to set the amount of lyrics shown and visualizer FPS
             </li>
@@ -324,7 +412,7 @@ scripts/
             <li>You can now right-click the app. I have no idea why I put this limitation, but it might make way for
                 something soon....</li>
         </ul>
-        <h3>4th (v80b)</h3>
+        <h3 id="v80b">4th (v80b)</h3>
         <ul>
             <li>Rewritten the visualizer engine (that has been the same since v1) to (hopefully) be more lightweight
                 and
@@ -338,7 +426,7 @@ scripts/
                         title="3 songs were not supported, thus they were not processed. If you're certain they work with browsers, try remuxing them. Broken files: BUNT., The Chainsmokers, Izzy Bizu - Spaces.m4a Kendrick Lamar - Swimming Pools (Drank) (Explicit).m4a Sabrina Carpenter - Espresso (Explicit).m4a"></a>
             </li>
         </ul>
-        <h3>2nd (v80a)</h3>
+        <h3 id="v80a">2nd (v80a)</h3>
         <ul>
             <li>Added a small catch to the <a href="/i/release_notes">release notes</a> and the <a href="/i/how_pwa">how
                     to install</a> pages where if the page is opened in standalone, a "back to Voxity" gets added to
@@ -352,16 +440,16 @@ scripts/
                 may
                 even upset the Service Worker)</li>
         </ul>
-        <h3>1st (v80)</h3>
+        <h3 id="v80">1st (v80)</h3>
         <ul>
             <li>Added a way to reorder the queue via dragging items within it</li>
             <li>If the song changes while the lyrics search is still ongoing, the request is aborted</li>
         </ul>
         <h1>2025</h1>
         <h2>December</h2>
-        <h3>27th (v79d)</h3>
+        <h3 id="v79d">27th (v79d)</h3>
         <p>Small adjustments to try and boost Lighthouse score lolz</p>
-        <h3>25th (v79c)</h3>
+        <h3 id="v79c">25th (v79c)</h3>
         <ul>
             <li>Voxity now triggers the "Unsaved changes will be lost" dialogue if something is playing and the app
                 isn't installed as a PWA</li>
@@ -369,9 +457,9 @@ scripts/
                 the
                 default theme</li>
         </ul>
-        <h3>24th (v79b)</h3>
+        <h3 id="v79b">24th (v79b)</h3>
         <p>The file "app.js" has been changed to "pwa.js"</p>
-        <h3>21st (v79a)</h3>
+        <h3 id="v79a">21st (v79a)</h3>
         <p>
         <ul>
             <li>If you disable tab title rotation in settings, the title is now a static "Title by Artist / Voxity"
@@ -379,7 +467,7 @@ scripts/
             <li>Small changes to texts in some places</li>
         </ul>
         </p>
-        <h3>17th (v79)</h3>
+        <h3 id="v79">17th (v79)</h3>
         <p>A new diagnostic function has been added which attempts to manually load Font Awesome. Because, on my
             iPhone
             and old iMac, icons would not load locally, but they would externally, so, it loads from
@@ -387,9 +475,9 @@ scripts/
             can be found in the about box (by pressing Voxity on the left/right of the screen), the settings box,
             and
             the welcome box if you haven't already visited (or deleted the "hai" object locally)</p>
-        <h3>12th (v78a)</h3>
+        <h3 id="v78a">12th (v78a)</h3>
         <p>Brought the release notes and "how to install PWA" document local</p>
-        <h3>v78</h3>
+        <h3 id="v78">v78</h3>
         <ul>
             <li>The <img draggable="false" class="emoji" alt="⚙️" src="https://twemoji.exerinity.com/72x72/2699.png">
                 Theme button has been changed to <img draggable="false" class="emoji" alt="⚙️"
@@ -412,19 +500,19 @@ scripts/
             <li>If the file does not have full metadata, lyrics are now no longer automatically queried</li>
             <li>You can now press <strong>Escape</strong> to close an open modal</li>
         </ul>
-        <h3>7th (v77)</h3>
+        <h3 id="v77">7th (v77)</h3>
         <ul>
             <li>Completely overhauled the hotkeys engine to be more correct and precise</li>
             <li>New hotkey: while holding ALT, arrow keys / A/D / J/L, it scrubs ±30 seconds</li>
             <li>Fixed the Media Session controls not responding to pause/play</li>
         </ul>
-        <h3>6th (v76)</h3>
+        <h3 id="v76">6th (v76)</h3>
         <ul>
             <li>Drag and drop is now supported with folders, throw your whole music folder at it and press
                 <strong>H</strong> (Shuffle)
             </li>
         </ul>
-        <h3>3rd (v75)</h3>
+        <h3 id="v75">3rd (v75)</h3>
         <ul>
             <li>New cursor rules:<br>-- When hovering over a slider, the cursor has changed from
                 <code>ew-resize</code>
@@ -441,44 +529,44 @@ scripts/
                 nothing new</li>
         </ul>
         <h2>November</h2>
-        <h3>30th (v74)</h3>
+        <h3 id="v74">30th (v74)</h3>
         <ul>
             <li>New theme: <strong>Neon purple</strong></li>
             <li>Fixed a bug where if a song was marked as instrumental, and the Search lyrics modal is used, lyrics
                 did
                 not show upon insertion</li>
         </ul>
-        <h3>28th (v73)</h3>
+        <h3 id="v73">28th (v73)</h3>
         <ul>
             <li>New theme: <strong>Very high contrast</strong></li>
         </ul>
-        <h3>18th (v72.5)</h3>
+        <h3 id="v72-5">18th (v72.5)</h3>
         <ul>
             <li>Reverted Musixmatch back to LRCLIB. My server got banned, and the lyrics were horrible. Does this
                 count
                 as an actual version? Ah, who gives a shit, my left shoe.</li>
         </ul>
-        <h3>17th (v72)</h3>
+        <h3 id="v72">17th (v72)</h3>
         <ul>
             <li>Moved queue header out of the queue container, so it looks better</li>
             <li><del><strong>High contrast</strong> is now the default theme</del> reverted</li>
         </ul>
-        <h3>16th (v71)</h3>
+        <h3 id="v71">16th (v71)</h3>
         <ul>
             <li>Changed main lyrics source from LRCLIB to Musixmatch<br>This is very experimental and will likely
                 not
                 remain</li>
         </ul>
-        <h3>14th (v70.5)</h3>
+        <h3 id="v70-5">14th (v70.5)</h3>
         <ul>
             <li>Status bar now shows "loading X of Z"</li>
         </ul>
-        <h3>v70</h3>
+        <h3 id="v70">v70</h3>
         <ul>
             <li>When loading multiple songs they are now loaded one at a time to prevent freezing</li>
             <li>New index.html source code comment</li>
         </ul>
-        <h3>11th (v69)</h3>
+        <h3 id="v69">11th (v69)</h3>
         <ul>
             <li>The "Clear queue" button now actually clears the queue instead of refreshing the page</li>
             <li>"fka Audion" has been removed from the welcome and about boxes as I have deactivated my Bluesky
@@ -486,12 +574,12 @@ scripts/
                 (it linked to a post there)</li>
             <li>Cleaned up old unused code</li>
         </ul>
-        <h3>5th (v68)</h3>
+        <h3 id="v68">5th (v68)</h3>
         <ul>
             <li>Metadata in the queue is now truncated</li>
         </ul>
         <h2>October</h2>
-        <h3>31st (v66)</h3>
+        <h3 id="v66">31st (v66)</h3>
         <ul>
             <li>Added new theme: <strong>Neon blue</strong></li>
             <li>Small tweak to lyrics, if previously it was marked as instrumental, lyrics would be switched off.
@@ -499,26 +587,26 @@ scripts/
                 here, if you paste lyrics, that is overridden and lyrics are re-enabled. (previously, nothing would
                 happen)</li>
         </ul>
-        <h3>29th (v65)</h3>
+        <h3 id="v65">29th (v65)</h3>
         <ul>
             <li>When a song is an instrumental, the lyrics will no longer be updated while playing (performance
                 improvement)</li>
             <li>The spinner for loading lyrics shows longer</li>
         </ul>
-        <h3>26th (v64)</h3>
+        <h3 id="v64">26th (v64)</h3>
         <ul>
             <li>Fixed the lyrics modal getting stuck, hopefully</li>
             <li>Changed location of sound effects from <code>/sound.ogg</code> to <code>/app/media/sound.ogg</code>
             </li>
         </ul>
-        <h3>20th (v63)</h3>
+        <h3 id="v63">20th (v63)</h3>
         <ul>
             <li>Small update, the <strong>Themes</strong> selector now show proper names instead of their variable
                 names
             </li>
             <li>Cleaned up old code</li>
         </ul>
-        <h3>18th (v62)</h3>
+        <h3 id="v62">18th (v62)</h3>
         <ul>
             <li>Added 4 new themes: <strong>neon-green</strong>, <strong>under-the-sea</strong>,
                 <strong>frutiger-aero</strong> and <strong>twitter-dim</strong>
@@ -531,17 +619,17 @@ scripts/
             </li>
             <li>With that, the modal module now has an API to edit the content of an existing modal</li>
         </ul>
-        <h3>17th (v61)</h3>
+        <h3 id="v61">17th (v61)</h3>
         <ul>
             <li>Added queue shuffling</li>
             <li>Added new themes: <strong>red</strong> and <strong>paper</strong></li>
             <li>Long text is no longer a "marquee", it now scrolls dynamically and reverses at the end</li>
         </ul>
-        <h3>15th (v60)</h3>
+        <h3 id="v60">15th (v60)</h3>
         <ul>
             <li>Blank lines are now shown in lyrics (for things like beat drops or riffs or whatever)</li>
         </ul>
-        <h3>13th (v59)</h3>
+        <h3 id="v59">13th (v59)</h3>
         <h4>Renaming from <strong>Audion</strong> to <strong>Voxity</strong>... why?</h4>
         <ul>
             <li>"Audion" is two other music-related things: an old music player created by Panic, you know, the guys
@@ -555,7 +643,7 @@ scripts/
         <p>"Voxity" is derived from the Latin word "vox", noun, feminine, meaning voice, sound, or utterance, and
             also
             the last three letters of my username (exerin<strong>ity</strong>)</p>
-        <h3>12th (v58)</h3>
+        <h3 id="v58">12th (v58)</h3>
         <ul>
             <li>Added new hotkeys: <strong>Shift + numerical keys (0 to 9)</strong> jump to in the middle of the
                 corresponding number, for example, <strong>Shift + 4</strong> jumps to 35%</li>
@@ -566,7 +654,7 @@ scripts/
             <li>Plugged my socials into the welcome and about message</li>
             <li>Added more intelligent text truncation that bases off your screen size</li>
         </ul>
-        <h3>11th (v57)</h3>
+        <h3 id="v57">11th (v57)</h3>
         <ul>
             <li>Added new hotkeys: <strong>Z</strong> to go to previous track / restart current and
                 <strong>X</strong>
@@ -574,11 +662,11 @@ scripts/
             </li>
             <li>Fixed Font Awesome not being cached by the Service Worker, resulting in no icons when offline</li>
         </ul>
-        <h3>10th (v56)</h3>
+        <h3 id="v56">10th (v56)</h3>
         <ul>
             <li>The "Paste lyrics" button now has the current lyrics (if any) prefilled to the text box</li>
         </ul>
-        <h3>9th (v55)</h3>
+        <h3 id="v55">9th (v55)</h3>
         <ul>
             <li>The maximum speed has changed from 2x to 14x but ultimately depends on what browser you are using
                 (Firefox goes silent at around 9x)</li>
@@ -589,11 +677,11 @@ scripts/
         </ul>
         <p><img src="https://i.exerinity.com/gg2SuwpIcN.png" alt=""></p>
         <h2>September</h2>
-        <h3>27th (v54)</h3>
+        <h3 id="v54">27th (v54)</h3>
         <ul>
             <li>Added a new message notification sound</li>
         </ul>
-        <h3>26th (v53)</h3>
+        <h3 id="v53">26th (v53)</h3>
         <ul>
             <li>The previous button now restarts the track instead of saying <strong>no</strong> if you are at the
                 start
@@ -601,7 +689,7 @@ scripts/
             <li>Removed the stars background, it was quite useless and bulky</li>
             <li>Added a finished sound, <code>TADA.wav</code> from Windows ME</li>
         </ul>
-        <h3>25th (v52)</h3>
+        <h3 id="v52">25th (v52)</h3>
         <ul>
             <li>You can now click on the visualizer itself to change the mode, alongside the dedicated button</li>
             <li>Added a title field to the message box function, as in, "Theme settings" instead of just "Audion"
@@ -609,51 +697,51 @@ scripts/
             <li><strong>Spectrum</strong> is now the default visualizer instead of <strong>Waveform</strong></li>
             <li>Added <strong>Search lyrics</strong> button and lyrics browser</li>
         </ul>
-        <h3>24th (v51)</h3>
+        <h3 id="v51">24th (v51)</h3>
         <ul>
             <li>Added a total time to the queue header</li>
         </ul>
-        <h3>20th (v50)</h3>
+        <h3 id="v50">20th (v50)</h3>
         <ul>
             <li>The cover art is now set as the favicon, if available</li>
             <li>Split up the stylesheet into 5 individual files</li>
         </ul>
-        <h3>19th (v49)</h3>
+        <h3 id="v49">19th (v49)</h3>
         <ul>
             <li>New welcome message on first visit</li>
         </ul>
-        <h3>17th (v48)</h3>
+        <h3 id="v48">17th (v48)</h3>
         <ul>
             <li>When hovering over sliders, the cursor changes to <strong>ew-resize</strong>, horizontal resize</li>
         </ul>
-        <h3>15th (v47)</h3>
+        <h3 id="v47">15th (v47)</h3>
         <ul>
             <li>Message boxes are now clamped within viewport, so you cannot drag them out of display</li>
             <li>Texts are now truncated if over 30 characters</li>
         </ul>
-        <h3>12th (v46)</h3>
+        <h3 id="v46">12th (v46)</h3>
         <ul>
             <li>Multimedia keys can now control Audion, for example, the skip button... skips.</li>
             <li>Added stars background</li>
         </ul>
-        <h3>11th (v45)</h3>
+        <h3 id="v45">11th (v45)</h3>
         <ul>
             <li>The duration of a song is now shown in the queue</li>
             <li>Heavily overhauled Service Worker</li>
         </ul>
-        <h3>10th (v44)</h3>
+        <h3 id="v44">10th (v44)</h3>
         <ul>
             <li>
                 <h3>A queue system has been added... Audion is now useful!!</h3>
             </li>
             <li>The cascading menu for selecting a visualizer mode has been removed and relocated to a modal</li>
         </ul>
-        <h3>8th (v43)</h3>
+        <h3 id="v43">8th (v43)</h3>
         <ul>
             <li>The volume and playback speed are now remembered upon loading new tracks</li>
             <li>Moved the scrubber slider to its own division, making it longer and cleaner</li>
         </ul>
-        <h3>4th (v42)</h3>
+        <h3 id="v42">4th (v42)</h3>
         <ul>
             <li>Certain miscellaneous buttons have been moved to their own division, instead of all being crammed in
                 one
@@ -661,14 +749,14 @@ scripts/
             <li>Added new themes: <strong>blue</strong> and <strong>high-contrast</strong> (which is basically
                 lights-out, only makes accent yellow)</li>
         </ul>
-        <h3>2nd (v41)</h3>
+        <h3 id="v41">2nd (v41)</h3>
         <ul>
             <li>Audion now integrates with the <a
                     href="https://developer.mozilla.org/en-US/docs/Web/API/Media_Session_API"
                     target="_blank"><strong>Media Session API</strong></a>, so now the track is shown better on your
                 device (+<code>api.js</code>)</li>
         </ul>
-        <h3>1st (v40)</h3>
+        <h3 id="v40">1st (v40)</h3>
         <ul>
             <li>Added theme switcher alongside these three themes: <strong>light</strong>, <strong>grey</strong>,
                 <strong>dim</strong> and <strong>lights-out</strong>
@@ -680,7 +768,7 @@ scripts/
                 hover and overall better look</li>
         </ul>
         <h2>August</h2>
-        <h3>31st (v39)</h3>
+        <h3 id="v39">31st (v39)</h3>
         <ul>
             <li>Added new hotkeys: numerical keys (0 to 9) jump to the corresponding percentage of the track (4 to
                 40%),
@@ -689,7 +777,7 @@ scripts/
             <li>Audion is now less harsh on mobile users, instead of outright denying them entry; it just warns them
                 that the experience won't be grand</li>
         </ul>
-        <h3>29th (v38)</h3>
+        <h3 id="v38">29th (v38)</h3>
         <ul>
             <li>Added new hotkeys: <strong>K</strong> to play/pause, <strong>J</strong> &amp; <strong>A</strong> to
                 go
@@ -699,24 +787,24 @@ scripts/
             <li>You can now scroll over sliders to change them</li>
             <li>Removed some redundant old unused code</li>
         </ul>
-        <h3>28th (v37)</h3>
+        <h3 id="v37">28th (v37)</h3>
         <ul>
             <li>Removed the clock and replaced it with branding</li>
             <li>Instead of truncating some text, it is now scrolling horizontally</li>
         </ul>
-        <h3>27th (v36)</h3>
+        <h3 id="v36">27th (v36)</h3>
         <ul>
             <li>You can now click on the labels above the sliders to open a modal for a precise input</li>
         </ul>
-        <h3>26th (v35)</h3>
+        <h3 id="v35">26th (v35)</h3>
         <ul>
             <li>Added a "click-to-copy" to the status bar, title, artist and album</li>
         </ul>
-        <h3>23rd (v34)</h3>
+        <h3 id="v34">23rd (v34)</h3>
         <ul>
             <li>Redone Service Worker</li>
         </ul>
-        <h3>22nd (v33)</h3>
+        <h3 id="v33">22nd (v33)</h3>
         <ul>
             <li>Added new hotkey: <strong>R</strong> to restart track</li>
             <li>Added a catch for Chromium browsers with the full-sized album art popup; directing you to right
@@ -724,7 +812,7 @@ scripts/
                 and press Open image in new tab</li>
             <li>Made it so hotkeys cannot be used while a text box is focused to prevent inteference</li>
         </ul>
-        <h3>21st (v32)</h3>
+        <h3 id="v32">21st (v32)</h3>
         <ul>
             <li>Amplified the tab title scroller: instead of being static, it now adapts; if you're playing a single
                 (where the title and album are the same name), Audion ignores the album name. For example,
@@ -732,34 +820,34 @@ scripts/
                 <code>"Animals" -&gt; "Martin Garrix" -&gt; "Audion"</code>
             </li>
         </ul>
-        <h3>19th (v31)</h3>
+        <h3 id="v31">19th (v31)</h3>
         <ul>
             <li>The lyrics panel now shows 16 lines instead of 8</li>
             <li>New visualizer color picker</li>
         </ul>
-        <h3>18th (v30)</h3>
+        <h3 id="v30">18th (v30)</h3>
         <ul>
             <li>The main accent color has been changed from green (<a href="https://www.colorhexa.com/238600"
                     target="_blank">#238600</a>) to purple (<a href="https://www.colorhexa.com/8000ff"
                     target="_blank">#8000ff</a>)</li>
             <li>Added new scrolling tab title</li>
         </ul>
-        <h3>17th (v29)</h3>
+        <h3 id="v29">17th (v29)</h3>
         <ul>
             <li>Added <strong>Spectrum</strong> visualizer</li>
         </ul>
-        <h3>15th (v28)</h3>
+        <h3 id="v28">15th (v28)</h3>
         <ul>
             <li>Added success toggle to error box module, which makes it purple</li>
             <li>You can now click on lines in lyrics to jump to them</li>
         </ul>
-        <h3>13th (v27)</h3>
+        <h3 id="v27">13th (v27)</h3>
         <ul>
             <li>Added an instrumental check to searching lyrics, if instrumental is returned, it says so, rather
                 than
                 returning "no results"</li>
         </ul>
-        <h3>11th (v26)</h3>
+        <h3 id="v26">11th (v26)</h3>
         <ul>
             <li>
                 <h3><a href="#" target="_blank">Audion is now a <strong>Progressive Web App</strong>, meaning it
@@ -772,58 +860,51 @@ scripts/
                 Fonts
             </li>
         </ul>
-        <h3>10th (v25)</h3>
+        <h3 id="v25">10th (v25)</h3>
         <ul>
             <li>Renaming from "Music player" to "Audion"</li>
             <li>Reworked error box module, mostly better styling and stacking</li>
         </ul>
-        <h3>9th (v24)</h3>
+        <h3 id="v24">9th (v24)</h3>
         <ul>
             <li>The icons in the status bar are now dynamic when changing speed/volume (adjusts intensity based on
                 level)</li>
             <li>You can now click on the cover art to open a modal which enlarges it</li>
             <li>Removed URL input source (it was inefficient, and almost always ran into CORS errors)</li>
         </ul>
-        <h3>5th (v23)</h3>
+        <h3 id="v23">5th (v23)</h3>
         <ul>
             <li>New message box function, originally from <a href="https://ex3.icu" target="_blank">https://ex3.icu</a>
                 (my Discord bot's site)</li>
         </ul>
-        <h3>4th (v22)</h3>
+        <h3 id="v22">4th (v22)</h3>
         <ul>
             <li>You can now truly disable the visualizer</li>
             <li>It is also now neon green</li>
         </ul>
         <h2>July</h2>
-        <h3>30th (v21)</h3>
+        <h3 id="v21">30th (v21)</h3>
         <ul>
             <li>The status timer has been changed from 1.1 seconds to 2.5 seconds</li>
             <li>Improved visualizer efficiency, preventing overlapping cycles</li>
         </ul>
-        <h3>29th (v20)</h3>
+        <h3 id="v20">29th (v20)</h3>
         <ul>
             <li>Metadata is now a global object (<code>${metadata}</code>)</li>
             <li>Improved status messages</li>
         </ul>
-        <h3>28th (v19)</h3>
+        <h3 id="v19">28th (v19)</h3>
         <ul>
             <li>Fixed lyrics sometimes getting stuck or just never working</li>
         </ul>
-        <h3>27th (v1 to 18)</h3>
+        <h3 id="intro">27th (v1 to 18)</h3>
         <h4>Initial upload to current repository</h4>
         <p>Previously, it was <em>*just*</em> on Cloudflare Pages, but I took that down and uploaded it to GitHub.
             The
             rest is history...</p>
         <h1><a href="#i">Back to top</a></h1>
     </div>
-    <script>
-        if (window.location.search.includes('standalone')) {
-            const container = document.getElementById('i');
-            const backLink = document.createElement('p');
-            backLink.innerHTML = '<a href="/" style="font-size: 14px; margin-bottom: 10px; display: inline-block; color: #fff; text-decoration: underline dashed;">&#8592; Return to Voxity</a>';
-            container.insertBefore(backLink, container.firstChild);
-        }
-    </script>
+    <script src="/app/relnote/scripts/control.js"></script>
 </body>
 
 </html>
