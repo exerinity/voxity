@@ -39,11 +39,21 @@ function vis_init() {
     const ro = new ResizeObserver(resizeCanvas);
     ro.observe(canvas);
 
+    const updateCanvasVisibility = () => {
+        const isHidden = modeSel.value === 'none';
+        if (isHidden) {
+            ctx.clearRect(0, 0, W, H);
+        }
+        canvas.classList.toggle('hidden', isHidden);
+    };
+
     if (frame_id) cancelAnimationFrame(frame_id);
 
     modeSel.addEventListener('change', () => {
-        if (modeSel.value === 'none') ctx.clearRect(0, 0, W, H);
+        updateCanvasVisibility();
     });
+
+    updateCanvasVisibility();
 
     function draw(t) {
         frame_id = requestAnimationFrame(draw);
