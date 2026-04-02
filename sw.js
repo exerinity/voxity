@@ -96,7 +96,11 @@ const FILES_TO_CACHE = [
   webfonts+'fa-brands-400.woff2',
   webfonts+'fa-regular-400.woff2',
   webfonts+'fa-solid-900.woff2',
-  webfonts+'fa-v4compatibility.woff2'
+  webfonts+'fa-v4compatibility.woff2',
+
+  // release notes src
+  '/app/relnote/scripts/control.js',
+  '/app/relnote/stylesheets/control.css',
 ];
 
 self.addEventListener('install', event => {
