@@ -7,3 +7,5 @@
 /README.md https://github.com/exerinity/voxity/blob/main/README.md
 /.gitignore /
 /LICENSE /LICENSE.txt
+/git/* https://github.com/exerinity/voxity/blob/main/:splat
+/git https://github.com/exerinity/voxity

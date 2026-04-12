@@ -13,7 +13,7 @@ function vis_init() {
     const analyser = getAnalyser();
     if (!analyser) return;
 
-    analyser.fftSize = 2048;
+    analyser.fftSize = 256;
     analyser.smoothingTimeConstant = 0.7;
 
     const len = Math.min(analyser.frequencyBinCount, MAX_BINS);
@@ -39,29 +39,33 @@ function vis_init() {
     const ro = new ResizeObserver(resizeCanvas);
     ro.observe(canvas);
 
-    const updateCanvasVisibility = () => {
-        const isHidden = modeSel.value === 'none';
-        if (isHidden) {
-            ctx.clearRect(0, 0, W, H);
-        }
-        canvas.classList.toggle('hidden', isHidden);
-    };
-
     if (frame_id) cancelAnimationFrame(frame_id);
 
     modeSel.addEventListener('change', () => {
-        updateCanvasVisibility();
+        if (modeSel.value === 'none') {
+            ctx.clearRect(0, 0, W, H);
+            if (frame_id) {
+                cancelAnimationFrame(frame_id);
+                frame_id = null;
+            }
+        } else if (!frame_id) {
+            draw(0);
+        }
     });
 
-    updateCanvasVisibility();
-
     function draw(t) {
+        const mode = modeSel.value;
+        if (mode === 'none') {
+            if (frame_id) {
+                cancelAnimationFrame(frame_id);
+                frame_id = null;
+            }
+            return;
+        }
+
         frame_id = requestAnimationFrame(draw);
         if (t - lastFrame < 1000 / FPS) return;
         lastFrame = t;
-
-        const mode = modeSel.value;
-        if (mode === 'none') return;
 
         ctx.clearRect(0, 0, W, H);
 
