@@ -71,7 +71,7 @@ window.addEventListener('DOMContentLoaded', () => {
             {
                 key: 'lrclib',
                 label: 'LRCLIB.net',
-                note: 'Stable, more precise lookups, but crowd-sourced, so could be wrong for lesser known songs',
+                note: 'Stable, more precise lookups, but crowd-sourced, so could be wrong for lesser known songs <a href="/settings/lrclib" class="voxity-settings-configure">(config)</a>',
             },
             {
                 key: 'musixmatch',
@@ -79,6 +79,54 @@ window.addEventListener('DOMContentLoaded', () => {
                 note: 'Unstable, less precise lookups, but professional enterprise lyrics, so spot-on for popular songs, rough for others',
             },
         ];
+
+        async function openLrclibConfigModal() {
+            const hasSettingsApi = typeof window !== 'undefined' && typeof window.VoxitySettings !== 'undefined';
+            const current = hasSettingsApi ? (window.VoxitySettings.get('lrclibMode') || 'strict') : 'strict';
+            const modal = await msg(`
+                <div class="voxity-settings-modal">
+                    <section class="voxity-settings-section">
+                        <h3>Searching</h3>
+                        <div class="voxity-settings-lyrics-options">
+                            <label class="voxity-settings-lyrics-option" ${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                <input type="radio" name="lrclib_mode" value="strict" ${current === 'strict' ? 'checked' : ''} ${hasSettingsApi ? '' : 'disabled'}>
+                                <div>
+                                    <strong>Strict</strong>
+                                    <p class="voxity-settings-small">Use the full signature (title, artist, album, duration) for precise matches</p>
+                                </div>
+                            </label>
+                            <label class="voxity-settings-lyrics-option" ${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                <input type="radio" name="lrclib_mode" value="lax" ${current === 'lax' ? 'checked' : ''} ${hasSettingsApi ? '' : 'disabled'}>
+                                <div>
+                                    <strong>Lax</strong>
+                                    <p class="voxity-settings-small">Search only by title and artist and pick the best match</p>
+                                </div>
+                            </label>
+                        </div>
+                    </section>
+                        <small><a href="/settings" class="voxity-settings-back">Back to settings</a></small>
+                </div>
+            `, 'LRCLIB settings');
+            window.VoxityRouter?.setModalRoute(modal, '/settings/lrclib');
+            setTimeout(() => {
+                const radios = Array.from(document.querySelectorAll('input[name="lrclib_mode"]'));
+                radios.forEach(r => {
+                    r.addEventListener('change', () => {
+                        if (!hasSettingsApi) return;
+                        try { window.VoxitySettings.set('lrclibMode', r.value); } catch { }
+                        try { modal_title_up(`LRCLIB mode: ${r.value === 'lax' ? 'Lax' : 'Strict'}`); } catch { }
+                    });
+                });
+                const backLink = document.querySelector('.voxity-settings-back');
+                if (backLink) {
+                    backLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        try { modal.close(); } catch { }
+                        try { openSettingsModal(); } catch { }
+                    });
+                }
+            }, 0);
+        }
         const key = 'au_theme';
         const ACCENT_COLOR_STORAGE_KEY = 'au_accent_color';
         const DEFAULT_ACCENT_COLOR = '#8000ff';
@@ -581,6 +629,14 @@ window.addEventListener('DOMContentLoaded', () => {
                 const rotationNumber = document.getElementById('pref_titleRotationInterval_number');
                 const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
                 const lyricsSourceInputs = Array.from(document.querySelectorAll('input[name="lyrics_source"]'));
+                const configureLinks = Array.from(document.querySelectorAll('.voxity-settings-configure'));
+                configureLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        try { closeTopModal(); } catch { }
+                        try { openLrclibConfigModal(); } catch { }
+                    });
+                });
 
                 const requestNotificationPermission = async () => {
                     if (typeof window === 'undefined' || typeof Notification === 'undefined') {
@@ -795,6 +851,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 updateSleepTimerUi();
             }, 0);
         }
+        try {
+            if (typeof window !== 'undefined') {
+                window.openSettingsModal = openSettingsModal;
+            }
+        } catch { }
 
         try {
             const stored = localStorage.getItem(key);

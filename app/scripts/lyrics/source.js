@@ -85,7 +85,44 @@ function pickBestMusixmatchResult(results, { duration, trackName, artistName }) 
 }
 
 async function fetchLyricsFromLrclib({ trackName, artistName, albumName, duration, signal }) {
+    const mode = (typeof window === 'undefined' || typeof window.VoxitySettings === 'undefined') ? 'strict' : (window.VoxitySettings.get('lrclibMode') || 'strict');
     const normalizedDuration = Number.isFinite(duration) && duration > 0 ? Math.round(duration) : 0;
+
+    if (mode === 'lax') {
+        const searchParams = new URLSearchParams({
+            track_name: trackName || '',
+            artist_name: artistName || '',
+        });
+        const searchResponse = await fetch(`https://lrclib.net/api/search?${searchParams.toString()}`, { signal });
+        const searchResults = await searchResponse.json();
+        if (!searchResponse.ok || !Array.isArray(searchResults) || searchResults.length === 0) {
+            return { kind: 'none' };
+        }
+        const selected = searchResults[0];
+        if (!selected) return { kind: 'none' };
+        if (selected.instrumental) return { kind: 'instrumental' };
+        if (typeof selected.syncedLyrics === 'string' && selected.syncedLyrics.trim()) {
+            return { kind: 'synced', lyrics: selected.syncedLyrics };
+        }
+        if (typeof selected.plainLyrics === 'string' && selected.plainLyrics.trim()) {
+            return { kind: 'plain', lyrics: selected.plainLyrics };
+        }
+        if (selected.id) {
+            try {
+                const lookupResponse = await fetch(`https://lrclib.net/api/get/${encodeURIComponent(selected.id)}`, { signal });
+                const lookupData = await lookupResponse.json();
+                if (lookupResponse.ok) {
+                    if (lookupData.instrumental) return { kind: 'instrumental' };
+                    if (typeof lookupData.syncedLyrics === 'string' && lookupData.syncedLyrics.trim()) return { kind: 'synced', lyrics: lookupData.syncedLyrics };
+                    if (typeof lookupData.plainLyrics === 'string' && lookupData.plainLyrics.trim()) return { kind: 'plain', lyrics: lookupData.plainLyrics };
+                }
+            } catch (err) {
+                null;
+            }
+        }
+        return { kind: 'none' };
+    }
+
     const response = await fetch(
         `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artistName || '')}&track_name=${encodeURIComponent(trackName || '')}&album_name=${encodeURIComponent(albumName || '')}&duration=${normalizedDuration}`,
         { signal }

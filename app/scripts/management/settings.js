@@ -7,6 +7,7 @@
         staticSongTitle: true,
         autoLyrics: true,
         lyricsSource: 'lrclib',
+        lrclibMode: 'strict',
         songNotifications: false,
         wakeLock: false,
         autoAccentColor: false,
