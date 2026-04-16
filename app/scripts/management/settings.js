@@ -1,4 +1,4 @@
-;(function () {
+; (function () {
     const STORAGE_KEY = 'au_settings';
     const DEFAULTS = Object.freeze({
         soundEffects: true,
@@ -31,6 +31,33 @@
             }
         } catch {
             values = { ...DEFAULTS };
+        }
+    }
+
+    function loadFromParams() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const relevant = [...params.keys()].filter(key => key in DEFAULTS);
+            if (!relevant.length) return;
+
+            const hasExisting = !!localStorage.getItem(STORAGE_KEY);
+            if (hasExisting && !confirm("You already have defined settings, but you have redefined them in the URL. Would you like to overwrite your settings?")) return;
+
+            params.forEach((raw, key) => {
+                if (!(key in DEFAULTS)) return;
+                let coerced;
+                if (typeof DEFAULTS[key] === 'boolean') {
+                    coerced = /^(1|true|yes)$/i.test(raw);
+                } else if (typeof DEFAULTS[key] === 'number') {
+                    const n = Number(raw);
+                    if (!isNaN(n)) coerced = n;
+                } else {
+                    coerced = raw;
+                }
+                if (coerced !== undefined) values[key] = coerced;
+            });
+        } catch {
+            null
         }
     }
 
@@ -76,6 +103,7 @@
     }
 
     load();
+    loadFromParams();
     persist();
 
     window.VoxitySettings = {
@@ -88,3 +116,21 @@
 
     emitChange('*');
 })();
+
+function linkSettings() {
+    const params = new URLSearchParams();
+    const current = VoxitySettings.all();
+
+    Object.entries(current).forEach(([key, value]) => {
+        if (value !== VoxitySettings.defaults[key]) {
+            params.set(key, value);
+        }
+    });
+
+    const url = params.toString()
+        ? `${location.origin}${location.pathname}?${params.toString()}`
+        : location.origin + location.pathname;
+
+    const modal = msg(`<a style="word-break: break-all;" href="${url}" target="_blank">${url}</a>`);
+    window.VoxityRouter?.setModalRoute(modal, '/settings/link');
+}
