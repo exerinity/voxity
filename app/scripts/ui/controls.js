@@ -83,7 +83,7 @@ function restr() {
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     const modalPromise = msg(hotkeys_content, 'List of hotkeys');
-    window.VoxityRouter?.setModalRoute(modalPromise, '/i/hotkeys');
+    window.VoxityRouter?.setModalRoute(modalPromise, '/hotkeys');
 }));
 
 
