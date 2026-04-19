@@ -9,25 +9,35 @@ A modern, opinionated, fast, PWA local music player written entirely in JavaScri
 - Download: https://github.com/exerinity/voxity.electron/releases
 - More info: https://exerinity.com/projects/voxity
 
-## Some quick features
-- Online lyric searching and displaying, with clickable lines from [LRCLIB](https://lrclib.net) or [Musixmatch](https://www.musixmatch.com)
+## Features
+- Online lyric searching and displaying, with click-to-jump lines from [LRCLIB](https://lrclib.net) or [Musixmatch (experimental)](https://www.musixmatch.com)
+- LRCLIB is configurable: you can query by Strict (artist, title, album, duration) or Lax (artist and title)
 - A queue with an intelligent shuffle system and drag-to-reorder
 - Metadata parsing and displaying, courtesy of jsmediatags
 - 10+ themes
 - 3 responsive visualizers with variable FPS
-- An intuitive hotkey system with many binds
+- Many many hotkeys (see [#hotkeys](#hotkeys) or the hotkeys button in the app)
 - Integration with the Media Session API
-- Crude WebVTT and SubRip subtitle parsing, on top of LyRiC parsing
+- Supports WebVTT, SubRip, and LRC as lyrics (just drag the file in)
 - A basic sleep timer
 - Sound effects for finished queue, error, welcome, and more
 - System notifications when a new song begins (requires permission)
-- Modals above sliders for precise input
+- Precise input modals that can be opened by clicking the corresponding slider's label, for example, clicking the "Volume" label opens a modal where you can type in the exact volume you want instead of dragging the slider
 - Click to copy metadata fields, for example, clicking the artist name copies it to your clipboard
 - Variable accent color which applies to the entire UI and visualizer
+- Automatic accent color generation based on album art
 - A settings area with many options, with more to come
 - A lyrics browser and editor
-- A rotating tab title which shows various information about the current song to avoid clutter/truncation
+- A rotating tab title which shows various information about the current song in the tab name to avoid clutter/truncation
 - An error/success toast system in the bottom right corner with an intuitive timer and pause-on-hover
+- Levenshtein-distance inspired searching function for the queue (CTRL+F, the dedicated button, or middle-click the queue header)
+- Sliders support mouse wheel scrolling
+- Wake lock holder
+- Clicking the duration in the scrubber toggles between elapsed and remaining time
+- A two level cover art viewer: clicking the cover art opens a larger view, and clicking that opens the full-size image in a new tab
+- A modular, explorable and breakable codebase, creating "plugins" or browser extensions (etc) should be fairly easy (allegedly)
+- Works offline after the first load with a respectful update strategy; when a new update is available, it asks if you want to update, and if you say no, nothing happens
+- A linear text scrolling animation system for very long text (scrolls, retracts, pauses, repeat)
 
 and more!
 
@@ -41,6 +51,23 @@ and more!
 
 ### Electron
 - Local file browsing and opening\*
+
+## Hotkeys
+| Key                  | Action                        | Details / modifiers |
+|---------------------------|-------------------------------|---------------------|
+| `Space` or `K`            | Play / pause                  | - |
+| `Escape`                  | Close modal                   | closest open modal, stacks |
+| `R`                       | Restart track                 | from 0 |
+| `Ctrl + F`            | Open queue search             | - |
+| `T`                       | Toggle loop                   | - |
+| `H`                       | Toggle shuffle                | - |
+| `Z`                       | Previous track                | - |
+| `X`                       | Next track                    | - |
+| `←` `J` `A`               | Scrub backward                | default: **-10s**<br>Alt: **-30s**<br>Shift: **-1s**<br>Ctrl: **-5s** |
+| `→` `L` `D`               | Scrub forward                 | same as above, only + |
+| `↑` `W`                   | Volume up                     | +1% |
+| `↓` `S`                   | Volume down                   | -1% |
+| `0` to `9`                   | Jump to percentage            | `0` = 0%, `1` = 10%, ..., `9` = 90%<br>`Shift` = half-jump; so `Shift` + `1` = 5% |
 
 ## About this repository
 The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
