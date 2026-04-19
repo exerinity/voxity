@@ -31,6 +31,17 @@ A modern, opinionated, fast, PWA local music player written entirely in JavaScri
 
 and more!
 
+## To do / Roadmap
+(Items ending in an asterisk are purely ideas and may never actually happen)
+- Tie the routes to actually open modals on load, for example, loading https://voxity.dev/settings should open the settings modal
+- Reduce CPU strain (it is pretty heavy on weaker CPUs, my laptops i5-6300U does not like it much)
+- Add a miniplayer which (asks to) open(s) when you unfocus, minimize, or otherwise leave the main window (especially in the Electron version)\*
+- Rewrite the "Modify lyrics" button from a text-area to a full toolkit with a timing editor\*
+- DOCUMENTATION!!! (of how to use the actual code and do your own things with it)
+
+### Electron
+- Local file browsing and opening\*
+
 ## About this repository
 The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
 ## Other repositories
