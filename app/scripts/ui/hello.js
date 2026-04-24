@@ -58,6 +58,7 @@ function thisSongIsAss() {
     document.getElementById('app').classList.add('hidden');
     elements.error_sound.index = 0;
     elements.error_sound.play();
-    msg("This song is ass. Session terminated.")
+    const modal = msg("This song is ass. Session terminated.");
+    window.VoxityRouter?.setModalRoute(modal, '/control/fuckyou');
     setTimeout(function () { window.location.reload(); }, 3000);
 }
