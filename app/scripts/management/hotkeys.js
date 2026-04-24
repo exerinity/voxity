@@ -134,6 +134,15 @@ document.addEventListener('keydown', (e) => {
             if (typeof contin === 'function') contin();
             break;
 
+        case 'KeyV':
+            if (e.ctrlKey && e.shiftKey && e.altKey) {
+                e.preventDefault();
+                if (typeof thisSongIsAss === 'function') {
+                    thisSongIsAss();
+                }
+            }
+            break;
+
         default:
             if (e.code.startsWith('Digit')) {
                 const num = parseInt(e.code.slice(5), 10);

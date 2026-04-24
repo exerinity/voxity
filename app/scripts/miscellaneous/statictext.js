@@ -38,6 +38,7 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
           <li><strong>S / Down</strong>: volume down</li>
           <li><strong>Z</strong>: previous track</li>
           <li><strong>X</strong>: next track</li>
+          <li><strong>Ctrl + Shift + Alt + V</strong>: This song is ass</li>
         </ul>
       </details>
     </li>
