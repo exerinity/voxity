@@ -184,6 +184,12 @@ async function fetchLyricsFromMusixmatch({ trackName, artistName, albumName, dur
 let lyricsAbortController = null;
 
 async function get_lyrics(trackName, artistName, albumName, duration) {
+    if (!navigator.onLine) {
+        stat_up(`<i class="fa-solid fa-plane-slash"></i> Skipping lyrics search, offline`);
+        skipLyricsUpdate = true;
+        lrc_con.innerHTML = '';
+        return;
+    }
     const start = Date.now();
     if (lyricsAbortController) {
         try {

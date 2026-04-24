@@ -5,6 +5,10 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
         return throw_error('No track playing!');
     }
 
+    if (!navigator.onLine) {
+        return throw_error('Go online to use this');
+    }
+
     const modal = await msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
             <input id="lrcse" placeholder="${metadata.title}" 
                 style="padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
