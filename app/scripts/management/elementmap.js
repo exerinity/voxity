@@ -22,6 +22,7 @@ const elements = {
     err_tab: document.getElementById('error'),
     pnow: document.getElementById('play-now'),
     stopnow: document.getElementById('cancel'),
+    remoteSession: document.getElementById('remote_session'),
     welcomesound: document.getElementById('welcomesound'),
     success_sound: document.getElementById('sucsound'),
     error_sound: document.getElementById('errsound'),
