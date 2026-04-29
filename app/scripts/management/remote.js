@@ -148,7 +148,7 @@
 
         return `
             <div style="gap:0.9rem; text-align:left;">
-                <a href="${host}" target="_blank">${escapeHtml(host)}</a> (<strong style="color:${color};">${text}</strong>)
+                <a href="https://${host}" target="_blank">${escapeHtml(host)}</a> (<strong style="color:${color};">${text}</strong>)
                 ${state.lastError ? `<p style="margin:0; color:#ef4444;">${escapeHtml(state.lastError)}</p>` : ''}
                 <div style="padding:0.75rem; border-radius:10px; background:var(--btn-bg); text-align:center;">
                     <div style="font-size:0.85rem; opacity:0.85;">Session PIN</div>
