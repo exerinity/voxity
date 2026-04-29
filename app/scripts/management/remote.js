@@ -300,6 +300,7 @@
     }
 
     async function startSession() {
+        if (!navigator.onLine) return throw_error("Go online to use this");
         if (state.socket?.readyState === WebSocket.OPEN || state.socket?.readyState === WebSocket.CONNECTING) return;
 
         closeJoinModal();
@@ -331,6 +332,7 @@
     }
 
     async function openRemoteControlModal() {
+        if (!navigator.onLine) return throw_error("Go online to use this");
         if (!hasAcceptedRemoteDisclaimer()) {
             await showRemoteDisclaimerPrompt();
             return;
