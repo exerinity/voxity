@@ -1,24 +1,24 @@
 (() => {
     function getServerUrls() {
         const isProd = window.location.hostname === 'voxity.dev';
-        const host   = isProd ? 'remote.voxity.dev' : 'localhost:3000';
+        const host = isProd ? 'remote.voxity.dev' : 'localhost:3000';
         return {
             host,
             http: `${isProd ? 'https' : 'http'}://${host}`,
-            ws:   `${isProd ? 'wss'   : 'ws'}://${host}`,
+            ws: `${isProd ? 'wss' : 'ws'}://${host}`,
         };
     }
 
     const state = {
-        socket:          null,
-        pin:             null,
-        status:          'disconnected',
-        lastError:       '',
-        controlModal:    null,
-        joinModal:       null,
+        socket: null,
+        pin: null,
+        status: 'disconnected',
+        lastError: '',
+        controlModal: null,
+        joinModal: null,
         disclaimerModal: null,
-        stateInterval:   null,
-        listenersBound:  false,
+        stateInterval: null,
+        listenersBound: false,
         manualDisconnect: false,
     };
 
@@ -27,10 +27,10 @@
     function escapeHtml(value) {
         return String(value ?? '')
             .replace(/&/g, '&amp;')
-            .replace(/</g,  '&lt;')
-            .replace(/>/g,  '&gt;')
-            .replace(/"/g,  '&quot;')
-            .replace(/'/g,  '&#39;');
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     function send(payload) {
@@ -63,12 +63,12 @@
 
     const COMMANDS = {
         play_pause: 'plps',
-        previous:   'prevtrack',
-        next:       'nexttrack',
-        forward10:  'fwd',
-        reverse10:  'rwd',
-        shuffle:    'shuffle',
-        loop:       'loop',
+        previous: 'prevtrack',
+        next: 'nexttrack',
+        forward10: 'fwd',
+        reverse10: 'rwd',
+        shuffle: 'shuffle',
+        loop: 'loop',
     };
 
     function clickForCommand(command) {
@@ -78,13 +78,13 @@
     function getPlaybackState() {
         const player = document.getElementById('player');
         return {
-            title:       document.getElementById('np2')?.textContent    || '',
-            artist:      document.getElementById('artist')?.textContent || '',
-            paused:      player ? !!player.paused : true,
+            title: document.getElementById('np2')?.textContent || '',
+            artist: document.getElementById('artist')?.textContent || '',
+            paused: player ? !!player.paused : true,
             currentTime: player ? Number(player.currentTime || 0) : 0,
-            duration:    player ? Number(player.duration    || 0) : 0,
-            volume:      player ? Number(player.volume      || 0) : 0,
-            loop:        player ? !!player.loop : false,
+            duration: player ? Number(player.duration || 0) : 0,
+            volume: player ? Number(player.volume || 0) : 0,
+            loop: player ? !!player.loop : false,
         };
     }
 
@@ -109,9 +109,9 @@
     }
 
     const STATUS_DISPLAY = {
-        connected:    { text: 'Connected',    color: '#22c55e' },
-        connecting:   { text: 'Connecting...',   color: '#f59e0b' },
-        error:        { text: 'Error',        color: '#ef4444' },
+        connected: { text: 'Connected', color: '#22c55e' },
+        connecting: { text: 'Connecting...', color: '#f59e0b' },
+        error: { text: 'Error', color: '#ef4444' },
         disconnected: { text: 'Disconnected', color: '#9ca3af' },
     };
 
@@ -134,17 +134,17 @@
     }
 
     function setStatus(status, error = '') {
-        state.status    = status;
+        state.status = status;
         state.lastError = error;
         updateRemoteButtonStatusColor();
         renderControlModal();
     }
 
     function controlModalHtml() {
-        const { host }   = getServerUrls();
+        const { host } = getServerUrls();
         const { text, color } = STATUS_DISPLAY[state.status] ?? STATUS_DISPLAY.disconnected;
-        const canConnect    = state.status === 'disconnected' || state.status === 'error';
-        const canDisconnect = state.status === 'connecting'   || state.status === 'connected';
+        const canConnect = state.status === 'disconnected' || state.status === 'error';
+        const canDisconnect = state.status === 'connecting' || state.status === 'connected';
 
         return `
             <div style="gap:0.9rem; text-align:left;">
@@ -157,9 +157,9 @@
                     </div>
                 </div><br>
                 <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-                    ${canConnect    ? '<button id="remote-connect-btn"    class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Start session</button>' : ''}
-                    ${canDisconnect ? '<button id="remote-disconnect-btn" class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Disconnect session</button>'   : ''}
-                    ${state.pin     ? '<button id="remote-copy-pin-btn"   class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Copy PIN</button>'              : ''}
+                    ${canConnect ? '<button id="remote-connect-btn"    class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Start session</button>' : ''}
+                    ${canDisconnect ? '<button id="remote-disconnect-btn" class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Disconnect session</button>' : ''}
+                    ${state.pin ? '<button id="remote-copy-pin-btn"   class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Copy PIN</button>' : ''}
                 </div>
             </div>
         `;
@@ -250,7 +250,7 @@
     function connectSocket() {
         if (!state.pin) { setStatus('error', 'No PIN available'); return; }
 
-        state.socket          = new WebSocket(getServerUrls().ws);
+        state.socket = new WebSocket(getServerUrls().ws);
         state.manualDisconnect = false;
 
         state.socket.addEventListener('open', () => {
@@ -290,8 +290,8 @@
         });
 
         state.socket.addEventListener('close', () => {
-            const wasManual   = state.manualDisconnect;
-            state.socket      = null;
+            const wasManual = state.manualDisconnect;
+            state.socket = null;
             state.manualDisconnect = false;
             closeJoinModal();
             clearSessionRuntime();
@@ -307,15 +307,15 @@
         setStatus('connecting');
 
         try {
-            const res  = await fetch(`${getServerUrls().http}/api/pin`, { cache: 'no-store' });
-            if (!res.ok) throw new Error(`Failed to get PIN (${res.status})`);
-            const data = await res.json();
-            if (!data?.pin) throw new Error('Remote server returned an invalid PIN response');
+            const res = await fetch(`${getServerUrls().http}/api/pin`, { cache: 'no-store' });
+            const data = await res.json().catch(() => null);
+            if (!res.ok) throw new Error(data?.error ?? `Server error (${res.status})`);
+            if (!data?.pin) throw new Error('Remote returned an invalid PIN');
             state.pin = data.pin;
             renderControlModal();
             connectSocket();
         } catch (err) {
-            setStatus('error', err?.message ?? 'Failed to initialize remote session');
+            setStatus('error', err?.message ?? 'The remote did not respond correctly, retry?');
         }
     }
 
@@ -350,7 +350,7 @@
 
     document.addEventListener('voxity:modal-closed', ({ detail }) => {
         if (detail?.modal === state.controlModal) state.controlModal = null;
-        if (detail?.modal === state.joinModal)    state.joinModal    = null;
+        if (detail?.modal === state.joinModal) state.joinModal = null;
         if (detail?.modal === state.disclaimerModal) state.disclaimerModal = null;
     });
 
@@ -367,9 +367,9 @@
         bindRemoteButton();
 
     window.VoxityRemote = {
-        open:       openRemoteControlModal,
-        connect:    startSession,
+        open: openRemoteControlModal,
+        connect: startSession,
         disconnect: disconnectSession,
-        status:     () => ({ status: state.status, pin: state.pin, lastError: state.lastError }),
+        status: () => ({ status: state.status, pin: state.pin, lastError: state.lastError }),
     };
 })();
