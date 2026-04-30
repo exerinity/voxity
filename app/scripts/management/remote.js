@@ -112,7 +112,7 @@
         connected: { text: 'Connected', color: '#22c55e' },
         connecting: { text: 'Connecting...', color: '#f59e0b' },
         error: { text: 'Error', color: '#ef4444' },
-        disconnected: { text: 'Disconnected', color: '#9ca3af' },
+        disconnected: { text: 'Disconnected', color: null },
     };
 
     function getRemoteTrigger() {
@@ -148,7 +148,7 @@
 
         return `
             <div style="gap:0.9rem; text-align:left;">
-                <a href="https://${host}" target="_blank">${escapeHtml(host)}</a> (<strong style="color:${color};">${text}</strong>)
+                <strong style="color:${color};">${text}</strong>
                 ${state.lastError ? `<p style="margin:0; color:#ef4444;">${escapeHtml(state.lastError)}</p>` : ''}
                 <div style="padding:0.75rem; border-radius:10px; background:var(--btn-bg); text-align:center;">
                     <div style="font-size:0.85rem; opacity:0.85;">Session PIN</div>
@@ -157,9 +157,10 @@
                     </div>
                 </div><br>
                 <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-                    ${canConnect ? '<button id="remote-connect-btn"    class="bu">Start session</button>' : ''}
+                    ${canConnect ? '<button id="remote-connect-btn" class="bu">Start session</button>' : ''}
                     ${canDisconnect ? '<button id="remote-disconnect-btn" class="bu">Disconnect session</button>' : ''}
-                    ${state.pin ? '<button id="remote-copy-pin-btn"   class="bu">Copy PIN</button>' : ''}
+                    ${state.pin ? '<button id="remote-copy-pin-btn" class="bu">Copy PIN</button>' : ''}
+                    <button class="bu" onclick="window.open('https://${host}', '_blank')">Open remote <i class="fa-solid fa-arrow-down fa-rotate-by" style="--fa-rotate-angle: 220deg;"></i></button>
                 </div>
             </div>
         `;
@@ -205,9 +206,9 @@
             </p>
             <div style="display:flex; gap:0.65rem; justify-content:center; flex-wrap:wrap;">
                 <button id="remote-join-approve" class="bu">Approve</button>
-                <button id="remote-join-deny"    class="bu">Deny</button>
+                <button id="remote-join-deny" class="bu">Deny</button>
             </div>
-        `, 'Remote', false, false);
+        `, 'Remote', false, true);
 
         document.getElementById('remote-join-approve')?.addEventListener('click', () => {
             send({ type: 'remote_join_approved' });
@@ -228,7 +229,7 @@
             <li><i class="fa-solid fa-arrow-right"></i> You are free to share PINs around, but please do not abuse the server... plz</li>
             <li><i class="fa-solid fa-arrow-right"></i> <strong>This could be removed at any time</strong></li>
             <li><i class="fa-solid fa-arrow-right"></i> The server source is at <a href="https://github.com/exerinity/voxity.remote" target="_blank">voxity.remote on GitHub</a></li>
-            <p>Before you click continue, you should probably open <a href="https://remote.voxity.dev" target="_blank">remote.voxity.dev</a> on another device.</p>
+            <p>Before you continue, you should probably open <a href="https://remote.voxity.dev" target="_blank">remote.voxity.dev</a> on another device.</p>
                 <button id="remote-disclaimer-accept" class="bu">I understand</button>
         `, 'Remote: disclaimer');
 
