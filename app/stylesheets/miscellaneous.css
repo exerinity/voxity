@@ -27,6 +27,17 @@ a:hover {
     background: var(--btn-hover-bg);
 }
 
+#msg-content button {
+    padding: 10px 20px;
+    background: var(--btn-bg);
+    border: none;
+    border-radius: 4px;
+    color: var(--fg);
+    cursor: pointer;
+    transition: background 0.2s;
+
+}
+
 .mqcont {
     width: 500px;
     overflow: hidden;
