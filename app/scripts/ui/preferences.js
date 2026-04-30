@@ -3,6 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const THEMES = [
             { 'dim': true, 'label': 'Dim' },
             { 'lights-out': true, 'label': 'Lights out' },
+            { 'purple': true, 'label': 'Purple'},
             { 'high-contrast': true, 'label': 'High contrast' },
             { 'red': true, 'label': 'Red' },
             { 'blue': true, 'label': 'Blue' },
@@ -131,7 +132,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const ACCENT_COLOR_STORAGE_KEY = 'au_accent_color';
         const DEFAULT_ACCENT_COLOR = '#8000ff';
         const btn = document.getElementById('settings');
-        let currentTheme = 'lights-out';
+        let currentTheme = 'purple';
 
         const normalizeAccentColor = (value) => {
             if (typeof value !== 'string') return null;
@@ -610,7 +611,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                     </section>
-                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>
+                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>
                 </div>
             `, 'Voxity settings');
             window.VoxityRouter?.setModalRoute(modal, '/settings');
