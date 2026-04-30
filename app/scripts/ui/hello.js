@@ -28,9 +28,18 @@ if (typeof localStorage !== 'undefined') {
 }
 
 async function loadFA() {
-    const mod = await msg("Attempting to inject Font Awesome manually...");
+    const mod = await msg("Loading...", "Rescue");
     window.VoxityRouter?.setModalRoute(mod, '/i/load_fa');
-    await new Promise(resolve => setTimeout(resolve, 600));
+
+    if (!navigator.onLine) return mod.setContent("You need to be online to reinject Font Awesome");
+
+    for (let i = 3; i > 0; i--) {
+        mod.setContent(`Font Awesome will be reinjected in ${i}...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    mod.setContent("Font Awesome will be reinjected now...");
+
     const fl = document.createElement('link');
     fl.rel = 'stylesheet';
     fl.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' + '?cachebuster=' + Date.now();
@@ -39,7 +48,7 @@ async function loadFA() {
 
     document.head.appendChild(fl);
 
-    fl.onload = () => mod.setContent('<span class="fa-fade">Icons should have loaded <i class="fa-solid fa-font-awesome"></i></span>');
+    fl.onload = () => mod.setContent('<span class="fa-fade">Icons should have loaded! <i class="fa-solid fa-font-awesome"></i></span><br>If you do not see anything still, your browser might be too old.');
     fl.onerror = () => throw_error("Could not load icons");
 }
 
@@ -47,8 +56,8 @@ function welcome() {
     const modalPromise = msg(`<p>Voxity is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files to get started!</p>
 <p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">https://exerinity.com/projects/voxity</a></p>
 <p><a href="https://exerinity.com/projects/voxity/screenshots" target="_blank" rel="noopener">View some screenshots of Voxity here</a></p>
-<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a> - <a href="https://exerinity.com/projects" target="_blank"><i class="fa-solid fa-globe"></i> My other projects</a>
-<br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">I do not see any icons</a></small>
+<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a>
+<br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a></small>
 `, "Welcome to Voxity");
     window.VoxityRouter?.setModalRoute(modalPromise, '/i/welcome');
 }
