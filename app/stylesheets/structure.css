@@ -70,6 +70,28 @@ strong {
     min-height: 100vh;
 }
 
+#splash-screen {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    z-index: 9999;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 320ms ease, visibility 320ms ease;
+}
+
+#splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.splash-logo {
+    font-size: clamp(4rem, 12vw, 6.5rem);
+}
+
 .header {
     display: flex;
     justify-content: space-between;
