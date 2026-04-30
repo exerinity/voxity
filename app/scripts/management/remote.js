@@ -157,9 +157,9 @@
                     </div>
                 </div><br>
                 <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-                    ${canConnect ? '<button id="remote-connect-btn"    class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Start session</button>' : ''}
-                    ${canDisconnect ? '<button id="remote-disconnect-btn" class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Disconnect session</button>' : ''}
-                    ${state.pin ? '<button id="remote-copy-pin-btn"   class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Copy PIN</button>' : ''}
+                    ${canConnect ? '<button id="remote-connect-btn"    class="bu">Start session</button>' : ''}
+                    ${canDisconnect ? '<button id="remote-disconnect-btn" class="bu">Disconnect session</button>' : ''}
+                    ${state.pin ? '<button id="remote-copy-pin-btn"   class="bu">Copy PIN</button>' : ''}
                 </div>
             </div>
         `;
@@ -204,8 +204,8 @@
                 Another device is requesting to join your active remote session: <strong>${escapeHtml(state.pin ?? 'unknown')}</strong>
             </p>
             <div style="display:flex; gap:0.65rem; justify-content:center; flex-wrap:wrap;">
-                <button id="remote-join-approve" class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Approve</button>
-                <button id="remote-join-deny"    class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">Deny</button>
+                <button id="remote-join-approve" class="bu">Approve</button>
+                <button id="remote-join-deny"    class="bu">Deny</button>
             </div>
         `, 'Remote', false, false);
 
@@ -223,20 +223,13 @@
     async function showRemoteDisclaimerPrompt() {
         if (state.disclaimerModal?.overlay?.isConnected) return;
 
-        state.disclaimerModal = await msg(`
-            <p style="margin-top:0;">
-                This is an experimental remote control for Voxity. It works by simply entering a PIN on another device. Please keep in mind:
-            </p>
-            <ul style="list-style: none;">
+        state.disclaimerModal = await msg(`This is an experimental remote control for Voxity. It works by simply entering a PIN on another device. Please keep in mind:<br><br>
             <li><i class="fa-solid fa-arrow-right"></i> This is not complete and only broadcasts so much to the remote</li>
             <li><i class="fa-solid fa-arrow-right"></i> You are free to share PINs around, but please do not abuse the server... plz</li>
-            <li><i class="fa-solid fa-arrow-right"></i> This could be removed at any time</li>
+            <li><i class="fa-solid fa-arrow-right"></i> <strong>This could be removed at any time</strong></li>
             <li><i class="fa-solid fa-arrow-right"></i> The server source is at <a href="https://github.com/exerinity/voxity.remote" target="_blank">voxity.remote on GitHub</a></li>
-            </ul>
             <p>Before you click continue, you should probably open <a href="https://remote.voxity.dev" target="_blank">remote.voxity.dev</a> on another device.</p>
-            <div style="display:flex; justify-content:center;">
-                <button id="remote-disclaimer-accept" class="bu" style="padding: 10px 14px; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer;">I understand</button>
-            </div>
+                <button id="remote-disclaimer-accept" class="bu">I understand</button>
         `, 'Remote: disclaimer');
 
         document.getElementById('remote-disclaimer-accept')?.addEventListener('click', () => {

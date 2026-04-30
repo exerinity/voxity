@@ -10,11 +10,11 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
 
     const modal = await msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
             <input id="lrcse" placeholder="${metadata.title}" 
-                style="padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+                style="padding: 0.75rem; border-radius: 8px; border: 1px solid var(--control-br); background: var(--control-bg); color: var(--fg); font-size: 0.95rem;">
             <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
-                <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+                <button id="lrsea" style="background: #27ae60;">Search</button>
             </div><br>
-            <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
+            <i style="font-size:0.9rem; color:var(--muted-2);">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
         </div>
     `, 'Search for lyrics');
     window.VoxityRouter?.setModalRoute(modal, '/lyrics/search');
@@ -41,7 +41,7 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                         return throw_error('No results');
                     }
 
-                    modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                    modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--link); border-radius: 8px; padding: 0.75rem; background: var(--control-bg);">
                             ${results.slice(0, 10).map((result, index) => `
                                 <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
                                     <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
@@ -53,10 +53,10 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                     try { lastResults = results.slice(0, 10); } catch { lastResults = null; }
                     try {
                         modal.setContent(`<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-                                <button id="back_to_search" style="padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;">Back</button>
-                                <span style="color:#aaa; font-size:0.9rem;">${(lastResults || []).length} result(s)</span>
+                                <button id="back_to_search" style="padding: 6px 10px; background: var(--btn-bg); border: none; border-radius: 6px; cursor: pointer;">Back</button>
+                                <span>${(lastResults || []).length} result(s)</span>
                             </div>
-                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
+                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--link); border-radius: 8px; padding: 0.75rem; background: var(--control-bg);">
                                 ${(lastResults || results || []).slice(0, 10).map((result) => `
                                     <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
                                         <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
@@ -72,11 +72,11 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                             modal.setContent(`
                                 <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
                                     <input id="lrcse" placeholder="${metadata.title}" 
-                                        style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+                                        style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--control-br); background: var(--control-bg); color: var(--fg); font-size: 0.95rem;">
                                     <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
-                                        <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+                                        <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: var(--fg-strong); border: none; border-radius: 6px; cursor: pointer;">Search</button>
                                     </div><br>
-                                    <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
+                                    <i style="font-size:0.9rem; color:var(--muted-2);">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
                                 </div>
                             `);
                             setTimeout(() => {
@@ -95,7 +95,17 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                         }
                                         try { lastResults = results2.slice(0, 10); } catch { }
                                         modal.setTitle('Results');
-                                        modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults || []).length} result(s)</span>\n                                            </div>\n                                            <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                ${(lastResults || []).map((result) => `\n                                                    <p data-id=\"${result.id}\" style=\"cursor: pointer; margin: 0.5rem 0;\">\n                                                        <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})\n                                                    </p>\n                                                `).join('')}\n                                            </div>`);
+                                        modal.setContent(`<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                                <button id="back_to_search" style="padding: 6px 10px; background: var(--btn-bg); color: var(--fg); border: none; border-radius: 6px; cursor: pointer;">Back</button>
+                                                <span style="color:var(--muted-2); font-size:0.9rem;">${(lastResults || []).length} result(s)</span>
+                                            </div>
+                                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--control-br); border-radius: 8px; padding: 0.75rem; background: var(--control-bg); color: var(--fg);">
+                                                ${(lastResults || []).map((result) => `
+                                                    <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                                        <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
+                                                    </p>
+                                                `).join('')}
+                                            </div>`);
                                     } catch (e) { throw_error(e); }
                                 });
                             }, 0);
@@ -109,11 +119,11 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                     const flcd = await flrs.json();
 
                                     if (flcd.syncedLyrics || flcd.plainLyrics) {
-                                        modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
-                                                <pre style="white-space: pre-wrap; color: white;">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
+                                        modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--control-br); border-radius: 8px; padding: 0.75rem; background: var(--control-bg); color: var(--fg);">
+                                                <pre style="white-space: pre-wrap; color: var(--fg);">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
                                             </div>
                                             <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top: 1rem;">
-                                                <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
+                                                <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: var(--fg-strong); border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
                                             </div>
                                         `);
                                         modal.setTitle('Preview lyrics');
@@ -127,8 +137,8 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                     back.id = 'back_to_results';
                                                     back.textContent = 'Back';
                                                     back.style.padding = '10px 16px';
-                                                    back.style.background = '#333';
-                                                    back.style.color = 'white';
+                                                    back.style.background = 'var(--btn-bg)';
+                                                    back.style.color = 'var(--fg)';
                                                     back.style.border = 'none';
                                                     back.style.borderRadius = '6px';
                                                     back.style.cursor = 'pointer';
@@ -140,18 +150,24 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                                 <strong>${r.trackName}</strong> by ${r.artistName} (${r.albumName})
                                                             </p>
                                                         `).join('');
-                                                        modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                                <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                                <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults || []).length} result(s)</span>\n                                                            </div>\n                                                            <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                                ${listHtml}\n                                                            </div>`);
+                                                        modal.setContent(`<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                                                <button id="back_to_search" style="padding: 6px 10px; background: var(--btn-bg); color: var(--fg); border: none; border-radius: 6px; cursor: pointer;">Back</button>
+                                                                <span style="color:var(--muted-2); font-size:0.9rem;">${(lastResults || []).length} result(s)</span>
+                                                            </div>
+                                                            <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--control-br); border-radius: 8px; padding: 0.75rem; background: var(--control-bg); color: var(--fg);">
+                                                                ${listHtml}
+                                                            </div>`);
                                                         setTimeout(() => {
                                                             document.getElementById('back_to_search')?.addEventListener('click', () => {
                                                                 modal.setTitle('Search for lyrics');
                                                                 modal.setContent(`
                                                                     <div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
                                                                         <input id="lrcse" placeholder="${metadata.title}" 
-                                                                            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 0.95rem;">
+                                                                            style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--control-br); background: var(--control-bg); color: var(--fg); font-size: 0.95rem;">
                                                                         <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
-                                                                            <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Search</button>
+                                                                            <button id="lrsea" style="padding: 10px 16px; background: #27ae60; color: var(--fg-strong); border: none; border-radius: 6px; cursor: pointer;">Search</button>
                                                                         </div><br>
-                                                                        <i style="font-size:0.9rem; color:#888;">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
+                                                                        <i style="font-size:0.9rem; color:var(--muted-2);">You can leave it blank to search by the current track's title. If you already have LRC lyrics, either drag and drop the .lrc file to the dropzone, or use the <strong><i class="fa-solid fa-paste"></i> Paste lyrics</strong> button</i>
                                                                     </div>
                                                                 `);
                                                                 setTimeout(() => {
@@ -170,7 +186,17 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                                             }
                                                                             try { lastResults = results2.slice(0, 10); } catch { }
                                                                             modal.setTitle('Results');
-                                                                            modal.setContent(`<div style=\"display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;\">\n                                                                                        <button id=\"back_to_search\" style=\"padding: 6px 10px; background: #333; color: white; border: none; border-radius: 6px; cursor: pointer;\">Back</button>\n                                                                                        <span style=\"color:#aaa; font-size:0.9rem;\">${(lastResults || []).length} result(s)</span>\n                                                                                    </div>\n                                                                                    <div style=\"max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;\">\n                                                                                        ${(lastResults || []).map((result) => `\n                                                                                            <p data-id=\"${result.id}\" style=\"cursor: pointer; margin: 0.5rem 0;\">\n                                                                                                <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})\n                                                                                            </p>\n                                                                                        `).join('')}\n                                                                                    </div>`);
+                                                                            modal.setContent(`<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                                                                        <button id="back_to_search" style="padding: 6px 10px; background: var(--btn-bg); color: var(--fg); border: none; border-radius: 6px; cursor: pointer;">Back</button>
+                                                                                        <span style="color:var(--muted-2); font-size:0.9rem;">${(lastResults || []).length} result(s)</span>
+                                                                                    </div>
+                                                                                    <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--control-br); border-radius: 8px; padding: 0.75rem; background: var(--control-bg); color: var(--fg);">
+                                                                                        ${(lastResults || []).map((result) => `
+                                                                                            <p data-id="${result.id}" style="cursor: pointer; margin: 0.5rem 0;">
+                                                                                                <strong>${result.trackName}</strong> by ${result.artistName} (${result.albumName})
+                                                                                            </p>
+                                                                                        `).join('')}
+                                                                                    </div>`);
                                                                         } catch (e) { throw_error(e); }
                                                                     });
                                                                 }, 0);
@@ -185,11 +211,11 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                                         const flcd = await flrs.json();
 
                                                                         if (flcd.syncedLyrics || flcd.plainLyrics) {
-                                                                            modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 0.75rem; background: #2a2a2a; color: white;">
-                                                                                        <pre style="white-space: pre-wrap; color: white;">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
+                                                                            modal.setContent(`<div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--control-br); border-radius: 8px; padding: 0.75rem; background: var(--control-bg); color: var(--fg);">
+                                                                                        <pre style="white-space: pre-wrap; color: var(--fg);">${flcd.syncedLyrics || flcd.plainLyrics}</pre>
                                                                                     </div>
                                                                                     <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top: 1rem;">
-                                                                                        <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
+                                                                                        <button id="insert_lyrics" style="padding: 10px 16px; background: #27ae60; color: var(--fg-strong); border: none; border-radius: 6px; cursor: pointer;">Insert lyrics</button>
                                                                                     </div>
                                                                                 `);
                                                                             modal.setTitle('Preview lyrics');
@@ -203,8 +229,8 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
                                                                                         back2.id = 'back_to_results';
                                                                                         back2.textContent = 'Back';
                                                                                         back2.style.padding = '10px 16px';
-                                                                                        back2.style.background = '#333';
-                                                                                        back2.style.color = 'white';
+                                                                                        back2.style.background = 'var(--btn-bg)';
+                                                                                        back2.style.color = 'var(--fg)';
                                                                                         back2.style.border = 'none';
                                                                                         back2.style.borderRadius = '6px';
                                                                                         back2.style.cursor = 'pointer';
