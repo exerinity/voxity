@@ -79,7 +79,7 @@ strong {
     z-index: 9999;
     opacity: 1;
     visibility: visible;
-    transition: opacity 320ms ease, visibility 320ms ease;
+    transition: opacity 1000ms ease, visibility 1000ms ease;
 }
 
 #splash-screen.fade-out {
