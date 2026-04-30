@@ -10,6 +10,7 @@ async function pwamsg() {
         window.deferredInstallPrompt = null;
 
         if (outcome === "accepted") {
+            playUiSound(elements.time_sound)
             throw_error("Thanks for installing Voxity! <i class='fa-solid fa-heart' style='color:red;'></i>", true);
             try { document.getElementById('installpwa')?.classList.add('hidden'); } catch { }
         }

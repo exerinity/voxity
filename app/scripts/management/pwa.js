@@ -19,17 +19,18 @@ if ('serviceWorker' in navigator && !noInstall) {
 
       registration.addEventListener('updatefound', () => {
         const nw = registration.installing;
+        stat_up('<i class="fa-solid fa-download fa-fade"></i> Checking for updates...', 7500);
         if (!nw) {
           uptodate = true;
           return;
         }
 
         nw.addEventListener('statechange', () => {
-          stat_up('<i class="fa-solid fa-download fa-fade"></i> The Service Worker is updating...');
+          stat_up('<i class="fa-solid fa-download fa-fade"></i> The Service Worker is updating...', 7500);
           if (nw.state === 'installed') {
             if (navigator.serviceWorker.controller) {
               if (typeof throw_error === 'function') {
-                stat_up('<i class="fa-solid fa-download"></i> The Service Worker was updated');
+                stat_up('<i class="fa-solid fa-download"></i> The Service Worker was updated', 10000);
                 msg(
                   'There is a new version of Voxity available! ' +
                   'Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh the app</a> to update - or to ensure it <i>actually</i> updates, click that hyperlink.<br>' +
@@ -58,4 +59,5 @@ if ('serviceWorker' in navigator && !noInstall) {
   });
 } else if (noInstall) {
   console.log("The Service Worker will not install");
+  setTimeout( function () { stat_up('<i class="fa-solid fa-road-circle-xmark fa-fade"></i> The Service Worker will not install', 7500); }, 2500);
 }
