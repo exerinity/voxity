@@ -19,18 +19,18 @@ if ('serviceWorker' in navigator && !noInstall) {
 
       registration.addEventListener('updatefound', () => {
         const nw = registration.installing;
-        stat_up('<i class="fa-solid fa-download fa-fade"></i> Checking for updates...', 7500);
+        stat_up('<i class="fa-solid fa-download fa-fade"></i> Starting service worker...', 7500);
         if (!nw) {
           uptodate = true;
           return;
         }
 
         nw.addEventListener('statechange', () => {
-          stat_up('<i class="fa-solid fa-download fa-fade"></i> The Service Worker is updating...', 7500);
+          stat_up('<i class="fa-solid fa-download fa-fade"></i> The service worker is updating...', 7500);
           if (nw.state === 'installed') {
             if (navigator.serviceWorker.controller) {
               if (typeof throw_error === 'function') {
-                stat_up('<i class="fa-solid fa-download"></i> The Service Worker was updated', 10000);
+                stat_up('<i class="fa-solid fa-download"></i> The service worker was updated', 10000);
                 msg(
                   'There is a new version of Voxity available! ' +
                   'Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh the app</a> to update - or to ensure it <i>actually</i> updates, click that hyperlink.<br>' +
@@ -41,7 +41,7 @@ if ('serviceWorker' in navigator && !noInstall) {
               uptodate = false;
             } else {
               if (typeof throw_error === 'function') {
-                stat_up('<i class="fa-solid fa-check"></i> Service Worker finished updating');
+                stat_up('<i class="fa-solid fa-check"></i> Service worker finished updating');
                 throw_error('Ready to work offline', true);
               }
               uptodate = true;
@@ -52,12 +52,12 @@ if ('serviceWorker' in navigator && !noInstall) {
     } catch (error) {
       console.error('SW registration failed:', error);
       if (typeof throw_error === 'function') {
-        stat_up('<i class="fa-solid fa-triangle-exclamation"></i> Service Worker registration failed');
+        stat_up('<i class="fa-solid fa-triangle-exclamation"></i> Service worker registration failed');
         throw_error("Service worker failed to start: Voxity won't work offline");
       }
     }
   });
 } else if (noInstall) {
-  console.log("The Service Worker will not install");
-  setTimeout( function () { stat_up('<i class="fa-solid fa-road-circle-xmark fa-fade"></i> The Service Worker will not install', 7500); }, 2500);
+  console.log("The service worker will not install");
+  setTimeout( function () { stat_up('<i class="fa-solid fa-road-circle-xmark fa-fade"></i> The service worker will not install', 7500); }, 2500);
 }
