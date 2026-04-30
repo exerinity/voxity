@@ -10,37 +10,36 @@
 
 :root {
     --lyric-color: #8000ff;
-    --link: #1d9bf0;
+    --link: #a07fff;
 
-    --bg: #1a1a1a;
-    --fg: #ffffff;
-    --fg-strong: #ffffff;
-    --muted: #dadada;
-    --muted-2: #bbbbbb;
-    --panel-bg: #222;
-    --header-bg: #111;
-    --control-bg: #333;
-    --control-br: #555;
-    --btn-bg: #444;
-    --btn-hover-bg: #666;
-    --range-bg: #444;
-    --thumb-bg: #e4e4e4;
-    --visualizer-bg: #000;
-    --lyrics-fg: #d4d4d4;
-    --error-bg: #a00;
-    --statusbox-bg: #061f3040;
-    --dialog-bg: #333;
+    --bg: #05000b;
+    --fg: #eaeaea;
+    --fg-strong: #fff;
+    --muted: #c8c0dc;
+    --muted-2: #a898c8;
+    --panel-bg: #0f0a1a;
+    --header-bg: #0e001b;
+    --control-bg: #180a28;
+    --control-br: #3a1a60;
+    --btn-bg: #27004e;
+    --btn-hover-bg: #8000ff;
+    --range-bg: #1a0a30;
+    --thumb-bg: #c8b0ff;
+    --visualizer-bg: #030008;
+    --lyrics-fg: #c0b0e0;
+    --error-bg: #a22;
+    --statusbox-bg: #2a006040;
+    --dialog-bg: #130820;
     --overlay-bg: transparent;
-    --spinner-trk: #061f30;
-    --shadow: #2226;
-    --shadow-strong: #2228;
+    --spinner-trk: #1e0040;
+    --shadow: #00000a;
+    --shadow-strong: #0000008a;
     --tooltip-surface: rgba(12, 12, 12, 0.92);
     --tooltip-border: rgba(255, 255, 255, 0.08);
     --tooltip-text: var(--fg-strong, var(--fg));
     --tooltip-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
     --font-primary: 'GSansFlex', sans-serif;
 }
-
 
 :root[data-theme="dim"] {
     --bg: #121212;
@@ -66,6 +65,32 @@
     --link: #5fb3ff;
     --shadow: #0006;
     --shadow-strong: #0008;
+}
+
+:root[data-theme="purple"] {
+    --bg: #05000b;
+    --fg: #eaeaea;
+    --fg-strong: #fff;
+    --muted: #c8c0dc;
+    --muted-2: #a898c8;
+    --panel-bg: #0f0a1a;
+    --header-bg: #0e001b;
+    --control-bg: #180a28;
+    --control-br: #3a1a60;
+    --btn-bg: #27004e;
+    --btn-hover-bg: #8000ff;
+    --range-bg: #1a0a30;
+    --thumb-bg: #c8b0ff;
+    --visualizer-bg: #030008;
+    --lyrics-fg: #c0b0e0;
+    --error-bg: #a22;
+    --statusbox-bg: #2a006040;
+    --dialog-bg: #130820;
+    --overlay-bg: transparent;
+    --spinner-trk: #1e0040;
+    --link: #a07fff;
+    --shadow: #00000a;
+    --shadow-strong: #0000008a;
 }
 
 :root[data-theme="lights-out"] {
