@@ -1,7 +1,6 @@
 const deb_ms = 300;
 let lastact = 0;
 let showTimeRemaining = false;
-rescue.innerHTML = rescue.innerHTML + '<br><strong>main.js has responded. The app should now load...</strong>'; // you will probably never see this before init fires
 
 function shouldPlaySoundEffects() {
     return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('soundEffects');
@@ -63,8 +62,8 @@ function init() {
     }
 
     playUiSound(elements.welcomesound);
-    document.getElementById('preemptive_warn').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
+    document.getElementById('splash-screen')?.classList.add('fade-out');
 
     elements.upload.addEventListener('change', function () {
         if (elements.upload.files && elements.upload.files.length > 0) {
