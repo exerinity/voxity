@@ -40,3 +40,48 @@ function set_media_session_metadata(artUrl) {
         })(),
     });
 }
+
+if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', () => {
+        elements.player.play().catch(() => {
+            throw_error('Unable to play the audio!');
+        });
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+        elements.player.pause();
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+        if (elements.player.currentTime < 1.5) {
+            prevTrack();
+        } else {
+            restr();
+        }
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        nextTrack();
+    });
+}
+
+window.voxityMpris?.onControl((channel, payload) => {
+    switch (channel) {
+        case "mpris:playpause": document.getElementById("plps")?.click(); break;
+        case "mpris:play":      elements.player.play().catch(() => {}); break;
+        case "mpris:pause":     elements.player.pause(); break;
+        case "mpris:next":      contin?.(); break;
+        case "mpris:previous":  previ?.(); break;
+        case "mpris:shuffle":   document.getElementById("shuffle")?.click(); break;
+        case "mpris:loop":      document.getElementById("loop")?.click(); break;
+        case "mpris:seek":
+            if (payload?.type === "absolute") {
+                elements.player.currentTime = payload.seconds;
+            } else {
+                elements.player.currentTime += payload.seconds;
+            }
+            break;
+        case "mpris:volume":
+            if (typeof payload?.volume === "number") {
+                elements.player.volume = payload.volume;
+            }
+            break;
+    }
+});
