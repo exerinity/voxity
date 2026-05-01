@@ -44,7 +44,6 @@ and more!
 ## To do / Roadmap
 (Items ending in an asterisk are purely ideas and may never actually happen)
 - Tie the routes to actually open modals on load, for example, loading https://voxity.dev/settings should open the settings modal
-- Reduce CPU strain (it is pretty heavy on weaker CPUs, my laptops i5-6300U does not like it much)
 - Add a miniplayer which (asks to) open(s) when you unfocus, minimize, or otherwise leave the main window (especially in the Electron version)\*
 - Rewrite the "Modify lyrics" button from a text-area to a full toolkit with a timing editor\*
 - DOCUMENTATION!!! (of how to use the actual code and do your own things with it)
@@ -72,11 +71,11 @@ and more!
 ## About this repository
 The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
 ## Other repositories
-There is also an Electron version of Voxity, available for Windows and some Linux distros (AppImage and deb), which has some extra features like an application menu and more to come to it. 
+There is also an Electron version of Voxity, available for Windows and some Linux distros (AppImage and deb), which has some extra features like an application menu and more to come to it. The Electron version works with [**Music Presence**](https://musicpresence.app) on Windows and Linux.
 
 https://github.com/exerinity/voxity.electron
 
-The proxy used for fetching lyrics from Musixmatch is due to be released. It's really just a basic Express server, that pretends to be a Musixmatch desktop app user... nothing special
+### https://github.com/stars/exerinity/lists/voxity
 
 ## License
 This project is licensed under the MIT license. See the [license](LICENSE) file for details.
