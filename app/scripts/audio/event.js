@@ -4,6 +4,7 @@ elements.player.addEventListener('pause', () => {
     if ('mediaSession' in navigator) {
         try { navigator.mediaSession.playbackState = 'paused'; } catch { }
     }
+    window.voxityMpris?.updateState({ status: 'paused' });
 });
 
 elements.player.addEventListener('play', () => {
@@ -13,4 +14,5 @@ elements.player.addEventListener('play', () => {
     if ('mediaSession' in navigator) {
         try { navigator.mediaSession.playbackState = 'playing'; } catch { }
     }
+    window.voxityMpris?.updateState({ status: 'playing' });
 });
