@@ -10,6 +10,7 @@
 
 :root {
     --lyric-color: #8000ff;
+    --accent: var(--lyric-color);
     --link: #a07fff;
 
     --bg: #05000b;
@@ -91,6 +92,41 @@
     --link: #a07fff;
     --shadow: #00000a;
     --shadow-strong: #0000008a;
+}
+
+:root[data-theme="adaptive"] {
+    --bg: color-mix(in srgb, #05070d 84%, var(--lyric-color) 16%);
+    --fg: color-mix(in srgb, #eef3fb 94%, var(--lyric-color) 6%);
+    --fg-strong: #ffffff;
+    --muted: color-mix(in srgb, #d7dfec 78%, var(--lyric-color) 22%);
+    --muted-2: color-mix(in srgb, #9ca8bc 72%, var(--lyric-color) 28%);
+    --panel-bg: color-mix(in srgb, #0f131d 82%, var(--lyric-color) 18%);
+    --header-bg: color-mix(in srgb, #090c13 88%, var(--lyric-color) 12%);
+    --control-bg: color-mix(in srgb, #171d2a 74%, var(--lyric-color) 26%);
+    --control-br: color-mix(in srgb, #435066 56%, var(--lyric-color) 44%);
+    --btn-bg: color-mix(in srgb, #182030 70%, var(--lyric-color) 30%);
+    --btn-hover-bg: color-mix(in srgb, #22324a 46%, var(--lyric-color) 54%);
+    --range-bg: color-mix(in srgb, #1c2434 72%, var(--lyric-color) 28%);
+    --thumb-bg: color-mix(in srgb, #dde7f6 78%, var(--lyric-color) 22%);
+    --visualizer-bg: color-mix(in srgb, #04070d 90%, var(--lyric-color) 10%);
+    --lyrics-fg: color-mix(in srgb, #dfe6f2 82%, var(--lyric-color) 18%);
+    --error-bg: #d85f73;
+    --statusbox-bg: color-mix(in srgb, transparent 62%, var(--lyric-color) 38%);
+    --dialog-bg: color-mix(in srgb, #131a27 76%, var(--lyric-color) 24%);
+    --overlay-bg: rgba(3, 7, 14, 0.62);
+    --spinner-trk: color-mix(in srgb, #162033 72%, var(--lyric-color) 28%);
+    --link: color-mix(in srgb, var(--lyric-color) 58%, white 42%);
+    --shadow: color-mix(in srgb, #00000099 82%, var(--lyric-color) 18%);
+    --shadow-strong: color-mix(in srgb, #000000d9 86%, var(--lyric-color) 14%);
+    --tooltip-surface: color-mix(in srgb, #101521f2 78%, var(--lyric-color) 22%);
+    --tooltip-border: color-mix(in srgb, rgba(255, 255, 255, 0.1) 36%, var(--lyric-color) 64%);
+    --tooltip-shadow: 0 12px 28px color-mix(in srgb, #000000bf 82%, var(--lyric-color) 18%);
+
+    --accent: color-mix(in srgb, var(--lyric-color) 72%, white 28%);
+    --accent-glow: 0 0 18px color-mix(in srgb, transparent 38%, var(--lyric-color) 62%);
+    --viz-bar-color: var(--lyric-color);
+    --viz-peak-color: color-mix(in srgb, var(--lyric-color) 52%, white 48%);
+    --viz-glow: 0.82;
 }
 
 :root[data-theme="lights-out"] {

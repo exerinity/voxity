@@ -1,9 +1,10 @@
 window.addEventListener('DOMContentLoaded', () => {
     (function settingsModal() {
         const THEMES = [
+            { 'adaptive': true, 'label': 'Adaptive (EXPERIMENTAL)' },
             { 'dim': true, 'label': 'Dim' },
             { 'lights-out': true, 'label': 'Lights out' },
-            { 'purple': true, 'label': 'Purple'},
+            { 'purple': true, 'label': 'Purple' },
             { 'high-contrast': true, 'label': 'High contrast' },
             { 'red': true, 'label': 'Red' },
             { 'blue': true, 'label': 'Blue' },
@@ -671,6 +672,12 @@ window.addEventListener('DOMContentLoaded', () => {
                         const next = select.value;
                         apply(next);
                         updateSettingsTooltip(next);
+                        if (acin) {
+                            const nextAccent = resolveAccentColor();
+                            if (nextAccent) {
+                                acin.value = nextAccent;
+                            }
+                        }
                     });
                 }
 
