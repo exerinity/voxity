@@ -35,7 +35,7 @@ function setStaticTitle() {
             if (!title && !artist) {
                 document.title = "Voxity";
             } else {
-                document.title = `${title || "Unknown Title"} by ${artist || "Unknown Artist"}`;
+                document.title = `${title || "Unknown Title"} by ${artist || "Unknown Artist"} / Voxity`;
             }
         } else {
             document.title = "Voxity";
