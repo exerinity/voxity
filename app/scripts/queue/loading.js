@@ -10,21 +10,17 @@ function processNextDurationLoad() {
 
                 if (durationLoadUnsupportedCount < 10) {
                     msg(
-                        `${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. 
-                If you're certain they work with browsers, 
-                <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.
+                        `${durationLoadUnsupportedCount} songs failed to load a duration, so they were marked as unplayable and omitted from the queue.
                 <br><br>
-                <strong>Broken files:</strong><br>
+                <strong>Unplayable files:</strong><br>
                 ${list}`
                     );
                 } else {
                     msg(
-                        `${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. 
-                If you're certain they work with browsers, 
-                <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.
+                        `${durationLoadUnsupportedCount} songs failed to load a duration, so they were marked as unplayable and omitted from the queue.
                 <br><br>
                 <details>
-                    <summary><strong>Broken files</strong></summary>
+                    <summary><strong>Unplayable files</strong></summary>
                     <div style="margin-top: 8px;">
                         ${list}
                     </div>
@@ -33,9 +29,7 @@ function processNextDurationLoad() {
                 }
             } else {
                 msg(
-                    `${durationLoadUnsupportedCount} songs were not supported, thus they were not processed. 
-            If you're certain they work with browsers, 
-            <a href="https://cobalt.tools/remux" target="_blank">try remuxing them</a>.`
+                    `${durationLoadUnsupportedCount} songs failed to load a duration, so they were marked as unplayable and omitted from the queue.`
                 );
             }
 
