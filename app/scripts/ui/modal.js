@@ -24,7 +24,7 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
     box.style.width = '90vw';
     box.style.maxHeight = '80vh';
     box.style.overflow = 'hidden';
-    box.style.position = 'absolute';
+    box.style.position = 'relative';
     box.style.fontFamily = 'inherit';
     box.style.textAlign = 'center';
     box.style.animation = 'zin 0.2s ease';
@@ -96,15 +96,24 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
         box.appendChild(close);
     }
 
+    let hasCustomPosition = false;
+
     if (canDrag) {
         let isDragging = false;
         let offsetX = 0;
         let offsetY = 0;
 
         title.addEventListener('mousedown', (e) => {
+            const rect = box.getBoundingClientRect();
+            if (!hasCustomPosition) {
+                box.style.position = 'absolute';
+                box.style.left = `${rect.left}px`;
+                box.style.top = `${rect.top}px`;
+                hasCustomPosition = true;
+            }
             isDragging = true;
-            offsetX = e.clientX - box.getBoundingClientRect().left;
-            offsetY = e.clientY - box.getBoundingClientRect().top;
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
             document.body.style.userSelect = 'none';
         });
 
@@ -126,6 +135,7 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
     }
 
     const eiv = () => {
+        if (!hasCustomPosition) return;
         const rect = box.getBoundingClientRect();
         const left = Math.min(Math.max(0, rect.left), Math.max(0, window.innerWidth - rect.width));
         const top = Math.min(Math.max(0, rect.top), Math.max(0, window.innerHeight - rect.height));
