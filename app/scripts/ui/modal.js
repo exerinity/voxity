@@ -13,7 +13,6 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
     overlay.style.alignItems = 'center';
     overlay.style.justifyContent = 'center';
     overlay.style.animation = 'fin 0.2s ease';
-
     const box = document.createElement('div');
     box.style.background = 'var(--dialog-bg)';
     box.style.color = 'var(--fg)';
@@ -28,7 +27,6 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
     box.style.fontFamily = 'inherit';
     box.style.textAlign = 'center';
     box.style.animation = 'zin 0.2s ease';
-
     const title = document.createElement('div');
     title.style.position = 'absolute';
     title.style.top = '12px';
@@ -44,9 +42,11 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
     const initialTitleText = tbartext || "Voxity";
     let currentTitleText = initialTitleText;
     title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> ${initialTitleText}`;
-
     let modalApi = null;
     let isClosed = false;
+
+    let onMouseMove = null;
+    let onMouseUp = null;
 
     const unregisterModal = () => {
         const stack = window.__voxityModals;
@@ -54,7 +54,6 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
         const idx = stack.indexOf(modalApi);
         if (idx >= 0) stack.splice(idx, 1);
     };
-
     const closeModal = () => {
         if (isClosed) return;
         isClosed = true;
@@ -69,6 +68,8 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
         box.style.animation = 'zout 0.15s ease forwards';
         overlay.style.animation = 'fout 0.15s ease forwards';
         window.removeEventListener('resize', eiv);
+        if (onMouseMove) document.removeEventListener('mousemove', onMouseMove);
+        if (onMouseUp) document.removeEventListener('mouseup', onMouseUp);
         overlay.removeEventListener('voxity:modal-close', closeModal);
         setTimeout(() => {
             if (document.body.contains(overlay)) {
@@ -76,7 +77,6 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
             }
         }, 250);
     };
-
     if (canClose) {
         const close = document.createElement('button');
         close.innerHTML = '<i class="fa-solid fa-xmark"></i>';
@@ -95,14 +95,11 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
         close.onclick = closeModal;
         box.appendChild(close);
     }
-
     let hasCustomPosition = false;
-
     if (canDrag) {
         let isDragging = false;
         let offsetX = 0;
         let offsetY = 0;
-
         title.addEventListener('mousedown', (e) => {
             const rect = box.getBoundingClientRect();
             if (!hasCustomPosition) {
@@ -116,8 +113,7 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
             offsetY = e.clientY - rect.top;
             document.body.style.userSelect = 'none';
         });
-
-        document.addEventListener('mousemove', (e) => {
+        onMouseMove = (e) => {
             if (!isDragging) return;
             let newLeft = e.clientX - offsetX;
             let newTop = e.clientY - offsetY;
@@ -126,14 +122,14 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
             const maxTop = window.innerHeight - rect.height;
             box.style.left = `${Math.min(Math.max(0, newLeft), maxLeft)}px`;
             box.style.top = `${Math.min(Math.max(0, newTop), maxTop)}px`;
-        });
-
-        document.addEventListener('mouseup', () => {
+        };
+        onMouseUp = () => {
             isDragging = false;
             document.body.style.userSelect = '';
-        });
+        };
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
     }
-
     const eiv = () => {
         if (!hasCustomPosition) return;
         const rect = box.getBoundingClientRect();
@@ -144,13 +140,11 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
     };
     window.addEventListener('resize', eiv);
     overlay.addEventListener('voxity:modal-close', closeModal);
-
     const content = document.createElement('div');
     content.id = 'msg-content';
     content.style.marginTop = '0.5rem';
     content.style.fontSize = '1.08rem';
     content.style.lineHeight = '1.6';
-
     const contentBody = document.createElement('div');
     contentBody.id = 'msg-body';
     contentBody.style.marginBottom = '1rem';
@@ -159,11 +153,9 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
     contentBody.style.paddingRight = '8px';
     contentBody.style.maxHeight = 'calc(80vh - 6rem)';
     contentBody.innerHTML = text;
-
     const footer = document.createElement('div');
     footer.className = 'pop';
     footer.style.alignItems = 'center';
-
     if (canClose) {
         const closeBtn = document.createElement('button');
         closeBtn.className = 'bu';
@@ -173,19 +165,15 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
         closeBtn.addEventListener('click', closeModal);
         footer.appendChild(closeBtn);
     }
-
     content.appendChild(contentBody);
     content.appendChild(footer);
-
     box.appendChild(title);
     box.appendChild(content);
     overlay.appendChild(box);
     document.body.appendChild(overlay);
-
     overlay.addEventListener('click', e => {
         if (canClose && e.target === overlay) closeModal();
     });
-
     if (!document.getElementById('msg-modal-animations')) {
         const style = document.createElement('style');
         style.id = 'msg-modal-animations';
@@ -209,12 +197,11 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
         `;
         document.head.appendChild(style);
     }
-
     modalApi = {
         overlay,
         close: () => closeModal(),
-        setTitle: (text) => {
-            const nextTitle = text || 'Voxity';
+        setTitle: (newTitle) => {
+            const nextTitle = newTitle || 'Voxity';
             title.innerHTML = `<i class="fa-solid fa-tower-broadcast" style="color: var(--lyric-color); margin-right: 0.5em;"></i> ${nextTitle}`;
             currentTitleText = nextTitle;
         },
@@ -224,7 +211,6 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
             try { eiv(); } catch { }
         }
     };
-
     window.__voxityModals = window.__voxityModals || [];
     window.__voxityModals.push(modalApi);
     try {
@@ -232,10 +218,8 @@ async function msg(text, tbartext, canClose = true, canDrag = true) {
             detail: { modal: modalApi },
         }));
     } catch { }
-
     return modalApi;
 }
-
 function closeTopModal() {
     const stack = window.__voxityModals;
     if (!stack || stack.length === 0) return false;
