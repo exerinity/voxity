@@ -8,9 +8,14 @@ function shouldPlaySoundEffects() {
 
 let stallExit = false;
 
+function shouldPreventExit() {
+    return typeof window.VoxitySettings === 'undefined' || window.VoxitySettings.isEnabled('preventExit');
+}
+
 window.addEventListener("beforeunload", (event) => {
     if (isPWA()) return;
     if (!stallExit) return;
+    if (!shouldPreventExit()) return;
 
     event.preventDefault();
     event.returnValue = "";

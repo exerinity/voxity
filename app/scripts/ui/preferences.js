@@ -31,6 +31,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 description: 'For error messages and finished notifications',
             },
             {
+                key: 'preventExit',
+                label: 'Prevent exit',
+                description: 'If you try closing Voxity, the browser will confirm leaving (this does not occur at all if installed as a PWA)',
+            },
+            {
                 key: 'titleRotation',
                 label: 'Enable title rotation',
                 description: 'Rotate the tab title with current song metadata',

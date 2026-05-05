@@ -2,6 +2,7 @@
     const STORAGE_KEY = 'au_settings';
     const DEFAULTS = Object.freeze({
         soundEffects: true,
+        preventExit: true,
         titleRotation: true,
         titleRotationInterval: 5,
         staticSongTitle: true,
