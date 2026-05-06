@@ -18,6 +18,7 @@ function stat_up(msg, ac = true) {
                 elements.status.innerHTML = `<i class="fa-solid fa-circle-play"></i> Now playing: <strong>${act_truncate(metadata.title || 'Unknown track', 120)}</strong> by ${metadata.artist || 'Unknown artist'}`;
                 elements.branding.innerHTML = '<i class="fa-solid fa-tower-broadcast fa-beat bop"></i> Voxity';
             }
+            calqueue();
             stat_out = null;
         }, delay);
     }
