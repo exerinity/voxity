@@ -312,7 +312,4 @@ function init() {
 
     document.getElementById('nexttrack')?.addEventListener('click', debounce(() => contin()));
     document.getElementById('prevtrack')?.addEventListener('click', debounce(() => previ()));
-    document.getElementById('clearqueue')?.addEventListener('click', debounce(() => {
-        clea();
-    }));
 }

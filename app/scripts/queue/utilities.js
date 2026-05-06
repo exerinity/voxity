@@ -29,6 +29,31 @@ function enqueueDurationLoad(item, durEl) {
     processNextDurationLoad();
 }
 
+function resetDurationLoadState() {
+    durationLoadGeneration++;
+    durationLoadInProgress = false;
+    durationLoadUnsupportedCount = 0;
+    durationLoadUnsupportedFiles = [];
+
+    while (durationLoadQueue.length > 0) {
+        const queuedItem = durationLoadQueue.shift();
+        if (!queuedItem) continue;
+        delete queuedItem._durationLoading;
+        delete queuedItem._pendingDurationEl;
+    }
+
+    if (durationAudio) {
+        const staleDurationAudio = durationAudio;
+        durationAudio = null;
+        try {
+            staleDurationAudio.pause();
+            staleDurationAudio.removeAttribute('src');
+            staleDurationAudio.load();
+            staleDurationAudio.remove();
+        } catch { null }
+    }
+}
+
 function calqueue() {
     const qh = document.getElementById('queuehead');
     if (qh) {
@@ -276,7 +301,7 @@ async function openQueueSearchModal(initialQuery = '') {
         if (!input) return;
         const value = input.value.trim();
         if (!value) {
-            throw_error('Enter something to search');
+            throw_error('Enter something to search!');
             return;
         }
         lastQueueSearchQuery = value;

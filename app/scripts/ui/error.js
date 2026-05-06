@@ -10,11 +10,18 @@ c.style.zIndex = '2147483647';
 document.body.appendChild(c);
 
 function throw_error(msg, ok = false) {
-    const dur = 8000;
+    const dur = 13000;
+
+    const type = ok === true ? 'success' : ok === 2 ? 'info' : 'error';
+    const cfg = {
+        error:   { bg: '#da0000ff', icon: 'fa-triangle-exclamation', live: 'assertive' },
+        success: { bg: '#047500ff', icon: 'fa-check',                 live: 'polite'    },
+        info:    { bg: '#0068c8ff', icon: 'fa-circle-info',           live: 'polite'    },
+    }[type];
 
     const box = document.createElement('div');
     box.className = 'error-box';
-    box.style.background = ok ? '#047500ff' : '#da0000ff';
+    box.style.background = cfg.bg;
     box.style.color = 'white';
     box.style.padding = '12px 36px 16px 16px';
     box.style.borderRadius = '8px';
@@ -24,7 +31,7 @@ function throw_error(msg, ok = false) {
     box.style.overflow = 'hidden';
     box.style.maxHeight = '72px';
     box.setAttribute('role', 'status');
-    box.setAttribute('aria-live', ok ? 'polite' : 'assertive');
+    box.setAttribute('aria-live', cfg.live);
 
     const cnt = document.createElement('div');
     cnt.className = 'error-content';
@@ -33,7 +40,7 @@ function throw_error(msg, ok = false) {
     cnt.style.gap = '10px';
 
     const ico = document.createElement('i');
-    ico.className = `fa-solid ${ok ? 'fa-check' : 'fa-triangle-exclamation'}`;
+    ico.className = `fa-solid ${cfg.icon}`;
     ico.style.marginTop = '2px';
 
     const txt = document.createElement('span');
@@ -143,7 +150,7 @@ function throw_error(msg, ok = false) {
         c.firstChild?.remove();
     }
 
-    if (!ok) {
+    if (type === 'error') {
         if (typeof playUiSound === 'function') {
             playUiSound(elements.error_sound);
         } else {
@@ -152,6 +159,15 @@ function throw_error(msg, ok = false) {
                 elements.error_sound.play();
             } catch { }
         }
-        console.error(msg)
+        console.error(msg);
+    } else if (type === 'info') {
+        if (typeof playUiSound === 'function') {
+            playUiSound(elements.message_sound);
+        } else {
+            try {
+                elements.message_sound.currentTime = 0;
+                elements.message_sound.play();
+            } catch { }
+        }
     }
 }

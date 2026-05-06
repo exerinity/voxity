@@ -23,7 +23,7 @@ function get_meta(file) {
             metadata.picture = tags.picture || null;
 
             if (!hasCompleteMetadata) {
-                throw_error("There is missing metadata, lyrics may not work");
+                throw_error("There is missing metadata, lyrics may not work", 2);
             }
 
             document.getElementById('artist').innerHTML = `<strong>${truncate(metadata.artist)}</strong>`;

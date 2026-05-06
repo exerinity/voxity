@@ -30,7 +30,7 @@ function contin(options = {}) {
 
     if (queue.length === 0) {
         if (!silent) {
-            throw_error('This is a dead end, add more tracks');
+            throw_error("There's no tracks ahead to skip to!");
         }
         return false;
     }
@@ -38,7 +38,7 @@ function contin(options = {}) {
         const nextIdx = getNextShuffleIndex();
         if (nextIdx === null) {
             if (!silent) {
-                throw_error('This is a dead end, add more tracks');
+                throw_error("There's no tracks ahead to skip to!");
             }
             return false;
         }
@@ -58,7 +58,7 @@ function contin(options = {}) {
         return true;
     }
     if (!silent) {
-        throw_error('This is a dead end, add more tracks');
+        throw_error("There's no tracks ahead to skip to!");
     }
     return false;
 }
@@ -158,15 +158,17 @@ function resetPlayerState() {
 
 function clea() {
     if (queue.length === 0) {
-        return throw_error('Queue is already empty');
+        return throw_error('Queue is already empty', 2);
     }
     const removed = queue.splice(0);
     removed.forEach(onQueueItemRemoved);
     currentIndex = -1;
-    queueIdCounter = 0;
     shufflePool = [];
     shuffleHistory = [];
     pt++;
+    if (typeof resetDurationLoadState === 'function') {
+        try { resetDurationLoadState(); } catch { }
+    }
 
     if (typeof clean === 'function') {
         try { clean(); } catch { }
@@ -216,7 +218,7 @@ function clea() {
 
 function remq(idx) {
     if (queue.length <= 1) {
-        throw_error('You cannot remove the last track');
+        throw_error('You cannot remove the last track', 2);
         return;
     }
     if (idx < 0 || idx >= queue.length) return;

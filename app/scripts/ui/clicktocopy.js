@@ -6,7 +6,7 @@ document.getElementById('status').addEventListener('click', debounce(() => {
     }
     const name = metadata.title + ' by ' + metadata.artist;
     navigator.clipboard.writeText(name).then(() => {
-        throw_error(`Copied song to clipboard`, true);
+        throw_error(`Copied song to clipboard`, 2);
     }).catch(err => {
         throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });
@@ -17,7 +17,7 @@ document.getElementById('np2').addEventListener('click', debounce(() => {
         return throw_error('No title to copy!');
     }
     navigator.clipboard.writeText(metadata.title).then(() => {
-        throw_error('Copied title to clipboard', true);
+        throw_error('Copied title to clipboard', 2);
     }).catch(err => {
         throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });
@@ -28,7 +28,7 @@ document.getElementById('artist').addEventListener('click', debounce(() => {
         return throw_error('No artist to copy!');
     }
     navigator.clipboard.writeText(metadata.artist).then(() => {
-        throw_error('Copied artist to clipboard', true);
+        throw_error('Copied artist to clipboard', 2);
     }).catch(err => {
         throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });
@@ -39,7 +39,7 @@ document.getElementById('album').addEventListener('click', debounce(() => {
         return throw_error('No album to copy!');
     }
     navigator.clipboard.writeText(metadata.album).then(() => {
-        throw_error('Copied album to clipboard', true);
+        throw_error('Copied album to clipboard', 2);
     }).catch(err => {
         throw_error('Failed to copy - is Voxity allowed to access your clipboard?');
     });

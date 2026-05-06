@@ -647,24 +647,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
                 const requestNotificationPermission = async () => {
                     if (typeof window === 'undefined' || typeof Notification === 'undefined') {
-                        throw_error('This browser does not seem to support notifications');
+                        throw_error('This browser does not seem to support notifications', 2);
                         return false;
                     }
                     if (Notification.permission === 'granted') {
                         return true;
                     }
                     if (Notification.permission === 'denied') {
-                        throw_error('You blocked notifications!');
+                        throw_error('You blocked notifications!!!11!11!!');
                         return false;
                     }
                     try {
                         const result = await Notification.requestPermission();
                         if (result !== 'granted') {
-                            throw_error('You disallowed notifications!', false);
+                            throw_error('You disallowed notifications!!!11!11!!', false);
                         }
                         return result === 'granted';
                     } catch {
-                        throw_error('Something failed enabling notifications, why not try again?');
+                        throw_error('Something failed enabling notifications, why not try again?', 2);
                         return false;
                     }
                 };
@@ -771,14 +771,14 @@ window.addEventListener('DOMContentLoaded', () => {
                         const controller = typeof window !== 'undefined' ? window.VoxityWakeLock : null;
                         if (!controller) {
                             if (checked) {
-                                throw_error('Wake locks are not available right now');
+                                throw_error('Wake locks are not available right now', 2);
                                 return false;
                             }
                             return true;
                         }
                         if (checked) {
                             if (!controller.supported()) {
-                                throw_error('Wake locks are not supported in this browser yet');
+                                throw_error('Wake locks are not supported in this browser!', 2);
                                 return false;
                             }
                             return controller.enable();

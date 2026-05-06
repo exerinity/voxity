@@ -2,7 +2,7 @@
 
 document.getElementById('searchlrclib').addEventListener('click', debounce(async () => {
     if (!navigator.onLine) {
-        return throw_error('Go online to use this');
+        return throw_error('Go online to use this', 2);
     }
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');

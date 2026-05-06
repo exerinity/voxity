@@ -11,6 +11,7 @@ let durationLoadInProgress = false;
 let durationAudio = null;
 let durationLoadUnsupportedCount = 0;
 let durationLoadUnsupportedFiles = [];
+let durationLoadGeneration = 0;
 let lastQueueSearchQuery = '';
 let queueSearchPlayImmediate = false;
 

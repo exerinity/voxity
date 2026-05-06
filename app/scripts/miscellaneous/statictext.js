@@ -50,7 +50,11 @@ const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA
 <p>Voxity was incepted in July 2025 and largely focused on in August and September, where it is now a rather large project, at least in feature density.</p>
         <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a href="/i/release_notes" onclick="event.preventDefault(); relnote()" style="cursor: pointer">Release notes</a><br>
                 <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">
-          ${isPWA() ? "Voxity is currently installed as a PWA, nice!" : "Tip: You should install Voxity as an app. <a href='/i/how_pwa' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
+          ${typeof isElectron === 'function' && isElectron()
+    ? "You are running the Electron version of Voxity"
+    : isPWA()
+        ? "Voxity is currently installed as a PWA, nice!"
+        : "Tip: You should install Voxity as an app. <a href='/i/how_pwa' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
         </p>
         <hr>
         <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank">LRCLIB</a>/<a href="https://www.musixmatch.com/" target="_blank" rel="noopener">Musixmatch</a> for lyrics. <a href="/git/LICENSE">Voxity is available under the MIT license.</a></p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}

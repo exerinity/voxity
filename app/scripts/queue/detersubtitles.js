@@ -168,7 +168,7 @@ function quf(fileList, options = {}) {
     const audioFiles = files.filter(isAudioFile);
     const hasInvalidFiles = files.length !== audioFiles.length;
     if (!ignoreInvalid && hasInvalidFiles) {
-        throw_error('Some invalid files were added');
+        throw_error('Some invalid files were added', 2);
     }
     if (audioFiles.length === 0) {
         if (!ignoreInvalid) {

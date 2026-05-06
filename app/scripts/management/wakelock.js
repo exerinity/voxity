@@ -63,7 +63,7 @@ const VoxityWakeLock = (() => {
                 if (!silent && typeof throw_error === 'function') {
                     try {
                         const message = error && error.message ? error.message : error;
-                        throw_error(`Unable to keep the screen awake: ${message}`);
+                        throw_error(`The wakelock is not cooperating`);
                     } catch { }
                 }
                 console.warn('Wake Lock request failed', error);

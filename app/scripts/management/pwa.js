@@ -12,7 +12,7 @@ if ('serviceWorker' in navigator && !noInstall) {
 
       if (registration.waiting) {
         if (typeof throw_error === 'function') {
-          throw_error('A new version is ready to install, <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">please refresh the app to finish</a>', true);
+          throw_error('A new version is ready to install, <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">please refresh the app to finish</a>', 2);
         }
         uptodate = false;
       }
@@ -59,5 +59,5 @@ if ('serviceWorker' in navigator && !noInstall) {
   });
 } else if (noInstall) {
   console.log("The service worker will not install");
-  setTimeout( function () { stat_up('<i class="fa-solid fa-road-circle-xmark fa-fade"></i> The service worker will not install', 7500); }, 2500);
+  setTimeout( function () { throw_error("The service worker will not install", 2) }, 2500);
 }

@@ -39,13 +39,16 @@ function processNextDurationLoad() {
         return;
     }
     durationLoadInProgress = true;
+    const generation = durationLoadGeneration;
     const audio = ensureDurationAudioElement();
     let objectUrl = null;
 
     function cleanup() {
         delete nextItem._durationLoading;
         delete nextItem._pendingDurationEl;
-        durationLoadInProgress = false;
+        if (generation === durationLoadGeneration) {
+            durationLoadInProgress = false;
+        }
         audio.removeEventListener('loadedmetadata', handleLoaded);
         audio.removeEventListener('error', handleError);
         if (objectUrl) {
@@ -57,10 +60,16 @@ function processNextDurationLoad() {
             audio.removeAttribute('src');
             audio.load();
         } catch { null }
-        setTimeout(processNextDurationLoad, durationLoadDelay);
+        if (generation === durationLoadGeneration) {
+            setTimeout(processNextDurationLoad, durationLoadDelay);
+        }
     }
 
     function handleLoaded() {
+        if (generation !== durationLoadGeneration) {
+            cleanup();
+            return;
+        }
         const idx = findIndexById(nextItem.id);
         const pos = idx !== -1 ? idx + 1 : (queue.length ? queue.length : 1);
         const total = queue.length || 1;
@@ -96,6 +105,10 @@ function processNextDurationLoad() {
     }
 
     function handleError() {
+        if (generation !== durationLoadGeneration) {
+            cleanup();
+            return;
+        }
         const idx = findIndexById(nextItem.id);
         if (idx !== -1 && idx !== currentIndex) {
             queue.splice(idx, 1);

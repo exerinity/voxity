@@ -15,7 +15,7 @@ async function pwamsg() {
             try { document.getElementById('installpwa')?.classList.add('hidden'); } catch { }
         }
         else {
-            throw_error("Prompt failed - opening the how to");
+            throw_error("The request failed, showing how-to", 2);
             const modalPromise = msg(
                 `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
                 "Install Voxity"

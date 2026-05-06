@@ -251,8 +251,8 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
             isLyricsLoading = false;
             return;
         } else {
-            stat_up(`<i class="fa-solid fa-xmark"></i> Error loading lyrics`);
-            throw_error(`Lyrics could not load:<br>${e}<br>You are likely offline.`);
+            stat_up(`<i class="fa-solid fa-xmark"></i> Error loading lyrics, check the toast notification`);
+            throw_error(`${e}`);
         }
         lrc_con.innerHTML = '';
         lrc_data = [];
