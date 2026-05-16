@@ -239,7 +239,7 @@ async function openSleepTimerModal() {
             <button id="sleep_timer_cancel" type="button" class="sleep-timer-cancel-btn">Cancel sleep timer</button>
         </div>
     `, 'Sleep timer');
-    window.VoxityRouter?.setModalRoute(modal, '/sleep_timer');
+    window.VoxityRouter?.setModalRoute(modal, '/control/sleep');
 
     setTimeout(() => {
         const root = modal?.overlay || document;
