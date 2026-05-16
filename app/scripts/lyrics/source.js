@@ -209,7 +209,7 @@ async function get_lyrics(trackName, artistName, albumName, duration) {
     lrc_con.innerHTML = `
   <div style="display:flex;align-items:center;gap:8px;">
     <div class="spinner"></div>
-    <span>Searching ${sourceLabel}...</span>
+    <span>Searching ${sourceLabel || "for lyrics"} for ${trackName || "unknown track"} by ${artistName || "unknown artist"}...</span>
     </div>`;
     try {
         const fetcher = sourceKey === LYRICS_SOURCE_KEYS.MUSIXMATCH ? fetchLyricsFromMusixmatch : fetchLyricsFromLrclib;
