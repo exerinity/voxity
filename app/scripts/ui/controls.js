@@ -101,6 +101,10 @@ try {
 
 
 document.getElementById('cover-art').addEventListener('click', debounce(() => {
+    enlargeCover();
+}));
+
+function enlargeCover() {
     if (!globalart) return;
 
     const modalPromise = msg(
@@ -131,4 +135,4 @@ document.getElementById('cover-art').addEventListener('click', debounce(() => {
             window.open(`/i/imageview.html?img=${encodeURIComponent(blobUrl)}&name=${name}`, '_blank');
         };
     }, 0);
-}));
+}

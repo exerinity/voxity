@@ -617,7 +617,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                     </section>
-                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small>
+                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a> - <a href="/i/toys" onclick="event.preventDefault();closeTopModal(); openToysModal()">Toys</a></small>
                 </div>
             `, 'Voxity settings');
             window.VoxityRouter?.setModalRoute(modal, '/settings');
