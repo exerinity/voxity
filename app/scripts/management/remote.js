@@ -337,7 +337,7 @@
             return;
         }
         const modalPromise = msg('Loading remote controls...', 'Remote');
-        window.VoxityRouter?.setModalRoute(modalPromise, '/remote');
+        window.VoxityRouter?.setModalRoute(modalPromise, '/control/remote');
         state.controlModal = await modalPromise;
         renderControlModal();
     }
