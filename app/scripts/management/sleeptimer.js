@@ -209,7 +209,7 @@ function completeSleepTimer() {
         } catch { }
     }
     try {
-        msg('Your sleep timer has reached zero, <a href="/i/sleep_timer" onclick="event.preventDefault(); closeTopModal(); openSleepTimerModal();">but you can always add more time</a>', "Time's up");
+        msg('Your sleep timer has concluded. Sweet dreams, I guess. And if you\'re still up, <a href="/i/sleep_timer" onclick="event.preventDefault(); closeTopModal(); openSleepTimerModal();">you can always add more time</a>', "Time's up");
     } catch { }
 }
 

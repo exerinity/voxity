@@ -15,7 +15,7 @@ async function openToysModal() {
             <section class="voxity-settings-section">
                 <h3>Compose modal</h3>
                 <div class="voxity-settings-field">
-                    <label for="toys-modal-html">Content (raw HTML)</label>
+                    <label for="toys-modal-html">Content (HTML)</label>
                     <textarea id="toys-modal-html" rows="4" placeholder="<b>Hello world!</b>" style="width:100%;box-sizing:border-box;resize:vertical;background:var(--dialog-bg);color:var(--fg);border:1px solid var(--btn-bg);border-radius:6px;padding:6px 8px;font-family:monospace;font-size:0.9rem;"></textarea>
                 </div>
                 <div class="voxity-settings-field">
@@ -27,11 +27,14 @@ async function openToysModal() {
                     <input type="text" id="toys-modal-route" class="voxity-settings-control" style="width:100%;box-sizing:border-box;" placeholder="/toys/preview">
                 </div>
                 <div style="display:flex;gap:1.25rem;margin-top:0.5rem;">
-                    <label style="display:flex;align-items:center;gap:0.4em;cursor:pointer;user-select:none;">
-                        <input type="checkbox" id="toys-modal-drag" checked> Draggable
+                    <label style="display:flex;align-items:center;gap:0.4em;cursor:pointer;user-select:none;" title="Modals can be dragged around the screen from their title bar. Try it on this modal! This toggles whether you can do that.">
+                        <input type="checkbox" id="toys-modal-drag" checked> Drag?
                     </label>
-                    <label style="display:flex;align-items:center;gap:0.4em;cursor:pointer;user-select:none;">
-                        <input type="checkbox" id="toys-modal-close" checked> Closable
+                    <label style="display:flex;align-items:center;gap:0.4em;cursor:pointer;user-select:none;" title="This toggles whether the modal can be closed: if checked, the close button and click-outside-to-close functionality will be disabled, but you can always still close modals by pressing Escape. (lol)">
+                        <input type="checkbox" id="toys-modal-close" checked> Close?
+                    </label>
+                    <label style="display:flex;align-items:center;gap:0.4em;cursor:pointer;user-select:none;" title="If checked, this modal will exit before launching your modal, for a clear view!">
+                        <input type="checkbox" id="toys-modal-close-first"> Close this?
                     </label>
                 </div>
                 <div style="margin-top:0.75rem;">
@@ -61,6 +64,8 @@ async function openToysModal() {
             const route = document.getElementById('toys-modal-route')?.value.trim() || '';
             const canDrag = document.getElementById('toys-modal-drag')?.checked ?? true;
             const canClose = document.getElementById('toys-modal-close')?.checked ?? true;
+            const closeFirst = document.getElementById('toys-modal-close-first')?.checked ?? false;
+            if (closeFirst) closeTopModal();
             const launched = msg(html, title, canClose, canDrag);
             if (route) {
                 launched.then?.(m => window.VoxityRouter?.setModalRoute(m, route));
