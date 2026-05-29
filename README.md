@@ -48,9 +48,6 @@ and more!
 - Rewrite the "Modify lyrics" button from a text-area to a full toolkit with a timing editor\*
 - DOCUMENTATION!!! (of how to use the actual code and do your own things with it)
 
-### Electron
-- Local file browsing and opening\*
-
 ## Hotkeys
 | Key                  | Action                        | Details / modifiers |
 |---------------------------|-------------------------------|---------------------|
@@ -71,9 +68,9 @@ and more!
 ## About this repository
 The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
 ## Other repositories
-There is also an Electron version of Voxity, available for Windows and some Linux distros (AppImage and deb), which has some extra features like an application menu and more to come to it. The Electron version works with [**Music Presence**](https://musicpresence.app) on Windows and Linux.
+I am currently working on a desktop version of Voxity, that scans your drive and plays music from there, rather than having to drop in files every session. It's in Electron, and, while it's not "official" or open source yet, you can download a preview on my website: https://exerinity.com/voxity/desktop
 
-https://github.com/exerinity/voxity.electron
+There is also a simpler deprecated Electron shell that exposes & obeys MPRIS control on Linux and works with [Music Presence](https://musicpresence.app): https://github.com/exerinity/voxity.electron
 
 ### https://github.com/stars/exerinity/lists/voxity
 
