@@ -67,8 +67,10 @@ and more!
 
 ## About this repository
 The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
-## Other repositories
+## Other repositories / Desktop version
 I am currently working on a desktop version of Voxity, that scans your drive and plays music from there, rather than having to drop in files every session. It's in Electron, and, while it's not "official" or open source yet, you can download a preview on my website: https://exerinity.com/voxity/desktop
+
+I am not exactly sure how high I'll take this, whether Voxity will transition into a desktop player with the web app as a preview, or something like that, but give the preview a try!
 
 There is also a simpler deprecated Electron shell that exposes & obeys MPRIS control on Linux and works with [Music Presence](https://musicpresence.app): https://github.com/exerinity/voxity.electron
 
