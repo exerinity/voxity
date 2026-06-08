@@ -5,7 +5,7 @@ A modern, opinionated, fast, PWA local music player written entirely in JavaScri
 
 ## Links
 - Try now: https://voxity.dev
-- Release notes: https://voxity.dev/i/release_notes
+- Release notes: https://voxity.dev/releases
 - Download: https://github.com/exerinity/voxity.electron/releases
 - More info: https://exerinity.com/projects/voxity
 

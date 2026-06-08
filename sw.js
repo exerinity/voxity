@@ -8,9 +8,9 @@ const webfonts = '/app/webfonts/';
 const FILES_TO_CACHE = [
   '/',
   '/entry',
-  '/i/how_pwa',
-  '/i/release_notes',
-  '/i/imageview',
+  '/install',
+  '/releases',
+  '/cover',
   '/favicon.ico',
   '/manifest.json',
   '/sw.js',

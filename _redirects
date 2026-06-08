@@ -1,6 +1,6 @@
 /app/scripts/app.js /app/scripts/pwa.js
 /i /
-/howpwa /i/how_pwa
+/howpwa /install
 /i/reload_fa /
 /favicona.png /app/media/voxity.png
 /i/sleep_timer /
@@ -9,3 +9,6 @@
 /LICENSE /LICENSE.txt
 /git/* https://github.com/exerinity/voxity/blob/main/:splat
 /git https://github.com/exerinity/voxity
+/i/release_notes /releases
+/i/imgview /cover
+/i/how_pwa /install

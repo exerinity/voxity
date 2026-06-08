@@ -129,7 +129,7 @@ function enlargeCover() {
             }
 
             const name = encodeURIComponent(metadata.title || metadata.album || 'Voxity art viewer');
-            window.open(`/i/imageview.html?img=${encodeURIComponent(blobUrl)}&name=${name}`, '_blank');
+            window.open(`/cover.html?img=${encodeURIComponent(blobUrl)}&name=${name}`, '_blank');
         };
     }, 0);
 }

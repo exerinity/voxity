@@ -17,7 +17,7 @@ async function pwamsg() {
         else {
             throw_error("The request failed, showing how-to", 2);
             const modalPromise = msg(
-                `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
+                `<iframe src="/install.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/install" target="_blank" rel="noopener">Open this in new tab</a>`,
                 "Install Voxity"
             );
         }
@@ -25,7 +25,7 @@ async function pwamsg() {
     }
 
     msg(
-        `<iframe src="/i/how_pwa.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/i/how_pwa" target="_blank" rel="noopener">Open this in new tab</a>`,
+        `<iframe src="/install.html" style="width:100%; height:400px; border:none; border-radius:8px;"></iframe><br><a href="/install" target="_blank" rel="noopener">Open this in new tab</a>`,
         "Install Voxity"
     );
 }
