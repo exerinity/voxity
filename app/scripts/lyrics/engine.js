@@ -126,6 +126,11 @@ function setCurrentFile(file) {
     cur_file = file;
     activeLyricsKey = null;
     lastLyricsRequest = null;
+    try {
+        document.dispatchEvent(new CustomEvent('voxity:track-changed', {
+            detail: { file },
+        }));
+    } catch { }
 }
 
 function force() {
