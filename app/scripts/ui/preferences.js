@@ -212,12 +212,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const AutoAccentController = (() => {
             const CANVAS_SIZE = 128;
-            const MAX_TRACKED_COLORS = 40;
+            const MAX_TRACKED_COLORS = 96;
             const MIN_DOMINANCE_GAP = 5;
             const RICH_PALETTE_THRESHOLD = 15;
             const MIN_COLOR_SATURATION = 0.2;
             const MIN_COLOR_LUMINANCE = 0.3;
             const MAX_COLOR_LUMINANCE = 0.92;
+            const PALETTE_DISTANCE_THRESHOLD = 74;
+            const PALETTE_HUE_DISTANCE_THRESHOLD = 24;
             let canvas = null;
             let ctx = null;
             let latestArtworkSrc = '';
@@ -246,6 +248,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
             const toHex = (value) => value.toString(16).padStart(2, '0');
             const clampByte = (value) => Math.max(0, Math.min(255, Math.round(value)));
+            const hexToRgb = (hex) => {
+                const normalized = normalizeAccentColor(hex);
+                if (!normalized) return null;
+                const expanded = normalized.length === 4
+                    ? normalized.slice(1).split('').map(ch => ch + ch).join('')
+                    : normalized.slice(1, 7);
+                return {
+                    r: parseInt(expanded.slice(0, 2), 16),
+                    g: parseInt(expanded.slice(2, 4), 16),
+                    b: parseInt(expanded.slice(4, 6), 16),
+                };
+            };
+            const getColorDistance = (a, b) => {
+                const first = hexToRgb(a);
+                const second = hexToRgb(b);
+                if (!first || !second) return Infinity;
+                return Math.sqrt(
+                    ((first.r - second.r) ** 2)
+                    + ((first.g - second.g) ** 2)
+                    + ((first.b - second.b) ** 2)
+                );
+            };
 
             const lightenColor = (hex) => {
                 if (typeof hex !== 'string') return null;
@@ -281,6 +305,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const min = Math.min(rNorm, gNorm, bNorm);
                 const luminance = 0.2126 * rNorm + 0.7152 * gNorm + 0.0722 * bNorm;
                 let saturation = 0;
+                let hue = 0;
                 if (max !== min) {
                     const l = (max + min) / 2;
                     const delta = max - min;
@@ -291,16 +316,26 @@ window.addEventListener('DOMContentLoaded', () => {
                         const denom = max + min;
                         saturation = denom === 0 ? 0 : delta / denom;
                     }
+                    if (max === rNorm) {
+                        hue = ((gNorm - bNorm) / delta) % 6;
+                    } else if (max === gNorm) {
+                        hue = ((bNorm - rNorm) / delta) + 2;
+                    } else {
+                        hue = ((rNorm - gNorm) / delta) + 4;
+                    }
+                    hue = Math.round(hue * 60);
+                    if (hue < 0) hue += 360;
                 }
                 return {
                     bucket,
                     hex: `#${toHex(avgR)}${toHex(avgG)}${toHex(avgB)}`,
+                    hue,
                     luminance,
                     saturation,
                 };
             };
 
-            const analyzeImageElement = (img) => {
+            const getColorInfosFromImageElement = (img) => {
                 const context = ensureContext();
                 if (!context || !canvas) return null;
                 try {
@@ -334,33 +369,98 @@ window.addEventListener('DOMContentLoaded', () => {
                     const colorInfos = sortedBuckets
                         .map(getColorInfo)
                         .filter(Boolean);
-                    if (!colorInfos.length) return null;
-                    const hasRichPalette = colorInfos.length >= RICH_PALETTE_THRESHOLD;
-                    if (hasRichPalette) {
-                        const vibrant = colorInfos
-                            .filter(info =>
-                                info.saturation >= MIN_COLOR_SATURATION
-                                && info.luminance >= MIN_COLOR_LUMINANCE
-                                && info.luminance <= MAX_COLOR_LUMINANCE
-                            )
-                            .sort((a, b) => {
-                                if (b.luminance !== a.luminance) return b.luminance - a.luminance;
-                                return b.bucket.count - a.bucket.count;
-                            });
-                        if (vibrant.length) {
-                            return vibrant[0].hex;
-                        }
-                    }
-                    const primary = colorInfos[0];
-                    if (!primary) return null;
-                    const runnerUp = colorInfos[1];
-                    if (runnerUp && (primary.bucket.count - runnerUp.bucket.count) < MIN_DOMINANCE_GAP) {
-                        return null;
-                    }
-                    return primary.hex;
+                    return colorInfos.length ? colorInfos : null;
                 } catch {
                     return null;
                 }
+            };
+
+            const sortVibrantColors = (colorInfos) => colorInfos
+                .filter(info =>
+                    info.saturation >= MIN_COLOR_SATURATION
+                    && info.luminance >= MIN_COLOR_LUMINANCE
+                    && info.luminance <= MAX_COLOR_LUMINANCE
+                )
+                .sort((a, b) => {
+                    if (b.luminance !== a.luminance) return b.luminance - a.luminance;
+                    return b.bucket.count - a.bucket.count;
+                });
+
+            const getHueDistance = (a, b) => {
+                const diff = Math.abs((a?.hue || 0) - (b?.hue || 0));
+                return Math.min(diff, 360 - diff);
+            };
+
+            const getPaletteScore = (info, maxCount) => {
+                const dominance = maxCount ? info.bucket.count / maxCount : 0;
+                const luminanceBalance = 1 - Math.abs(info.luminance - 0.62);
+                return (info.saturation * 2.4) + (luminanceBalance * 0.9) + (dominance * 0.65);
+            };
+
+            const chooseAccentColor = (colorInfos) => {
+                if (!colorInfos?.length) return null;
+                const hasRichPalette = colorInfos.length >= RICH_PALETTE_THRESHOLD;
+                if (hasRichPalette) {
+                    const vibrant = sortVibrantColors(colorInfos);
+                    if (vibrant.length) {
+                        return vibrant[0].hex;
+                    }
+                }
+                const primary = colorInfos[0];
+                if (!primary) return null;
+                const runnerUp = colorInfos[1];
+                if (runnerUp && (primary.bucket.count - runnerUp.bucket.count) < MIN_DOMINANCE_GAP) {
+                    return null;
+                }
+                return primary.hex;
+            };
+
+            const choosePaletteColors = (colorInfos, limit = 5) => {
+                if (!colorInfos?.length) return [];
+                const maxCount = Math.max(...colorInfos.map(info => info.bucket.count));
+                const candidates = [...colorInfos]
+                    .filter(info =>
+                        info.saturation >= 0.08
+                        && info.luminance >= 0.12
+                        && info.luminance <= 0.96
+                    )
+                    .sort((a, b) => getPaletteScore(b, maxCount) - getPaletteScore(a, maxCount));
+                const fallbackCandidates = [...colorInfos]
+                    .sort((a, b) => getPaletteScore(b, maxCount) - getPaletteScore(a, maxCount));
+                const selected = [];
+                const selectedInfos = [];
+                const addColor = (info, { enforceRgb = true, enforceHue = true } = {}) => {
+                    const normalized = normalizeAccentColor(info?.hex);
+                    if (!normalized || selected.includes(normalized)) return false;
+                    if (enforceRgb && selected.some(existing => getColorDistance(existing, normalized) < PALETTE_DISTANCE_THRESHOLD)) {
+                        return false;
+                    }
+                    if (enforceHue && selectedInfos.some(existing => getHueDistance(existing, info) < PALETTE_HUE_DISTANCE_THRESHOLD)) {
+                        return false;
+                    }
+                    selected.push(normalized);
+                    selectedInfos.push(info);
+                    return selected.length >= limit;
+                };
+                for (const info of candidates) {
+                    if (addColor(info, { enforceRgb: true, enforceHue: true })) break;
+                }
+                if (selected.length < limit) {
+                    for (const info of candidates) {
+                        if (addColor(info, { enforceRgb: true, enforceHue: false })) break;
+                    }
+                }
+                if (selected.length < limit) {
+                    for (const info of fallbackCandidates) {
+                        if (addColor(info, { enforceRgb: false, enforceHue: false })) break;
+                    }
+                }
+                return selected.slice(0, limit);
+            };
+
+            const analyzeImageElement = (img) => {
+                const colorInfos = getColorInfosFromImageElement(img);
+                return chooseAccentColor(colorInfos);
             };
 
             const loadImage = (src) => new Promise((resolve, reject) => {
@@ -403,6 +503,30 @@ window.addEventListener('DOMContentLoaded', () => {
                 applyFromSource(src, token);
             };
 
+            const getLatestArtworkSrc = () => {
+                if (latestArtworkSrc) return latestArtworkSrc;
+                try {
+                    if (typeof globalart !== 'undefined' && globalart) return globalart;
+                } catch { }
+                return '';
+            };
+
+            const getPalette = async ({ limit = 5, src = '' } = {}) => {
+                const artworkSrc = src || getLatestArtworkSrc();
+                if (!artworkSrc) return [];
+                const image = await loadImage(artworkSrc);
+                const colorInfos = getColorInfosFromImageElement(image);
+                const seen = new Set();
+                return choosePaletteColors(colorInfos, limit)
+                    .map(hex => lightenColor(hex) || hex)
+                    .map(normalizeAccentColor)
+                    .filter(color => {
+                        if (!color || seen.has(color)) return false;
+                        seen.add(color);
+                        return true;
+                    });
+            };
+
             const handleArtwork = (src) => {
                 latestArtworkSrc = src || '';
                 if (!src) {
@@ -428,6 +552,8 @@ window.addEventListener('DOMContentLoaded', () => {
             };
 
             return {
+                getLatestArtworkSrc,
+                getPalette,
                 handleArtwork,
                 syncPreference,
             };
@@ -461,6 +587,69 @@ window.addEventListener('DOMContentLoaded', () => {
             const found = THEMES.find(themeObj => getThemeName(themeObj) === themeName);
             return found?.label || themeName.replace(/-/g, ' ');
         };
+
+        async function openCoverAccentPaletteModal({ accentInput = null } = {}) {
+            const hasTrack = (() => {
+                try {
+                    if (typeof cur_file !== 'undefined' && cur_file) return true;
+                } catch { }
+                try {
+                    const player = document.getElementById('player');
+                    return !!player?.src;
+                } catch {
+                    return false;
+                }
+            })();
+            if (!hasTrack) {
+                throw_error('No track playing!');
+                return null;
+            }
+            const artworkSrc = AutoAccentController.getLatestArtworkSrc();
+            if (!artworkSrc) {
+                throw_error('This track has no cover');
+                return null;
+            }
+            const paletteModal = await msg(`Reading...`, 'Pick accent from cover');
+            window.VoxityRouter?.setModalRoute(paletteModal, '/control/cover_swatch');
+            try {
+                const palette = await AutoAccentController.getPalette({ limit: 5, src: artworkSrc });
+                if (!palette.length) {
+                    paletteModal.setContent(`No colors are available for this track yet`);
+                    return paletteModal;
+                }
+                paletteModal.setContent(`
+                    <div class="voxity-cover-accent-modal">
+                        <div class="voxity-cover-accent-grid">
+                            ${palette.map(color => `
+                                <button type="button" class="voxity-cover-accent-swatch" data-color="${color}" style="--swatch-color: ${color};" aria-label="Use ${color} as accent color">
+                                    <span>${color}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `);
+                const swatches = Array.from(paletteModal.overlay.querySelectorAll('.voxity-cover-accent-swatch'));
+                swatches.forEach(swatch => {
+                    swatch.addEventListener('click', () => {
+                        const applied = applyAccentColor(swatch.dataset.color, { persist: true });
+                        if (!applied) return;
+                        if (accentInput) {
+                            accentInput.value = applied;
+                        }
+                        try { paletteModal.close(); } catch { }
+                        setTimeout(() => {
+                            try { modal_title_up(`Accent color set to ${applied}`); } catch { }
+                        }, 260);
+                    });
+                });
+                return paletteModal;
+            } catch {
+                paletteModal.setContent(`
+                    Couldn't sample any colors from the cover
+                `);
+                return paletteModal;
+            }
+        }
 
         function apply(theme) {
             document.documentElement.setAttribute('data-theme', theme);
@@ -535,6 +724,7 @@ window.addEventListener('DOMContentLoaded', () => {
                                 <input id="accent_color" type="color" value="${accentValue}" class="voxity-settings-control voxity-settings-color">
                                 <button type="button" id="accent_color_reset" class="voxity-settings-reset" title="Reset to the current theme default" aria-label="Reset accent color to default"><i class="fa-solid fa-arrow-rotate-left"></i></button>
                             </div>
+                            <small><a href="/settings/accent-from-cover" id="accent_from_cover" class="voxity-settings-cover-link">Pick from cover...</a></small>
                         </div>
                     </section>
                     <section class="voxity-settings-section">
@@ -626,6 +816,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const select = document.getElementById('theme_select');
                 const acin = document.getElementById('accent_color');
                 const accentResetBtn = document.getElementById('accent_color_reset');
+                const accentFromCoverLink = document.getElementById('accent_from_cover');
                 const vizSelect = document.getElementById('vizmode_select');
                 const hiddenViz = document.getElementById('viz-mode');
                 const fpsSlider = document.getElementById('fps_slider');
@@ -704,6 +895,13 @@ window.addEventListener('DOMContentLoaded', () => {
                         if (resetValue) {
                             modal_title_up(`Accent color reset to ${resetValue}`);
                         }
+                    });
+                }
+
+                if (accentFromCoverLink) {
+                    accentFromCoverLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openCoverAccentPaletteModal({ accentInput: acin });
                     });
                 }
 
