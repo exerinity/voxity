@@ -77,8 +77,9 @@ There is also a simpler deprecated Electron shell that exposes & obeys MPRIS con
 ### https://github.com/stars/exerinity/lists/voxity
 
 ## License
-This project is licensed under the MIT license. See the [license](LICENSE) file for details.
+This project is released under the Unlicense, which is a public domain dedication. See the [license](LICENSE) file for details.
 
+(*this does not apply to Font Awesome icons, jsmediatags, Twemoji, or any other third party things used*)
 ## Things used
 - ~~**Twemoji**: https://twemoji.twitter.com~~ *removed as of v85a\**
 - **jsmediatags**: https://github.com/aadsm/jsmediatags
