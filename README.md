@@ -66,7 +66,7 @@ and more!
 | `0` to `9`                   | Jump to percentage            | `0` = 0%, `1` = 10%, ..., `9` = 90%<br>`Shift` = half-jump; so `Shift` + `1` = 5% |
 
 ## About this repository
-The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. 
+The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. Nevertheless, if you can make a cool fork of Voxity, go ahead! I would love to see it!
 ## Other repositories / Desktop version
 I am currently working on a desktop version of Voxity, that scans your drive and plays music from there, rather than having to drop in files every session. It's in Electron, and, while it's not "official" or open source yet, you can download a preview on my website: https://exerinity.com/voxity/desktop
 
@@ -105,12 +105,12 @@ https://exerinity.com/doom/ost and https://demo.player.exerinity.com/
 - **Windows Media Player** for the rotating tab title logic, in the mini player
 - **Winamp** for the status bar system (https://files.exerinity.com/Voxity_20260224_203314.mp4)
 - **VLC media player** for the notifications (...kinda)
-- **foobar2000** for the tagline "plays music." (it is a carbon copy from its buttons found at https://www.foobar2000.org/support) (im sorry)
+- **foobar2000** for the tagline "plays music." (it is a carbon copy from its buttons found at https://www.foobar2000.org/support) (im sorry) and other minor things here and there
 
 ## Donate
-Instead of donating to me, you should donate to
+Please do not (ask how to) donate to me, as Voxity is not a financially demanding project to maintain. The only thing that costs me anything is the domain, which is ~$20 a year. I don't know, it hasn't been the second period. Instead, I urge you to instead donate to:
 
 - [The Tim Bergling Foundation](https://www.timberglingfoundation.org/donationer)
 - [LRCLIB](https://github.com/sponsors/tranxuanthang)
 
-I'm not affiliated with these, but, developing Voxity does not cost me anything, so I should not receive anything back for it
+I'm not affiliated with these, but LRCLIB is a major component within Voxity and the Tim Bergling Foundation is the charity founded in the name of my childhood hero, so...
