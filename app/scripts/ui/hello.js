@@ -29,7 +29,6 @@ if (typeof localStorage !== 'undefined') {
 
 async function loadFA() {
     const mod = await msg("Loading...", "Rescue");
-    window.VoxityRouter?.setModalRoute(mod, '/i/load_fa');
 
     if (!navigator.onLine) return mod.setContent("You need to be online to reinject Font Awesome");
 
@@ -59,7 +58,6 @@ function welcome() {
 <p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a>
 <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a></small>
 `, "Welcome to Voxity");
-    window.VoxityRouter?.setModalRoute(modalPromise, '/i/welcome');
 }
 
 function thisSongIsAss() {
@@ -68,6 +66,5 @@ function thisSongIsAss() {
     elements.error_sound.index = 0;
     elements.error_sound.play();
     const modal = msg("This song is ass. Session terminated.");
-    window.VoxityRouter?.setModalRoute(modal, '/control/fuckyou');
     setTimeout(function () { window.location.reload(); }, 3000);
 }

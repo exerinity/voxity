@@ -22,10 +22,6 @@ async function openToysModal() {
                     <label for="toys-modal-title">Title <small>(optional)</small></label>
                     <input type="text" id="toys-modal-title" class="voxity-settings-control" style="width:100%;box-sizing:border-box;" placeholder="Voxity">
                 </div>
-                <div class="voxity-settings-field">
-                    <label for="toys-modal-route">Route <small>(optional)</small></label>
-                    <input type="text" id="toys-modal-route" class="voxity-settings-control" style="width:100%;box-sizing:border-box;" placeholder="/toys/preview">
-                </div>
                 <div style="display:flex;gap:1.25rem;margin-top:0.5rem;">
                     <label style="display:flex;align-items:center;gap:0.4em;cursor:pointer;user-select:none;" title="Modals can be dragged around the screen from their title bar. Try it on this modal! This toggles whether you can do that.">
                         <input type="checkbox" id="toys-modal-drag" checked> Drag?
@@ -44,7 +40,6 @@ async function openToysModal() {
         </div>
     `, 'Voxitoys');
 
-    window.VoxityRouter?.setModalRoute(modal, '/i/toys');
 
     setTimeout(() => {
         const toastText = document.getElementById('toys-toast-text');
@@ -61,15 +56,11 @@ async function openToysModal() {
         document.getElementById('toys-modal-launch')?.addEventListener('click', () => {
             const html = document.getElementById('toys-modal-html')?.value || '';
             const title = document.getElementById('toys-modal-title')?.value.trim() || undefined;
-            const route = document.getElementById('toys-modal-route')?.value.trim() || '';
             const canDrag = document.getElementById('toys-modal-drag')?.checked ?? true;
             const canClose = document.getElementById('toys-modal-close')?.checked ?? true;
             const closeFirst = document.getElementById('toys-modal-close-first')?.checked ?? false;
             if (closeFirst) closeTopModal();
             const launched = msg(html, title, canClose, canDrag);
-            if (route) {
-                launched.then?.(m => window.VoxityRouter?.setModalRoute(m, route));
-            }
         });
     }, 0);
 }

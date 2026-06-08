@@ -133,5 +133,4 @@ function linkSettings() {
         : location.origin + location.pathname;
 
     const modal = msg(`<a style="word-break: break-all;" href="${url}" target="_blank">${url}</a>`);
-    window.VoxityRouter?.setModalRoute(modal, '/settings/link');
 }

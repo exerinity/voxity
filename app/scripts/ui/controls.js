@@ -30,7 +30,6 @@ document.getElementById('rwd').addEventListener('click', debounce(() => {
 
 document.getElementById('branding').addEventListener('click', debounce(() => {
     const modalPromise = msg(about_content, "About Voxity");
-    window.VoxityRouter?.setModalRoute(modalPromise, '/about');
     return modalPromise;
 }));
 
@@ -83,7 +82,6 @@ function restr() {
 
 document.getElementById('hotkeys').addEventListener('click', debounce(() => {
     const modalPromise = msg(hotkeys_content, 'List of hotkeys');
-    window.VoxityRouter?.setModalRoute(modalPromise, '/hotkeys');
 }));
 
 
@@ -111,7 +109,6 @@ function enlargeCover() {
         `<img src="${globalart}" title="Click to open full image in a new tab" alt="Cover art" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" id="msgart">`,
         act_truncate(metadata.album || metadata.title || "Cover art")
     );
-    window.VoxityRouter?.setModalRoute(modalPromise, '/i/imageview');
 
     setTimeout(() => {
         const img = document.getElementById('msgart');

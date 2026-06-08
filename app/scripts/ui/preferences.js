@@ -114,7 +114,6 @@ window.addEventListener('DOMContentLoaded', () => {
                         <small><a href="/settings" class="voxity-settings-back">Back to settings</a></small>
                 </div>
             `, 'LRCLIB settings');
-            window.VoxityRouter?.setModalRoute(modal, '/settings/lrclib');
             setTimeout(() => {
                 const radios = Array.from(document.querySelectorAll('input[name="lrclib_mode"]'));
                 radios.forEach(r => {
@@ -610,7 +609,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             const paletteModal = await msg(`Reading...`, 'Pick accent from cover');
-            window.VoxityRouter?.setModalRoute(paletteModal, '/control/cover_swatch');
             try {
                 const palette = await AutoAccentController.getPalette({ limit: 5, src: artworkSrc });
                 if (!palette.length) {
@@ -810,7 +808,6 @@ window.addEventListener('DOMContentLoaded', () => {
                     <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a> - <a href="/i/toys" onclick="event.preventDefault();closeTopModal(); openToysModal()">Toys</a></small>
                 </div>
             `, 'Voxity settings');
-            window.VoxityRouter?.setModalRoute(modal, '/settings');
 
             setTimeout(() => {
                 const select = document.getElementById('theme_select');

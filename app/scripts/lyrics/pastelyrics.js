@@ -12,8 +12,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
             </div><br><small style="color: #888;">You can drag and drop a .lrc or .srt/.vtt file to the dropzone or search LRCLIB for lyrics by pressing <strong><i class="fa-solid fa-magnifying-glass"></i> Search lyrics</strong></small>
         </div>
     `, 'Paste your own lyrics');
-    window.VoxityRouter?.setModalRoute(modalPromise, '/lyrics/edit');
-
+    
     setTimeout(() => {
         const ta = document.getElementById('lrc_textarea');
         if (lrc_data) ta.value = lrc_data.map(item => {

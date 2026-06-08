@@ -273,7 +273,6 @@ async function openQueueSearchModal(initialQuery = '') {
             </div>
         </form>
     `, 'Search the queue');
-    window.VoxityRouter?.setModalRoute(modal, '/find');
 
     const input = document.getElementById('queue-search-input');
     const form = document.getElementById('queue-search-form');

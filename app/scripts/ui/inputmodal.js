@@ -15,7 +15,6 @@ document.getElementById('volc').addEventListener('click', debounce(() => {
             </div>
         </div>
     `, 'Set volume');
-    window.VoxityRouter?.setModalRoute(modalPromise, '/control/volume');
 
     setTimeout(() => {
         const input = document.getElementById('vol_inp');
@@ -69,7 +68,6 @@ document.getElementById('speedc').addEventListener('click', debounce(() => {
             </div>
         </div>
     `, 'Set speed');
-    window.VoxityRouter?.setModalRoute(modalPromise, '/control/speed');
 
     setTimeout(() => {
         const input = document.getElementById('spd_inp');
@@ -127,7 +125,6 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
             </div>
         </div>
     `, 'Set playback time');
-    window.VoxityRouter?.setModalRoute(modalPromise, '/control/time');
 
     setTimeout(() => {
         const input = document.getElementById('ind_inp');

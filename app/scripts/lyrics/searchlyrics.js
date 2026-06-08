@@ -32,7 +32,6 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
         </div>`;
 
     const modal = await msg(searchFormHtml(), 'Search for lyrics');
-    window.VoxityRouter?.setModalRoute(modal, '/lyrics/search');
 
     function attachSearchForm(initialQuery) {
         setTimeout(() => {
