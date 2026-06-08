@@ -237,6 +237,74 @@ details ul {
     color: var(--fg-strong);
 }
 
+.voxity-settings-cover-link {
+    display: inline-block;
+    margin-top: 0.35rem;
+    color: var(--lyric-color, #8000ff);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.voxity-settings-cover-link:hover,
+.voxity-settings-cover-link:focus-visible {
+    text-decoration: underline;
+}
+
+.voxity-cover-accent-modal {
+    color: var(--fg);
+}
+
+.voxity-cover-accent-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 0.8rem;
+}
+
+#msg-content .voxity-cover-accent-swatch {
+    aspect-ratio: 1;
+    border: 1px solid var(--control-br);
+    border-radius: 12px;
+    background: var(--swatch-color);
+    color: #fff;
+    cursor: pointer;
+    min-width: auto;
+    padding: 0.35rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 16px var(--shadow);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#msg-content .voxity-cover-accent-swatch:hover,
+#msg-content .voxity-cover-accent-swatch:focus-visible {
+    background: var(--swatch-color);
+    border-color: var(--fg-strong);
+    box-shadow: 0 10px 20px var(--shadow);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.voxity-cover-accent-swatch span {
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 999px;
+    bottom: 0.35rem;
+    font-size: 0.68rem;
+    left: 50%;
+    line-height: 1;
+    padding: 0.2rem 0.35rem;
+    position: absolute;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+    .voxity-cover-accent-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 .voxity-settings-slider {
     display: flex;
     gap: 0.5rem;
