@@ -114,7 +114,11 @@ function enlargeCover() {
         const img = document.getElementById('msgart');
         if (!img) return;
 
-        img.onclick = () => {
+            img.onclick = () => {
+            if (typeof isElectron === 'function' && isElectron()) {
+                throw_error('Not available in Electron');
+                return;
+            }
             let blobUrl = globalart;
 
             if (globalart.startsWith('data:')) {

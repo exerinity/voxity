@@ -24,8 +24,8 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
           <li><strong>Ctrl + Left/Right</strong>: scrub ±5s</li>
           <li><strong>Alt + Left/Right</strong>: scrub ±30s</li>
 
-          <li><strong>Numeric keys (0–9)</strong>: jump to 0–90%</li>
-          <li><strong>Shift + Numeric keys (0–9)</strong>: jump to 5–95%</li>
+          <li><strong>Numeric keys (0-9)</strong>: jump to 0-90%</li>
+          <li><strong>Shift + Numeric keys (0-9)</strong>: jump to 5-95%</li>
         </ul>
       </details>
     </li>
@@ -38,12 +38,20 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
           <li><strong>S / Down</strong>: volume down</li>
           <li><strong>Z</strong>: previous track</li>
           <li><strong>X</strong>: next track</li>
-          <li><strong>Ctrl + Shift + Alt + V</strong>: This song is ass</li>
+        </ul>
+      </details>
+    </li>
+
+    <li>
+      <details>
+        <summary style="font-size:1.1rem;font-weight:600;margin-bottom:0.2em;">Miscellaneous</summary>
+        <ul style="list-style-type:none;padding-left:1em;margin-top:0.3em;line-height:1.5;">
+          <li><strong>Ctrl + Shift + Alt + V</strong>: this song is ass</li>
         </ul>
       </details>
     </li>
   </ul>
-  <i style="font-size:0.9rem;color:#888;">You can also scroll your mouse over the sliders</i>
+  <i style="font-size:0.9rem">While not a hot<u>key</u>, per se, you can also scroll your mousewheel over sliders to move them</i>
   `;
 
 const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.com" target="_blank" rel="noopener">exerinity</a>, written in vanilla JavaScript. It is not designed to replace or compete with any other players; but rather to be a fun, fast and quick way for casual listening.</p>
@@ -57,7 +65,7 @@ const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA
         : "Tip: You should install Voxity as an app. <a href='/install' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
         </p>
         <hr>
-        <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank">LRCLIB</a>/<a href="https://www.musixmatch.com/" target="_blank" rel="noopener">Musixmatch</a> for lyrics. <a href="/git/LICENSE">Voxity is available under the MIT license.</a></p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
+        <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank">LRCLIB</a>/<a href="https://www.musixmatch.com/" target="_blank" rel="noopener">Musixmatch</a> for lyrics. Voxity is <a href="https://github.com/exerinity/voxity/tree/main#license">public domain software</a>.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
         <br><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a> - <a href="https://github.com/exerinity/voxity" target="_blank"><i class="fa-brands fa-github"></i> Voxity on GitHub</a>
         <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a></small><br><br>
         <a href="https://exerinity.com/projects/voxity/88x31" target="_blank"><img src="https://i.exerinity.com/voxity.gif"></a> <a href="https://exerinity.com/projects/voxity/88x31" target="_blank"><img src="https://i.exerinity.com/voxitygreen.gif"></a> <a href="https://exerinity.com/projects/voxity/88x31" target="_blank"><img src="https://i.exerinity.com/voxitynow_purp.gif"></a>`;
