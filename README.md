@@ -1,15 +1,15 @@
 # Voxity - plays music.
-A modern, opinionated, fast, PWA local music player written entirely in JavaScript
+Voxity is a bizarre, feature-rich, semi-advanced PWA desktop music player written entirely in vanilla JavaScript that supports any file format your browser does. Not intended for use on mobile.
 
 ![](https://i.exerinity.com/Voxity_20260218_223009.png)
 
-## Links
+## Quick links
 - Try now: https://voxity.dev
 - Release notes: https://voxity.dev/releases
 - Download: https://github.com/exerinity/voxity.electron/releases
 - More info: https://exerinity.com/projects/voxity
 
-## Features
+## List of features
 - Online lyric searching and displaying, with click-to-jump lines from [LRCLIB](https://lrclib.net) or [Musixmatch (experimental)](https://www.musixmatch.com)
 - LRCLIB is configurable: you can query by Strict (artist, title, album, duration) or Lax (artist and title)
 - A queue with an intelligent shuffle system and drag-to-reorder
@@ -114,3 +114,8 @@ Please do not (ask how to) donate to me, as Voxity is not a financially demandin
 - [LRCLIB](https://github.com/sponsors/tranxuanthang)
 
 I'm not affiliated with these, but LRCLIB is a major component within Voxity and the Tim Bergling Foundation is the charity founded in the name of my childhood hero, so...
+
+## Mobile?
+Voxity is not intended to be used on mobile, however, from my personal experience, it *might* work. On Android in landscape mode, it works perfectly fine (if you ignore the tiny fucking screen), on iPhone it's a bit finicky, but the reason I discourage mobile use is the design of Voxity. Voxity is a "two panel" or "two sided" player, information is split up into two sides on the screen, which is difficult (for me) to make work correctly on mobile, in portrait. That's not saying tablets won't run it fine, but nobody uses tablets anymore. Making Voxity mobile friendly would probably fundamentally change what it is and notwithstanding simply not something I am interested in. Because your phone 100% has dozens of better music players that are native.
+
+Please do not make a pull request or an issue about mobile in any concern. Whether something is not working on mobile (but does on desktop), requests to modify for mobile friendliness, whatever, **it will be ignored or rejected**. Voxity is strictly a desktop player **only**.
