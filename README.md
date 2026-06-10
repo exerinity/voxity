@@ -41,13 +41,6 @@ Voxity is a bizarre, feature-rich, semi-advanced PWA desktop music player writte
 
 and more!
 
-## To do / Roadmap
-(Items ending in an asterisk are purely ideas and may never actually happen)
-- Tie the routes to actually open modals on load, for example, loading https://voxity.dev/settings should open the settings modal
-- Add a miniplayer which (asks to) open(s) when you unfocus, minimize, or otherwise leave the main window (especially in the Electron version)\*
-- Rewrite the "Modify lyrics" button from a text-area to a full toolkit with a timing editor\*
-- DOCUMENTATION!!! (of how to use the actual code and do your own things with it)
-
 ## Hotkeys
 | Key                  | Action                        | Details / modifiers |
 |---------------------------|-------------------------------|---------------------|
@@ -115,7 +108,9 @@ Please do not (ask how to) donate to me, as Voxity is not a financially demandin
 
 I'm not affiliated with these, but LRCLIB is a major component within Voxity and the Tim Bergling Foundation is the charity founded in the name of my childhood hero, so...
 
-## Mobile?
-Voxity is not intended to be used on mobile, however, from my personal experience, it *might* work. On Android in landscape mode, it works perfectly fine (if you ignore the tiny fucking screen), on iPhone it's a bit finicky, but the reason I discourage mobile use is the design of Voxity. Voxity is a "two panel" or "two sided" player, information is split up into two sides on the screen, which is difficult (for me) to make work correctly on mobile, in portrait. That's not saying tablets won't run it fine, but nobody uses tablets anymore. Making Voxity mobile friendly would probably fundamentally change what it is and notwithstanding simply not something I am interested in. Because your phone 100% has dozens of better music players that are native.
+## Well what about mobile?
+Simple answer: **No.**
 
-Please do not make a pull request or an issue about mobile in any concern. Whether something is not working on mobile (but does on desktop), requests to modify for mobile friendliness, whatever, **it will be ignored or rejected**. Voxity is strictly a desktop player **only**.
+Voxity is not intended to be used on mobile, however, from my personal experience, it *might* work. On Android in landscape mode, it works perfectly fine (if you ignore the tiny fucking screen), on iPhone it's a bit finicky, but the reason I discourage mobile use is the design of Voxity. Voxity is a "two panel" or "two sided" player, information is split up into two sides on the screen, which is difficult (for me) to make work correctly on mobile, in portrait. That's not saying tablets won't run it fine, but nobody uses tablets anymore. Making Voxity mobile friendly would probably fundamentally change what it is and nevertheless simply not something I am interested in. Because your phone 100% has dozens of better music players that are native.
+
+Please do not make a pull request or an issue about mobile in any concern. Whether something is not working on mobile (but does on desktop), requests to modify for mobile friendliness, whatever, **it will be ignored, closed or rejected**. Voxity is strictly a desktop player **only**.
