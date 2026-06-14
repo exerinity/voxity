@@ -37,7 +37,7 @@ async function openToysModal() {
                     <button class="bu" id="toys-modal-launch" style="background:var(--btn-bg);color:var(--fg);">Launch modal</button>
                 </div>
             </section>
-            <small><a href="/i/foundmedia" id="toys-accent-picker">Open image accent picker</a></small>
+            <small><a href="/i/foundmedia" onclick="event.preventDefault();closeTopModal(); openImageAccentPickerModal()">Open image accent picker</a></small>
         </div>
     `, 'Voxitoys');
 

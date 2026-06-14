@@ -680,7 +680,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                     </section>
-                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a> - <a href="/i/toys" onclick="event.preventDefault();closeTopModal(); openToysModal()">Toys</a><br><a href="/i/foundmedia" id="toys-accent-picker">Open image accent picker</a></small>
+                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a> - <a href="/i/toys" onclick="event.preventDefault();closeTopModal(); openToysModal()">Toys</a><br><a href="/i/foundmedia" onclick="event.preventDefault();closeTopModal(); openImageAccentPickerModal()">Open image accent picker</a></small>
                 </div>
             `, 'Voxity settings');
 
