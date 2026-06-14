@@ -13,6 +13,8 @@
         wakeLock: false,
         autoAccentColor: false,
         dynamicFavicon: true,
+        shuffleButtonAction: 'shuffle',
+        visualizer: 'spectrum',
     });
 
     let values = { ...DEFAULTS };
