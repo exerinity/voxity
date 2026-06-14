@@ -15,7 +15,7 @@ let braviaRings = [];
 
 function vis_init() {
     const canvas = document.getElementById('visualizer');
-    const ctx = canvas.getContext('2d', { alpha: false });
+    const ctx = canvas.getContext('2d', { alpha: true });
     const modeSel = document.getElementById('viz-mode');
     const analyser = getAnalyser();
     if (!analyser) return;

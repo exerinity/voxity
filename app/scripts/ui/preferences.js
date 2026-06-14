@@ -532,6 +532,13 @@ window.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { }
                 return 60;
             })();
+            const vizBgOpacityValue = (function () {
+                try {
+                    const stored = parseInt(localStorage.getItem('au_viz_bg_opacity'));
+                    if (!isNaN(stored) && stored >= 0 && stored <= 100) return stored;
+                } catch (e) { }
+                return 100;
+            })();
             const lrcValue = (function () {
                 try {
                     const stored = parseInt(localStorage.getItem('au_lrc_amount'));
@@ -587,12 +594,24 @@ window.addEventListener('DOMContentLoaded', () => {
                     <section class="voxity-settings-section">
                         <h3>Audio feedback</h3>
                         <div class="voxity-settings-field">
+                            <label for="vizmode_select">Visualizer mode</label>
+                            <select id="vizmode_select" class="voxity-settings-control">
+                                ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="voxity-settings-field">
                             <label for="fps_slider">Visualizer FPS</label>
                             <div class="voxity-settings-slider">
                                 <input id="fps_slider" type="range" min="1" max="300" value="${fpsValue}">
                                 <input id="fps_number" type="number" min="1" max="300" value="${fpsValue}" class="voxity-settings-control voxity-settings-number">
                             </div>
-                            <small class="voxity-settings-small">1-300 frames per second</small>
+                        </div>
+                        <div class="voxity-settings-field">
+                            <label for="vizbg_slider">Visualizer background opacity</label>
+                            <div class="voxity-settings-slider">
+                                <input id="vizbg_slider" type="range" min="0" max="100" value="${vizBgOpacityValue}">
+                                <input id="vizbg_number" type="number" min="0" max="100" value="${vizBgOpacityValue}" class="voxity-settings-control voxity-settings-number">
+                            </div>
                         </div>
                         <div class="voxity-settings-field">
                             <label for="lrc_slider">Lyrics amount</label>
@@ -600,22 +619,13 @@ window.addEventListener('DOMContentLoaded', () => {
                                 <input id="lrc_slider" type="range" min="1" max="48" value="${lrcValue}">
                                 <input id="lrc_number" type="number" min="1" max="48" value="${lrcValue}" class="voxity-settings-control voxity-settings-number">
                             </div>
-                            <small class="voxity-settings-small">Number of lyric lines visible (1-48)</small>
                         </div>
                         <div class="voxity-settings-field">
-                            <label for="pref_titleRotationInterval">Title rotation speed</label>
+                            <label for="pref_titleRotationInterval">Tab title rotation speed</label>
                             <div class="voxity-settings-slider">
                                 <input type="range" id="pref_titleRotationInterval" min="1" max="240" value="${rotationIntervalValue}" ${hasSettingsApi ? '' : 'disabled'}>
                                 <input type="number" id="pref_titleRotationInterval_number" min="1" max="240" value="${rotationIntervalValue}" class="voxity-settings-control voxity-settings-number" ${hasSettingsApi ? '' : 'disabled'}>
                             </div>
-                            <small class="voxity-settings-small">Seconds between title changes (1-240)</small>
-                        </div>
-                        <div class="voxity-settings-field">
-                            <label for="vizmode_select">Visualizer mode</label>
-                            <select id="vizmode_select" class="voxity-settings-control">
-                                ${VIZ_OPTIONS.map(o => `<option value="${o.v}" ${o.v === currentViz ? 'selected' : ''}>${o.l}</option>`).join('')}
-                            </select>
-                            <small class="voxity-settings-small">Tip: click the visualizer to reopen this panel</small>
                         </div>
                     </section>
                     <section class="voxity-settings-section">
@@ -693,6 +703,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 const hiddenViz = document.getElementById('viz-mode');
                 const fpsSlider = document.getElementById('fps_slider');
                 const fpsNumber = document.getElementById('fps_number');
+                const vizBgSlider = document.getElementById('vizbg_slider');
+                const vizBgNumber = document.getElementById('vizbg_number');
                 const lrcSlider = document.getElementById('lrc_slider');
                 const lrcNumber = document.getElementById('lrc_number');
                 const rotationSlider = document.getElementById('pref_titleRotationInterval');
@@ -818,6 +830,21 @@ window.addEventListener('DOMContentLoaded', () => {
 
                     fpsSlider.addEventListener('input', () => syncFPS(fpsSlider.value));
                     fpsNumber.addEventListener('change', () => syncFPS(fpsNumber.value));
+                }
+
+                if (vizBgSlider && vizBgNumber) {
+                    const syncVizBg = (v) => {
+                        const num = parseInt(v, 10);
+                        const val = (isNaN(num) ? 100 : Math.max(0, Math.min(100, num)));
+                        try { vizBgSlider.value = val; } catch { }
+                        try { vizBgNumber.value = val; } catch { }
+                        try { document.documentElement.style.setProperty('--visualizer-bg-opacity', String(val / 100)); } catch { }
+                        try { localStorage.setItem('au_viz_bg_opacity', String(val)); } catch { }
+                        try { modal_title_up(`Visualizer background opacity: ${val}%`); } catch { }
+                    };
+
+                    vizBgSlider.addEventListener('input', () => syncVizBg(vizBgSlider.value));
+                    vizBgNumber.addEventListener('change', () => syncVizBg(vizBgNumber.value));
                 }
 
                 if (lrcSlider && lrcNumber) {
@@ -980,6 +1007,14 @@ window.addEventListener('DOMContentLoaded', () => {
             if (!isNaN(f)) {
                 const clamped = Math.max(1, Math.min(300, f));
                 try { FPS = clamped; } catch { }
+            }
+        } catch { }
+
+        try {
+            const bgOpacity = parseInt(localStorage.getItem('au_viz_bg_opacity'));
+            if (!isNaN(bgOpacity)) {
+                const clamped = Math.max(0, Math.min(100, bgOpacity));
+                document.documentElement.style.setProperty('--visualizer-bg-opacity', String(clamped / 100));
             }
         } catch { }
 
