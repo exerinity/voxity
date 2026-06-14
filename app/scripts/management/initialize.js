@@ -93,8 +93,14 @@ function init() {
     shuffleButton = document.getElementById('shuffle');
     updateShuffleButton();
     shuffleButton?.addEventListener('click', debounce(() => {
-        toggleShuffle();
+        handleShuffleButton();
     }));
+    document.addEventListener('voxity:settings-changed', (event) => {
+        const key = event?.detail?.key;
+        if (key === 'shuffleButtonAction' || key === '*') {
+            updateShuffleButton();
+        }
+    });
 
     elements.player.addEventListener('play', () => {
         if (frame_id) {
@@ -160,7 +166,14 @@ function init() {
                     break;
             }
         }
-        throw_error(err_msg);
+        throw_error(err_msg + ' - skipping in 5 seconds...');
+
+        const failedSrc = elements.player.currentSrc || elements.player.src;
+        setTimeout(() => {
+            if (!elements.player.error) return;
+            if ((elements.player.currentSrc || elements.player.src) !== failedSrc) return;
+            contin({ silent: true });
+        }, 5000);
     });
 
     elements.player.addEventListener('timeupdate', () => {
