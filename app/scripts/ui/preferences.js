@@ -20,6 +20,8 @@ window.addEventListener('DOMContentLoaded', () => {
             { v: 'spectrum', l: 'Spectrum' },
             { v: 'waveform', l: 'Waveform' },
             { v: 'circular', l: 'Circular' },
+            { v: 'super', l: 'Superscope' },
+            { v: 'bravia', l: 'Bravia' },
             { v: 'none', l: 'Off' },
         ];
         const DEFAULT_ROTATION_INTERVAL = 5;
@@ -64,7 +66,7 @@ window.addEventListener('DOMContentLoaded', () => {
             {
                 key: 'autoAccentColor',
                 label: 'Set accent from cover',
-                description: 'Derive the accent color from the dominant color in the current artwork',
+                description: 'Derive the accent color from the dominant color in the current artwork <a href="/settings/auto-accent" class="voxity-settings-configure-accent">(config)</a>',
             },
             {
                 key: 'dynamicFavicon',
@@ -72,6 +74,18 @@ window.addEventListener('DOMContentLoaded', () => {
                 description: 'Replace the browser tab icon with the current artwork',
                 disableIfElectron: true,
                 disabledNote: 'You are running the Electron version of Voxity',
+            },
+        ];
+        const SHUFFLE_ACTIONS = [
+            {
+                key: 'jumble',
+                label: 'Jumble the queue',
+                note: 'Immediately reorder every song randomly without enabling shuffle functionality',
+            },
+            {
+                key: 'shuffle',
+                label: 'Enable normal queue shuffling',
+                note: 'Toggle shuffle so upcoming tracks play in a random order',
             },
         ];
         const LYRICS_SOURCES = [
@@ -133,6 +147,102 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             }, 0);
         }
+
+        async function openAutoAccentConfigModal() {
+            const accentApi = (typeof window !== 'undefined' && window.VoxityAccents) ? window.VoxityAccents.config : null;
+            const hasApi = !!accentApi;
+            const fields = hasApi ? accentApi.fields : [];
+            const fieldsHtml = fields.map(field => {
+                const value = accentApi.get(field.key);
+                return `
+                    <div class="voxity-settings-field">
+                        <label for="accent_cfg_${field.key}">${field.label}</label>
+                        <div class="voxity-settings-slider">
+                            <input type="range" id="accent_cfg_${field.key}" min="${field.min}" max="${field.max}" step="${field.step}" value="${value}">
+                            <input type="number" id="accent_cfg_${field.key}_number" min="${field.min}" max="${field.max}" step="${field.step}" value="${value}" class="voxity-settings-control voxity-settings-number">
+                        </div>
+                        ${field.description ? `<small class="voxity-settings-small">${field.description}</small>` : ''}
+                    </div>`;
+            }).join('');
+            const modal = await msg(`
+                <div class="voxity-settings-modal">
+                    <section class="voxity-settings-section">
+                        <p class="voxity-settings-note">Only change these if you know what you're doing.</p>
+                        ${hasApi ? '' : '<p class="voxity-settings-note">Not allowed</p>'}
+                        ${hasApi && accentApi.presets?.length ? `
+                        <div class="voxity-settings-field">
+                            <label for="accent_cfg_preset">Presets</label>
+                            <select id="accent_cfg_preset" class="voxity-settings-control">
+                                <option value="">Choose a preset...</option>
+                                ${accentApi.presets.map(preset => `<option value="${preset.name}">${preset.name}</option>`).join('')}
+                            </select>
+                        </div>` : ''}
+                        ${fieldsHtml}
+                        <div style="margin-top:0.5rem;">
+                            <button type="button" class="bu" id="accent_cfg_reset" style="background:var(--btn-bg);color:var(--fg);" ${hasApi ? '' : 'disabled'}>Reset to defaults</button>
+                        </div>
+                    </section>
+                    <small><a href="/settings" class="voxity-settings-back">Back to settings</a></small>
+                </div>
+            `, 'Accent finder settings');
+            setTimeout(() => {
+                if (hasApi) {
+                    const refreshInputs = () => {
+                        fields.forEach(field => {
+                            const slider = document.getElementById(`accent_cfg_${field.key}`);
+                            const number = document.getElementById(`accent_cfg_${field.key}_number`);
+                            const applied = accentApi.get(field.key);
+                            if (slider) slider.value = applied;
+                            if (number) number.value = applied;
+                        });
+                    };
+                    fields.forEach(field => {
+                        const slider = document.getElementById(`accent_cfg_${field.key}`);
+                        const number = document.getElementById(`accent_cfg_${field.key}_number`);
+                        if (!slider || !number) return;
+                        const sync = (raw, announce = false) => {
+                            let num = Number(raw);
+                            if (!Number.isFinite(num)) num = accentApi.get(field.key);
+                            num = Math.min(field.max, Math.max(field.min, num));
+                            accentApi.set(field.key, num);
+                            const applied = accentApi.get(field.key);
+                            slider.value = applied;
+                            number.value = applied;
+                            if (announce) { try { modal_title_up(`${field.label}: ${applied}`); } catch { } }
+                        };
+                        slider.addEventListener('input', () => sync(slider.value, true));
+                        number.addEventListener('change', () => sync(number.value, true));
+                    });
+                    const presetSelect = document.getElementById('accent_cfg_preset');
+                    if (presetSelect) {
+                        presetSelect.addEventListener('change', () => {
+                            const name = presetSelect.value;
+                            if (!name) return;
+                            if (accentApi.applyPreset(name)) {
+                                refreshInputs();
+                                try { modal_title_up(`Preset: ${name}`); } catch { }
+                            }
+                        });
+                    }
+                    const resetBtn = document.getElementById('accent_cfg_reset');
+                    if (resetBtn) {
+                        resetBtn.addEventListener('click', () => {
+                            accentApi.reset();
+                            refreshInputs();
+                            try { modal_title_up('Reset to defaults'); } catch { }
+                        });
+                    }
+                }
+                const backLink = document.querySelector('.voxity-settings-back');
+                if (backLink) {
+                    backLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        try { modal.close(); } catch { }
+                        try { openSettingsModal(); } catch { }
+                    });
+                }
+            }, 0);
+        }
         const key = 'au_theme';
         const ACCENT_COLOR_STORAGE_KEY = 'au_accent_color';
         const DEFAULT_ACCENT_COLOR = '#8000ff';
@@ -172,12 +282,6 @@ window.addEventListener('DOMContentLoaded', () => {
             if (!normalized) return null;
             document.documentElement.style.setProperty('--lyric-color', normalized);
             try { viz_color = normalized; } catch { }
-            try {
-                const visualizer = document.getElementById('visualizer');
-                if (visualizer) {
-                    visualizer.style.backgroundColor = normalized;
-                }
-            } catch { }
             if (persist) {
                 try { localStorage.setItem(ACCENT_COLOR_STORAGE_KEY, normalized); } catch { }
             }
@@ -210,256 +314,14 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         const AutoAccentController = (() => {
-            const CANVAS_SIZE = 128;
-            const MAX_TRACKED_COLORS = 96;
-            const MIN_DOMINANCE_GAP = 5;
-            const RICH_PALETTE_THRESHOLD = 15;
-            const MIN_COLOR_SATURATION = 0.2;
-            const MIN_COLOR_LUMINANCE = 0.3;
-            const MAX_COLOR_LUMINANCE = 0.92;
-            const PALETTE_DISTANCE_THRESHOLD = 74;
-            const PALETTE_HUE_DISTANCE_THRESHOLD = 24;
-            let canvas = null;
-            let ctx = null;
             let latestArtworkSrc = '';
             let currentRequestToken = 0;
-
-            const ensureContext = () => {
-                if (ctx) return ctx;
-                try {
-                    canvas = document.createElement('canvas');
-                    canvas.width = CANVAS_SIZE;
-                    canvas.height = CANVAS_SIZE;
-                    ctx = canvas.getContext('2d', { willReadFrequently: true }) || canvas.getContext('2d');
-                } catch {
-                    canvas = null;
-                    ctx = null;
-                }
-                return ctx;
-            };
 
             const isPreferenceEnabled = () => {
                 if (typeof window === 'undefined' || typeof window.VoxitySettings === 'undefined') {
                     return false;
                 }
                 return !!window.VoxitySettings.isEnabled('autoAccentColor');
-            };
-
-            const toHex = (value) => value.toString(16).padStart(2, '0');
-            const clampByte = (value) => Math.max(0, Math.min(255, Math.round(value)));
-            const hexToRgb = (hex) => {
-                const normalized = normalizeAccentColor(hex);
-                if (!normalized) return null;
-                const expanded = normalized.length === 4
-                    ? normalized.slice(1).split('').map(ch => ch + ch).join('')
-                    : normalized.slice(1, 7);
-                return {
-                    r: parseInt(expanded.slice(0, 2), 16),
-                    g: parseInt(expanded.slice(2, 4), 16),
-                    b: parseInt(expanded.slice(4, 6), 16),
-                };
-            };
-            const getColorDistance = (a, b) => {
-                const first = hexToRgb(a);
-                const second = hexToRgb(b);
-                if (!first || !second) return Infinity;
-                return Math.sqrt(
-                    ((first.r - second.r) ** 2)
-                    + ((first.g - second.g) ** 2)
-                    + ((first.b - second.b) ** 2)
-                );
-            };
-
-            const lightenColor = (hex) => {
-                if (typeof hex !== 'string') return null;
-                const normalized = hex.trim().replace(/^#/, '');
-                if (!/^[0-9a-f]{3,8}$/i.test(normalized)) return null;
-                const expanded = normalized.length === 3
-                    ? normalized.split('').map(ch => ch + ch).join('')
-                    : normalized.slice(0, 6);
-                const r = parseInt(expanded.slice(0, 2), 16);
-                const g = parseInt(expanded.slice(2, 4), 16);
-                const b = parseInt(expanded.slice(4, 6), 16);
-                const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-                const MIN_LUMINANCE = 0.7;
-                if (luminance >= MIN_LUMINANCE || luminance >= 0.99) {
-                    return `#${expanded}`;
-                }
-                const factor = Math.min(1, (MIN_LUMINANCE - luminance) / (1 - luminance));
-                const lightR = clampByte(r + ((255 - r) * factor));
-                const lightG = clampByte(g + ((255 - g) * factor));
-                const lightB = clampByte(b + ((255 - b) * factor));
-                return `#${toHex(lightR)}${toHex(lightG)}${toHex(lightB)}`;
-            };
-
-            const getColorInfo = (bucket) => {
-                if (!bucket || !bucket.count) return null;
-                const avgR = Math.round(bucket.r / bucket.count);
-                const avgG = Math.round(bucket.g / bucket.count);
-                const avgB = Math.round(bucket.b / bucket.count);
-                const rNorm = avgR / 255;
-                const gNorm = avgG / 255;
-                const bNorm = avgB / 255;
-                const max = Math.max(rNorm, gNorm, bNorm);
-                const min = Math.min(rNorm, gNorm, bNorm);
-                const luminance = 0.2126 * rNorm + 0.7152 * gNorm + 0.0722 * bNorm;
-                let saturation = 0;
-                let hue = 0;
-                if (max !== min) {
-                    const l = (max + min) / 2;
-                    const delta = max - min;
-                    if (l > 0.5) {
-                        const denom = 2 - max - min;
-                        saturation = denom === 0 ? 0 : delta / denom;
-                    } else {
-                        const denom = max + min;
-                        saturation = denom === 0 ? 0 : delta / denom;
-                    }
-                    if (max === rNorm) {
-                        hue = ((gNorm - bNorm) / delta) % 6;
-                    } else if (max === gNorm) {
-                        hue = ((bNorm - rNorm) / delta) + 2;
-                    } else {
-                        hue = ((rNorm - gNorm) / delta) + 4;
-                    }
-                    hue = Math.round(hue * 60);
-                    if (hue < 0) hue += 360;
-                }
-                return {
-                    bucket,
-                    hex: `#${toHex(avgR)}${toHex(avgG)}${toHex(avgB)}`,
-                    hue,
-                    luminance,
-                    saturation,
-                };
-            };
-
-            const getColorInfosFromImageElement = (img) => {
-                const context = ensureContext();
-                if (!context || !canvas) return null;
-                try {
-                    context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-                    context.drawImage(img, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
-                    const imageData = context.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-                    const buckets = new Map();
-                    const data = imageData.data;
-                    for (let i = 0; i < data.length; i += 4) {
-                        const alpha = data[i + 3];
-                        if (alpha < 32) continue;
-                        const r = data[i];
-                        const g = data[i + 1];
-                        const b = data[i + 2];
-                        const key = `${r >> 4}-${g >> 4}-${b >> 4}`;
-                        let bucket = buckets.get(key);
-                        if (!bucket) {
-                            bucket = { count: 0, r: 0, g: 0, b: 0 };
-                            buckets.set(key, bucket);
-                        }
-                        bucket.count += 1;
-                        bucket.r += r;
-                        bucket.g += g;
-                        bucket.b += b;
-                    }
-                    if (!buckets.size) return null;
-                    const sortedBuckets = [...buckets.values()]
-                        .sort((a, b) => b.count - a.count)
-                        .slice(0, MAX_TRACKED_COLORS);
-                    if (!sortedBuckets.length) return null;
-                    const colorInfos = sortedBuckets
-                        .map(getColorInfo)
-                        .filter(Boolean);
-                    return colorInfos.length ? colorInfos : null;
-                } catch {
-                    return null;
-                }
-            };
-
-            const sortVibrantColors = (colorInfos) => colorInfos
-                .filter(info =>
-                    info.saturation >= MIN_COLOR_SATURATION
-                    && info.luminance >= MIN_COLOR_LUMINANCE
-                    && info.luminance <= MAX_COLOR_LUMINANCE
-                )
-                .sort((a, b) => {
-                    if (b.luminance !== a.luminance) return b.luminance - a.luminance;
-                    return b.bucket.count - a.bucket.count;
-                });
-
-            const getHueDistance = (a, b) => {
-                const diff = Math.abs((a?.hue || 0) - (b?.hue || 0));
-                return Math.min(diff, 360 - diff);
-            };
-
-            const getPaletteScore = (info, maxCount) => {
-                const dominance = maxCount ? info.bucket.count / maxCount : 0;
-                const luminanceBalance = 1 - Math.abs(info.luminance - 0.62);
-                return (info.saturation * 2.4) + (luminanceBalance * 0.9) + (dominance * 0.65);
-            };
-
-            const chooseAccentColor = (colorInfos) => {
-                if (!colorInfos?.length) return null;
-                const hasRichPalette = colorInfos.length >= RICH_PALETTE_THRESHOLD;
-                if (hasRichPalette) {
-                    const vibrant = sortVibrantColors(colorInfos);
-                    if (vibrant.length) {
-                        return vibrant[0].hex;
-                    }
-                }
-                const primary = colorInfos[0];
-                if (!primary) return null;
-                const runnerUp = colorInfos[1];
-                if (runnerUp && (primary.bucket.count - runnerUp.bucket.count) < MIN_DOMINANCE_GAP) {
-                    return null;
-                }
-                return primary.hex;
-            };
-
-            const choosePaletteColors = (colorInfos, limit = 5) => {
-                if (!colorInfos?.length) return [];
-                const maxCount = Math.max(...colorInfos.map(info => info.bucket.count));
-                const candidates = [...colorInfos]
-                    .filter(info =>
-                        info.saturation >= 0.08
-                        && info.luminance >= 0.12
-                        && info.luminance <= 0.96
-                    )
-                    .sort((a, b) => getPaletteScore(b, maxCount) - getPaletteScore(a, maxCount));
-                const fallbackCandidates = [...colorInfos]
-                    .sort((a, b) => getPaletteScore(b, maxCount) - getPaletteScore(a, maxCount));
-                const selected = [];
-                const selectedInfos = [];
-                const addColor = (info, { enforceRgb = true, enforceHue = true } = {}) => {
-                    const normalized = normalizeAccentColor(info?.hex);
-                    if (!normalized || selected.includes(normalized)) return false;
-                    if (enforceRgb && selected.some(existing => getColorDistance(existing, normalized) < PALETTE_DISTANCE_THRESHOLD)) {
-                        return false;
-                    }
-                    if (enforceHue && selectedInfos.some(existing => getHueDistance(existing, info) < PALETTE_HUE_DISTANCE_THRESHOLD)) {
-                        return false;
-                    }
-                    selected.push(normalized);
-                    selectedInfos.push(info);
-                    return selected.length >= limit;
-                };
-                for (const info of candidates) {
-                    if (addColor(info, { enforceRgb: true, enforceHue: true })) break;
-                }
-                if (selected.length < limit) {
-                    for (const info of candidates) {
-                        if (addColor(info, { enforceRgb: true, enforceHue: false })) break;
-                    }
-                }
-                if (selected.length < limit) {
-                    for (const info of fallbackCandidates) {
-                        if (addColor(info, { enforceRgb: false, enforceHue: false })) break;
-                    }
-                }
-                return selected.slice(0, limit);
-            };
-
-            const analyzeImageElement = (img) => {
-                const colorInfos = getColorInfosFromImageElement(img);
-                return chooseAccentColor(colorInfos);
             };
 
             const loadImage = (src) => new Promise((resolve, reject) => {
@@ -482,13 +344,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 try {
                     const image = await loadImage(src);
                     if (token !== currentRequestToken) return;
-                    const detected = analyzeImageElement(image);
+                    const detected = getDominantAccent(image);
                     if (!detected) {
                         applyPreferredAccentColor();
                         return;
                     }
-                    const lightened = lightenColor(detected) || detected;
-                    applyAccentColor(lightened, { persist: false });
+                    applyAccentColor(detected, { persist: false });
                 } catch {
                     if (token === currentRequestToken) {
                         applyPreferredAccentColor();
@@ -514,16 +375,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 const artworkSrc = src || getLatestArtworkSrc();
                 if (!artworkSrc) return [];
                 const image = await loadImage(artworkSrc);
-                const colorInfos = getColorInfosFromImageElement(image);
-                const seen = new Set();
-                return choosePaletteColors(colorInfos, limit)
-                    .map(hex => lightenColor(hex) || hex)
-                    .map(normalizeAccentColor)
-                    .filter(color => {
-                        if (!color || seen.has(color)) return false;
-                        seen.add(color);
-                        return true;
-                    });
+                return getAccents(image, { limit });
             };
 
             const handleArtwork = (src) => {
@@ -665,7 +517,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
         async function openSettingsModal({ focusViz = false } = {}) {
             const current = document.documentElement.getAttribute('data-theme') || currentTheme;
-            const currentViz = (document.getElementById('viz-mode')?.value) || 'spectrum';
+            const currentViz = (typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings.get('visualizer') : null)
+                || document.getElementById('viz-mode')?.value
+                || 'spectrum';
             const accentValue = resolveAccentColor();
             const hasSettingsApi = typeof window.VoxitySettings !== 'undefined';
             const fpsValue = (function () {
@@ -698,6 +552,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 if (!hasSettingsApi) return 'lrclib';
                 const stored = window.VoxitySettings.get('lyricsSource');
                 return stored === 'musixmatch' ? 'musixmatch' : 'lrclib';
+            })();
+            const selectedShuffleAction = (function () {
+                if (!hasSettingsApi) return 'shuffle';
+                const stored = window.VoxitySettings.get('shuffleButtonAction');
+                return stored === 'jumble' ? 'jumble' : 'shuffle';
             })();
             const supportsWakeLock = typeof navigator !== 'undefined' && 'wakeLock' in navigator;
             const modal = await msg(`
@@ -804,8 +663,24 @@ window.addEventListener('DOMContentLoaded', () => {
             }).join('')}
                             </div>
                         </div>
+                        <div class="voxity-settings-field">
+                            <label>What should the shuffle button do?</label>
+                            <div class="voxity-settings-lyrics-options">
+                                ${SHUFFLE_ACTIONS.map(action => {
+                const checked = action.key === selectedShuffleAction ? 'checked' : '';
+                const disabled = hasSettingsApi ? '' : 'disabled';
+                return `<label class="voxity-settings-lyrics-option"${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                                    <input type="radio" name="shuffle_action" value="${action.key}" data-label="${action.label}" ${checked} ${disabled}>
+                                                    <div>
+                                                        <strong>${action.label}</strong>
+                                                        <p class="voxity-settings-small">${action.note}</p>
+                                                    </div>
+                                                </label>`;
+            }).join('')}
+                            </div>
+                        </div>
                     </section>
-                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a> - <a href="/i/toys" onclick="event.preventDefault();closeTopModal(); openToysModal()">Toys</a></small>
+                    <small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a> - <a href="/i/welcome" onclick="event.preventDefault();closeTopModal(); welcome()">Show welcome modal</a> - <a href="/i/toys" onclick="event.preventDefault();closeTopModal(); openToysModal()">Toys</a><br><a href="/i/foundmedia" id="toys-accent-picker">Open image accent picker</a></small>
                 </div>
             `, 'Voxity settings');
 
@@ -824,12 +699,22 @@ window.addEventListener('DOMContentLoaded', () => {
                 const rotationNumber = document.getElementById('pref_titleRotationInterval_number');
                 const settingsApi = typeof window.VoxitySettings !== 'undefined' ? window.VoxitySettings : null;
                 const lyricsSourceInputs = Array.from(document.querySelectorAll('input[name="lyrics_source"]'));
+                const shuffleActionInputs = Array.from(document.querySelectorAll('input[name="shuffle_action"]'));
                 const configureLinks = Array.from(document.querySelectorAll('.voxity-settings-configure'));
                 configureLinks.forEach(link => {
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
                         try { closeTopModal(); } catch { }
                         try { openLrclibConfigModal(); } catch { }
+                    });
+                });
+
+                const accentConfigLinks = Array.from(document.querySelectorAll('.voxity-settings-configure-accent'));
+                accentConfigLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        try { closeTopModal(); } catch { }
+                        try { openAutoAccentConfigModal(); } catch { }
                     });
                 });
 
@@ -910,6 +795,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         if (!hiddenViz) return;
                         hiddenViz.value = vizSelect.value;
                         hiddenViz.dispatchEvent(new Event('change', { bubbles: true }));
+                        try { window.VoxitySettings?.set('visualizer', vizSelect.value); } catch { }
                         modal_title_up(`Visualizer mode: ${vizSelect.options[vizSelect.selectedIndex]?.text || vizSelect.value}`, true);
                     };
                     vizSelect.addEventListener('change', applyChange);
@@ -992,6 +878,19 @@ window.addEventListener('DOMContentLoaded', () => {
                                 try {
                                     const label = input.dataset.label || normalized;
                                     modal_title_up(`Lyrics source: ${label}`);
+                                } catch { }
+                            });
+                        });
+                    }
+
+                    if (shuffleActionInputs.length) {
+                        shuffleActionInputs.forEach(input => {
+                            input.addEventListener('change', () => {
+                                if (!input.checked) return;
+                                const normalized = input.value === 'jumble' ? 'jumble' : 'shuffle';
+                                settingsApi.set('shuffleButtonAction', normalized);
+                                try {
+                                    modal_title_up(`Shuffle mode: ${normalized}`);
                                 } catch { }
                             });
                         });
@@ -1089,6 +988,15 @@ window.addEventListener('DOMContentLoaded', () => {
             if (!isNaN(la)) {
                 const clamped = Math.max(1, Math.min(48, la));
                 try { lrc_amount = clamped; } catch { }
+            }
+        } catch { }
+
+        try {
+            const savedViz = window.VoxitySettings?.get('visualizer');
+            const hiddenViz = document.getElementById('viz-mode');
+            if (savedViz && hiddenViz) {
+                hiddenViz.value = savedViz;
+                hiddenViz.dispatchEvent(new Event('change', { bubbles: true }));
             }
         } catch { }
 
