@@ -1,4 +1,4 @@
-const CACHE_NAME = 'voxity94';
+const CACHE_NAME = 'voxity95';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';
@@ -69,6 +69,7 @@ const FILES_TO_CACHE = [
   sc+'lyrics/source.js',
 
   // scripts - ui
+  sc+'ui/accents.js',
   sc+'ui/clicktocopy.js',
   sc+'ui/controls.js',
   sc+'ui/error.js',
