@@ -78,11 +78,55 @@ function getNextShuffleIndex() {
     return null;
 }
 
+function getShuffleButtonAction() {
+    try {
+        if (typeof window !== 'undefined' && window.VoxitySettings) {
+            return window.VoxitySettings.get('shuffleButtonAction') === 'jumble' ? 'jumble' : 'shuffle';
+        }
+    } catch { }
+    return 'shuffle';
+}
+
 function updateShuffleButton() {
     if (!shuffleButton) return;
     shuffleButton.innerHTML = '<i class="fa-solid fa-shuffle"></i>';
+    if (getShuffleButtonAction() === 'jumble') {
+        shuffleButton.style.removeProperty('color');
+        shuffleButton.setAttribute('aria-pressed', 'false');
+        shuffleButton.title = 'Shuffle the queue';
+        return;
+    }
     shuffleButton.style.color = shuffleMode ? 'green' : 'red';
     shuffleButton.setAttribute('aria-pressed', shuffleMode ? 'true' : 'false');
+    shuffleButton.title = 'Toggle shuffle';
+}
+
+function jumbleQueue() {
+    if (queue.length <= 1) {
+        stat_up('<i class="fa-solid fa-shuffle"></i> Nothing to shuffle');
+        return;
+    }
+    const currentId = getCurrentItemId();
+    for (let i = queue.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [queue[i], queue[j]] = [queue[j], queue[i]];
+    }
+    if (currentId != null) {
+        currentIndex = findIndexById(currentId);
+    }
+    if (shuffleMode) {
+        resetShufflePool();
+    }
+    rqueue();
+    stat_up('<i class="fa-solid fa-shuffle"></i> Queue shuffled');
+}
+
+function handleShuffleButton() {
+    if (getShuffleButtonAction() === 'jumble') {
+        jumbleQueue();
+    } else {
+        toggleShuffle();
+    }
 }
 
 function toggleShuffle() {
