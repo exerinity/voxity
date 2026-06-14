@@ -5,6 +5,13 @@ let INTENSITY = 1.25;
 let viz_color = '#8000ff';
 let frame_id = null;
 let lastFrame = 0;
+let winampPhase = 0;
+let winampX = null;
+let winampY = null;
+let winampVX = 0;
+let winampVY = 0;
+let winampPrevBass = 0;
+let braviaRings = [];
 
 function vis_init() {
     const canvas = document.getElementById('visualizer');
@@ -67,7 +74,12 @@ function vis_init() {
         if (t - lastFrame < 1000 / FPS) return;
         lastFrame = t;
 
-        ctx.clearRect(0, 0, W, H);
+        if (mode === 'winamp') {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+            ctx.fillRect(0, 0, W, H);
+        } else {
+            ctx.clearRect(0, 0, W, H);
+        }
 
         if (mode === 'waveform') {
             analyser.getByteTimeDomainData(timeData);
@@ -98,6 +110,117 @@ function vis_init() {
                 ctx.fillRect(x, H - h, barW, h);
                 x += barW;
             }
+            return;
+        }
+
+        if (mode === 'super') {
+            analyser.getByteTimeDomainData(timeData);
+
+            let bass = 0;
+            const bassBins = Math.max(1, Math.floor(len * 0.12));
+            for (let i = 0; i < bassBins; i++) bass += freqData[i];
+            bass /= bassBins * 255;
+
+            let energy = 0;
+            for (let i = 0; i < len; i++) energy += freqData[i];
+            energy /= len * 255;
+
+            winampPhase += 0.012 + bass * 0.12;
+
+            const baseR = Math.min(W, H) * 0.14 * (1 + bass * 0.8);
+
+            if (winampX === null) { winampX = W / 2; winampY = H / 2; }
+
+            const impact = bass - winampPrevBass;
+            if (impact > 0.12) {
+                const ang = Math.random() * Math.PI * 2;
+                const power = 5 + bass * 18 + impact * 45;
+                winampVX += Math.cos(ang) * power;
+                winampVY += Math.sin(ang) * power;
+            }
+            winampPrevBass = bass;
+
+            winampVX += (Math.random() - 0.5) * 0.9;
+            winampVY += (Math.random() - 0.5) * 0.9;
+
+            const maxV = Math.min(W, H) * 0.06;
+            const sp = Math.hypot(winampVX, winampVY);
+            if (sp > maxV) { winampVX = winampVX / sp * maxV; winampVY = winampVY / sp * maxV; }
+
+            winampX += winampVX;
+            winampY += winampVY;
+            winampVX *= 0.94;
+            winampVY *= 0.94;
+
+            const margin = baseR * 2.2;
+            if (winampX < margin) { winampX = margin; winampVX = Math.abs(winampVX); }
+            if (winampX > W - margin) { winampX = W - margin; winampVX = -Math.abs(winampVX); }
+            if (winampY < margin) { winampY = margin; winampVY = Math.abs(winampVY); }
+            if (winampY > H - margin) { winampY = H - margin; winampVY = -Math.abs(winampVY); }
+
+            const cx = winampX;
+            const cy = winampY;
+
+            ctx.globalCompositeOperation = 'lighter';
+            const layers = 4;
+            for (let l = 0; l < layers; l++) {
+                const hue = (winampPhase * 40 + l * 90 + energy * 120) % 360;
+                ctx.strokeStyle = `hsl(${hue}, 100%, ${55 + bass * 20}%)`;
+                ctx.lineWidth = 1.5 + bass * 2;
+                ctx.beginPath();
+                const rot = winampPhase * (1 + l * 0.6);
+                const lobes = 2 + l;
+                for (let i = 0; i <= len; i++) {
+                    const idx = i % len;
+                    const v = (timeData[idx] - 128) / 128;
+                    const f = freqData[idx] / 255;
+                    const a = (i / len) * Math.PI * 2 * lobes + rot;
+                    const r = baseR + v * baseR * 1.6 * INTENSITY + f * baseR * 0.9;
+                    const x = cx + Math.cos(a) * r;
+                    const y = cy + Math.sin(a) * r;
+                    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+            ctx.globalCompositeOperation = 'source-over';
+            return;
+        }
+
+        if (mode === 'bravia') {
+            let energy = 0;
+            for (let i = 0; i < len; i++) energy += freqData[i];
+            energy /= len * 255;
+
+            const spawnChance = 0.015 + energy * 0.07;
+            if (braviaRings.length < 5 && Math.random() < spawnChance) {
+                braviaRings.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    r: Math.min(W, H) * (0.02 + Math.random() * 0.05),
+                    t: 0,
+                });
+            }
+
+            const grow = 0.2 + energy * 0.9;
+            const fade = 0.0025 + energy * 0.006;
+            const gap = Math.min(W, H) * 0.035;
+
+            ctx.strokeStyle = viz_color;
+            ctx.lineWidth = 2;
+            for (let n = braviaRings.length - 1; n >= 0; n--) {
+                const ring = braviaRings[n];
+                ring.r += grow;
+                ring.t += fade;
+                if (ring.t >= 1) { braviaRings.splice(n, 1); continue; }
+                const envelope = Math.sin(ring.t * Math.PI);
+                for (let k = 0; k < 4; k++) {
+                    ctx.globalAlpha = Math.max(0, envelope * (1 - k * 0.2));
+                    ctx.beginPath();
+                    ctx.arc(ring.x, ring.y, ring.r + k * gap, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+            ctx.globalAlpha = 1;
             return;
         }
 
