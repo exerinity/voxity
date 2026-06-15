@@ -95,6 +95,10 @@ function init() {
     shuffleButton?.addEventListener('click', debounce(() => {
         handleShuffleButton();
     }));
+    shuffleButton?.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        handleShuffleButtonAlt();
+    });
     document.addEventListener('voxity:settings-changed', (event) => {
         const key = event?.detail?.key;
         if (key === 'shuffleButtonAction' || key === '*') {

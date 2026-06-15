@@ -129,6 +129,14 @@ function handleShuffleButton() {
     }
 }
 
+function handleShuffleButtonAlt() {
+    if (getShuffleButtonAction() === 'jumble') {
+        toggleShuffle();
+    } else {
+        jumbleQueue();
+    }
+}
+
 function toggleShuffle() {
     shuffleMode = !shuffleMode;
     if (shuffleMode) {
