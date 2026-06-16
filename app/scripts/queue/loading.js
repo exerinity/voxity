@@ -10,14 +10,14 @@ function processNextDurationLoad() {
 
                 if (durationLoadUnsupportedCount < 10) {
                     msg(
-                        `${durationLoadUnsupportedCount} songs failed to load a duration, so they were marked as unplayable and omitted from the queue.
+                        `${durationLoadUnsupportedCount} songs failed to begin playing, so they were omitted from the queue.
                 <br><br>
                 <strong>Unplayable files:</strong><br>
                 ${list}`
                     );
                 } else {
                     msg(
-                        `${durationLoadUnsupportedCount} songs failed to load a duration, so they were marked as unplayable and omitted from the queue.
+                        `${durationLoadUnsupportedCount} songs failed to begin playing, so they were omitted from the queue.
                 <br><br>
                 <details>
                     <summary><strong>Unplayable files</strong></summary>
@@ -29,7 +29,7 @@ function processNextDurationLoad() {
                 }
             } else {
                 msg(
-                    `${durationLoadUnsupportedCount} songs failed to load a duration, so they were marked as unplayable and omitted from the queue.`
+                    `${durationLoadUnsupportedCount} songs failed to begin playing, so they were omitted from the queue.`
                 );
             }
 
@@ -42,14 +42,19 @@ function processNextDurationLoad() {
     const generation = durationLoadGeneration;
     const audio = ensureDurationAudioElement();
     let objectUrl = null;
+    let playbackTimer = null;
 
     function cleanup() {
         delete nextItem._durationLoading;
         delete nextItem._pendingDurationEl;
+        if (playbackTimer !== null) {
+            clearTimeout(playbackTimer);
+            playbackTimer = null;
+        }
         if (generation === durationLoadGeneration) {
             durationLoadInProgress = false;
         }
-        audio.removeEventListener('loadedmetadata', handleLoaded);
+        audio.removeEventListener('loadedmetadata', handleMetadata);
         audio.removeEventListener('error', handleError);
         if (objectUrl) {
             try { URL.revokeObjectURL(objectUrl); } catch { null }
@@ -65,7 +70,7 @@ function processNextDurationLoad() {
         }
     }
 
-    function handleLoaded() {
+    function handleLoaded(durationValue) {
         if (generation !== durationLoadGeneration) {
             cleanup();
             return;
@@ -75,8 +80,6 @@ function processNextDurationLoad() {
         const total = queue.length || 1;
         stat_up(`<i class="fa-solid fa-people-carry-box"></i> Processing: <strong>${nextItem.displayName || nextItem.file.name}</strong> (${pos} of ${total})...`);
         calqueue();
-
-        const durationValue = Number.isFinite(audio.duration) ? audio.duration : NaN;
 
         if (!Number.isFinite(durationValue) || durationValue <= 0) {
             if (idx === currentIndex) {
@@ -123,11 +126,33 @@ function processNextDurationLoad() {
         cleanup();
     }
 
-    audio.addEventListener('loadedmetadata', handleLoaded, { once: true });
+    function handleMetadata() {
+        if (generation !== durationLoadGeneration) {
+            cleanup();
+            return;
+        }
+        const durationValue = Number.isFinite(audio.duration) ? audio.duration : NaN;
+        audio.muted = true;
+        audio.play().then(() => {
+            if (generation !== durationLoadGeneration) {
+                cleanup();
+                return;
+            }
+            playbackTimer = setTimeout(() => {
+                playbackTimer = null;
+                handleLoaded(durationValue);
+            }, 75);
+        }).catch(() => {
+            handleError();
+        });
+    }
+
+    audio.addEventListener('loadedmetadata', handleMetadata, { once: true });
     audio.addEventListener('error', handleError, { once: true });
     try {
         objectUrl = URL.createObjectURL(nextItem.file);
         audio.src = objectUrl;
+        audio.muted = true;
         audio.load();
     } catch {
         handleError();
