@@ -14,12 +14,14 @@
             document.</p>
         <p>All previous builds are kept archived on Cloudflare Pages. If you want the URL of a specific date or version,
             <a href="https://twitter.com/messages/compose?recipient_id=1988378945625223168" target="_blank"
-                title="DM me on Twitter">let me know</a> and I'll dig it up!</p>
+                title="DM me on Twitter">let me know</a> and I'll dig it up!
+        </p>
         <details>
             <summary>
                 List
             </summary>
             <ul>
+                <li><a href="#v95b">v95b - June 16, 2026</a></li>
                 <li><a href="#v95a">v95a - June 16, 2026</a></li>
                 <li><a href="#v95">v95 - June 14, 2026</a></li>
                 <li><a href="#v94a">v94a - June 8, 2026</a></li>
@@ -137,34 +139,47 @@
         </div>
         <h1>2026</h1>
         <h2>June</h2>
+        <h3 id="v95b">18th (v95b)</h3>
+        <ul>
+            <li>Added a config for when the accent color picker fires: on song change, or album name change</li>
+        </ul>
         <h3 id="v95a">16th (v95a)</h3>
         <ul>
-            <li>The track loading mechanism now plays 75 ms of a song in the background instead of just checking a duration</li>
+            <li>The track loading mechanism now plays 75 ms of a song in the background instead of just checking a
+                duration</li>
             <span>If that fails, the track is definitively unplayable</span>
         </ul>
         <h3 id="v95">14th (v95)</h3>
         <ul>
-            <li>Added a new setting: "What should the shuffle button do?"; you can now make it either just jumble the queue or toggle regular shuffling</li>
-            <li>Added a new accent color modal accessible at the bottom of settings or toys, with ability to read an uploaded file, the current song, or a queued song</li>
+            <li>Added a new setting: "What should the shuffle button do?"; you can now make it either just jumble the
+                queue or toggle regular shuffling</li>
+            <li>Added a new accent color modal accessible at the bottom of settings or toys, with ability to read an
+                uploaded file, the current song, or a queued song</li>
             <li>The engine for picking accents has been extracted into its own file (/ui/accents.js)</li>
             <li>The accent finder engine is now configurable in settings</li>
             <li>If the player stops under error, it now waits 5 seconds before automatically skipping</li>
             <li>Visualizer mode is now finally saved</li>
-            <li>Added two visualizer modes: <strong>Superscope</strong> and <strong>Bravia</strong>, which is inspired by the visualizer for audio-only channels on the <strong>Sony BRAVIA KDL-4</strong> TVs from the late-2000s/mid-2010s</li>
+            <li>Added two visualizer modes: <strong>Superscope</strong> and <strong>Bravia</strong>, which is inspired
+                by the visualizer for audio-only channels on the <strong>Sony BRAVIA KDL-4</strong> TVs from the
+                late-2000s/mid-2010s</li>
         </ul>
         <h3 id="v94a">8th (v94a)</h3>
         <ul>
             <li>Added a new accent picker under the... accent picker, which lists 5 colors from cover art</li>
-            <li>The lyrics request aborter has been strengthened, if you are rapidly skipping tracks, it will completely stand down until you stop</li>
+            <li>The lyrics request aborter has been strengthened, if you are rapidly skipping tracks, it will completely
+                stand down until you stop</li>
             <li>Removed the remote and shut down its server</li>
-            <li>Removed the router logic - it was purely for looking cool, but it actually just spams your browser history and does nothing. It, and all mentions of it, will be fully removed in the next update.</li>
+            <li>Removed the router logic - it was purely for looking cool, but it actually just spams your browser
+                history and does nothing. It, and all mentions of it, will be fully removed in the next update.</li>
         </ul>
         <h2>May</h2>
         <h3 id="v94">16th (v94)</h3>
         <ul>
-            <li>Added back the Toys ("Voxitoys" hahahaha im so funny) modal from very very long ago; you can find it at the bottom of settings</li>
+            <li>Added back the Toys ("Voxitoys" hahahaha im so funny) modal from very very long ago; you can find it at
+                the bottom of settings</li>
             <li>You can now (finally) select Musixmatch as a source under the Search lyrics modal</li>
-            <li>Added a new rudimentary context menu to queue items; right clicking an item will give you options to copy
+            <li>Added a new rudimentary context menu to queue items; right clicking an item will give you options to
+                copy
                 metadata and manipulate the queue, maybe more soon</li>
         </ul>
         <h3 id="v93a">5th (v93a)</h3>

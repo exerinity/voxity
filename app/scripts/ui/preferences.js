@@ -66,7 +66,7 @@ window.addEventListener('DOMContentLoaded', () => {
             {
                 key: 'autoAccentColor',
                 label: 'Set accent from cover',
-                description: 'Derive the accent color from the dominant color in the current artwork <a href="/settings/auto-accent" class="voxity-settings-configure-accent">(config)</a>',
+                description: 'Derive the accent color from the dominant color in the current artwork <a href="/settings/auto-accent" class="voxity-settings-configure-accent">(config)</a> <a href="/settings/accent-firing" class="voxity-settings-configure-firing">(firing)</a>',
             },
             {
                 key: 'dynamicFavicon',
@@ -243,6 +243,51 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             }, 0);
         }
+
+        async function openAccentFiringConfigModal() {
+            const hasSettingsApi = typeof window !== 'undefined' && typeof window.VoxitySettings !== 'undefined';
+            const current = hasSettingsApi ? (window.VoxitySettings.get('accentPickerFireOn') || 'song') : 'song';
+            const modal = await msg(`
+                <div class="voxity-settings-modal">
+                    <section class="voxity-settings-section">
+                        <h3>When should the picker fire?</h3>
+                        <div class="voxity-settings-lyrics-options">
+                            <label class="voxity-settings-lyrics-option" ${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                <input type="radio" name="accent_fire_on" value="album" ${current === 'album' ? 'checked' : ''} ${hasSettingsApi ? '' : 'disabled'}>
+                                <div>
+                                    <strong>When the album name changes</strong>
+                                </div>
+                            </label>
+                            <label class="voxity-settings-lyrics-option" ${hasSettingsApi ? '' : ' data-disabled="true"'}>
+                                <input type="radio" name="accent_fire_on" value="song" ${current === 'song' ? 'checked' : ''} ${hasSettingsApi ? '' : 'disabled'}>
+                                <div>
+                                    <strong>When the song changes</strong>
+                                </div>
+                            </label>
+                        </div>
+                    </section>
+                        <small><a href="/settings" class="voxity-settings-back">Back to settings</a></small>
+                </div>
+            `);
+            setTimeout(() => {
+                const radios = Array.from(document.querySelectorAll('input[name="accent_fire_on"]'));
+                radios.forEach(r => {
+                    r.addEventListener('change', () => {
+                        if (!hasSettingsApi) return;
+                        try { window.VoxitySettings.set('accentPickerFireOn', r.value); } catch { }
+                        try { modal_title_up(`Picker fires: ${r.value === 'album' ? 'On album change' : 'On song change'}`); } catch { }
+                    });
+                });
+                const backLink = document.querySelector('.voxity-settings-back');
+                if (backLink) {
+                    backLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        try { modal.close(); } catch { }
+                        try { openSettingsModal(); } catch { }
+                    });
+                }
+            }, 0);
+        }
         const key = 'au_theme';
         const ACCENT_COLOR_STORAGE_KEY = 'au_accent_color';
         const DEFAULT_ACCENT_COLOR = '#8000ff';
@@ -315,6 +360,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const AutoAccentController = (() => {
             let latestArtworkSrc = '';
+            let lastFiredAlbum = null;
             let currentRequestToken = 0;
 
             const isPreferenceEnabled = () => {
@@ -322,6 +368,13 @@ window.addEventListener('DOMContentLoaded', () => {
                     return false;
                 }
                 return !!window.VoxitySettings.isEnabled('autoAccentColor');
+            };
+
+            const getFireOnMode = () => {
+                if (typeof window === 'undefined' || typeof window.VoxitySettings === 'undefined') {
+                    return 'song';
+                }
+                return window.VoxitySettings.get('accentPickerFireOn') === 'album' ? 'album' : 'song';
             };
 
             const loadImage = (src) => new Promise((resolve, reject) => {
@@ -378,15 +431,21 @@ window.addEventListener('DOMContentLoaded', () => {
                 return getAccents(image, { limit });
             };
 
-            const handleArtwork = (src) => {
+            const handleArtwork = (src, album) => {
                 latestArtworkSrc = src || '';
                 if (!src) {
+                    lastFiredAlbum = null;
                     applyPreferredAccentColor();
                     return;
                 }
                 if (!isPreferenceEnabled()) {
                     return;
                 }
+                const albumKey = typeof album === 'string' ? album : null;
+                if (getFireOnMode() === 'album' && albumKey !== null && albumKey === lastFiredAlbum) {
+                    return;
+                }
+                lastFiredAlbum = albumKey;
                 queueApply(src);
             };
 
@@ -727,6 +786,15 @@ window.addEventListener('DOMContentLoaded', () => {
                         e.preventDefault();
                         try { closeTopModal(); } catch { }
                         try { openAutoAccentConfigModal(); } catch { }
+                    });
+                });
+
+                const accentFiringLinks = Array.from(document.querySelectorAll('.voxity-settings-configure-firing'));
+                accentFiringLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        try { closeTopModal(); } catch { }
+                        try { openAccentFiringConfigModal(); } catch { }
                     });
                 });
 

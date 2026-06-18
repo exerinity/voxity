@@ -44,7 +44,7 @@ function get_meta(file) {
                 cover.classList.remove('hidden');
                 cover.title = metadata.album || metadata.title || 'Cover art';
                 cover.alt = `Cover art for ${metadata.album || metadata.title} by ${metadata.artist}`;
-                notifyAutoAccentController(globalart);
+                notifyAutoAccentController(globalart, metadata.album);
                 updateFaviconFromArtwork(metadata.picture);
                 if ('mediaSession' in navigator) {
                     try {
@@ -109,11 +109,11 @@ function get_meta(file) {
     });
 }
 
-function notifyAutoAccentController(source) {
+function notifyAutoAccentController(source, album) {
     try {
         const controller = typeof window !== 'undefined' ? window.VoxityAutoAccent : null;
         if (controller && typeof controller.handleArtwork === 'function') {
-            controller.handleArtwork(source || '');
+            controller.handleArtwork(source || '', typeof album === 'string' ? album : null);
         }
     } catch { }
 }

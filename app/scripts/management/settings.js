@@ -12,6 +12,7 @@
         songNotifications: false,
         wakeLock: false,
         autoAccentColor: false,
+        accentPickerFireOn: 'song',
         dynamicFavicon: true,
         shuffleButtonAction: 'shuffle',
         visualizer: 'spectrum',
