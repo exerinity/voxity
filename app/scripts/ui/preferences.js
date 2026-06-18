@@ -66,7 +66,7 @@ window.addEventListener('DOMContentLoaded', () => {
             {
                 key: 'autoAccentColor',
                 label: 'Set accent from cover',
-                description: 'Derive the accent color from the dominant color in the current artwork <a href="/settings/auto-accent" class="voxity-settings-configure-accent">(config)</a> <a href="/settings/accent-firing" class="voxity-settings-configure-firing">(firing)</a>',
+                description: 'Derive the accent color from the dominant color in the current artwork (config: <a href="/settings/auto-accent" class="voxity-settings-configure-accent">engine</a> | <a href="/settings/accent-firing" class="voxity-settings-configure-firing">firing</a>)',
             },
             {
                 key: 'dynamicFavicon',
