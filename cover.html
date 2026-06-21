@@ -28,16 +28,20 @@
   <script>
     const params = new URLSearchParams(location.search);
     const src = params.get("img");
-    const name = params.get("name") || "Voxity";
-    document.title = name + ' / Voxity';
-    const img = document.getElementById("img");
-    img.src = decodeURIComponent(src);
+    if (!src) {
+      alert("This is intended for clicking the cover art in Voxity. A cover is not loaded. I guess you just visited this page arbitrarily...");
+    } else {
+      const name = params.get("name") || "Voxity";
+      document.title = name + ' / Voxity';
+      const img = document.getElementById("img");
+      img.src = decodeURIComponent(src);
 
-    img.onload = () => {
-      if (img.src.startsWith("blob:")) {
-        window.addEventListener("beforeunload", () => URL.revokeObjectURL(img.src));
-      }
-    };
+      img.onload = () => {
+        if (img.src.startsWith("blob:")) {
+          window.addEventListener("beforeunload", () => URL.revokeObjectURL(img.src));
+        }
+      };
+    }
   </script>
 </body>
 
