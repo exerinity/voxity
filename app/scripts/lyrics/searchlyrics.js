@@ -80,13 +80,21 @@ document.getElementById('searchlrclib').addEventListener('click', debounce(async
         }
     }
 
+    function syncBadgeHtml(isSynced) {
+        return isSynced
+            ? `<span style="display:inline-block; margin-left:0.5rem; padding:1px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold; background:#27ae60; color:#fff; vertical-align:middle;">SYNCED</span>`
+            : `<span style="display:inline-block; margin-left:0.5rem; padding:1px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold; background:#888; color:#fff; vertical-align:middle;">UNSYNCED</span>`;
+    }
+
     function showResults(results, source) {
         modal.setTitle('Results');
         const listHtml = results.map(r => {
             if (source === 'musixmatch') {
-                return `<p data-lookup-id="${r.lookup_id}" data-type="${r.type}" style="cursor:pointer; margin:0.5rem 0;"><strong>${r.title || ''}</strong> by ${r.artist || ''}</p>`;
+                const isSynced = r.type === 'Synced';
+                return `<p data-lookup-id="${r.lookup_id}" data-type="${r.type}" style="cursor:pointer; margin:0.5rem 0;"><strong>${r.title || ''}</strong> by ${r.artist || ''}${syncBadgeHtml(isSynced)}</p>`;
             }
-            return `<p data-id="${r.id}" style="cursor:pointer; margin:0.5rem 0;"><strong>${r.trackName}</strong> by ${r.artistName} (${r.albumName})</p>`;
+            const isSynced = !!r.syncedLyrics;
+            return `<p data-id="${r.id}" style="cursor:pointer; margin:0.5rem 0;"><strong>${r.trackName}</strong> by ${r.artistName} (${r.albumName})${syncBadgeHtml(isSynced)}</p>`;
         }).join('');
         modal.setContent(`<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
                 <button id="back_to_search" style="padding:6px 10px; background:var(--btn-bg); border:none; border-radius:6px; cursor:pointer;">Back</button>
