@@ -1,7 +1,7 @@
 # Voxity - plays music.
 Voxity is a bizarre, feature-rich, semi-advanced PWA desktop music player written entirely in vanilla JavaScript that supports any file format your browser does.
 
-![](https://i.exerinity.com/Voxity_20260218_223009.png)
+[![](https://cologne.exerinity.com/voxity.png)](https://cologne.exerinity.com/voxity.png)
 
 ## Quick links
 - Try now: https://voxity.dev
