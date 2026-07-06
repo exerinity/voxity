@@ -6,7 +6,7 @@ Voxity is a bizarre, feature-rich, semi-advanced PWA desktop music player writte
 ## Quick links
 - Try now: https://voxity.dev
 - Release notes: https://voxity.dev/releases
-- Download: https://github.com/exerinity/voxity.electron/releases
+- Download an Electron wrapper: https://github.com/exerinity/voxity.electron/releases
 - More info: https://exerinity.com/projects/voxity
 
 ## List of features
@@ -60,25 +60,19 @@ and more!
 
 ## About this repository
 The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. Nevertheless, if you can make a cool fork of Voxity, go ahead! I would love to see it!
-## Other repositories / Desktop version
-I am currently working on a desktop version of Voxity, that scans your drive and plays music from there, rather than having to drop in files every session. It's in Electron, and, while it's not "official" or open source yet, you can download a preview on my website: https://exerinity.com/voxity/desktop
+## Other repositories
+There is a simple Electron wrapper that exposes & obeys MPRIS control on Linux and works with [Music Presence for Discord](https://musicpresence.app): https://github.com/exerinity/voxity.electron
 
-I am not exactly sure how high I'll take this, whether Voxity will transition into a desktop player with the web app as a preview, or something like that, but give the preview a try!
-
-There is also a simpler deprecated Electron shell that exposes & obeys MPRIS control on Linux and works with [Music Presence](https://musicpresence.app): https://github.com/exerinity/voxity.electron
-
-### https://github.com/stars/exerinity/lists/voxity
+The source code for the archived and now-removed remote control server is: https://github.com/exerinity/voxity.remote
 
 ## License
 This project is released under the Unlicense, which is a public domain dedication. See the [license](LICENSE) file for details.
 
 (*this does not apply to Font Awesome icons, jsmediatags, Twemoji, or any other third party things used*)
+
 ## Things used
-- ~~**Twemoji**: https://twemoji.twitter.com~~ *removed as of v85a\**
 - **jsmediatags**: https://github.com/aadsm/jsmediatags
 - **Font Awesome**: https://fontawesome.com
-
-\*- what good is an emoji library in a music player? especially with Font Awesome present?
 
 ## Ascendants
 Voxity was birthed in July 2025 after combining these three projects:
@@ -101,7 +95,9 @@ https://exerinity.com/doom/ost and https://demo.player.exerinity.com/
 - **foobar2000** for the tagline "plays music." (it is a carbon copy from its buttons found at https://www.foobar2000.org/support) (im sorry) and other minor things here and there
 
 ## Donate
-Please do not (ask how to) donate to me, as Voxity is not a financially demanding project to maintain. The only thing that costs me anything is the domain, which is ~$20 a year. I don't know, it hasn't been the second period. Instead, I urge you to instead donate to:
+Please do not (ask how to) donate to me, as Voxity is not a financially demanding project to maintain. The only thing that costs me anything is the domain, which is ~$20 a year. I don't know, it hasn't been the second period. Voxity doesn't cost me anything to code or host.
+
+Instead, I urge you to donate to:
 
 - [The Tim Bergling Foundation](https://www.timberglingfoundation.org/donationer)
 - [LRCLIB](https://github.com/sponsors/tranxuanthang)
