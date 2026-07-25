@@ -82,14 +82,14 @@ function debounce(fn) {
     };
 }
 
-function wheel(target, fall) {
+function wheel(target, fall, force) {
     if (!target) return;
     target.addEventListener('wheel', (e) => {
         if (!(e.ctrlKey || e.metaKey)) {
             e.preventDefault();
         }
         const raws = parseFloat(target.step);
-        let step = !isNaN(raws) && raws > 0 ? raws : (fall ? fall() : 1);
+        let step = force && fall ? fall() : (!isNaN(raws) && raws > 0 ? raws : (fall ? fall() : 1));
         if (e.shiftKey) step *= 5;
         const direction = e.deltaY < 0 ? 1 : -1;
         const min = parseFloat(target.min);
