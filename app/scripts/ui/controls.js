@@ -116,7 +116,7 @@ function enlargeCover() {
 
             img.onclick = () => {
             if (typeof isElectron === 'function' && isElectron()) {
-                throw_error('Not available in Electron');
+                throw_error('Not available in Electron', 2);
                 return;
             }
             let blobUrl = globalart;
