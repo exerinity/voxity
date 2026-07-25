@@ -70,6 +70,19 @@ This project is released under the Unlicense, which is a public domain dedicatio
 
 (*this does not apply to Font Awesome icons, jsmediatags, Twemoji, or any other third party things used*)
 
+## Browser?
+One of the best things about Voxity (and basically any PWA) is you don't need to install it, you only need a browser. But which browser works best with it? Well, from my personal testing:
+
+## Best - Chrome (and close derivatives)
+Chrome has the best PWA support, playback support, and pretty much the most stable for Voxity. For an even better experience, use Ungoogled Chromium or Helium and install Voxity as a PWA
+
+## 2nd best - Firefox
+Firefox is also pretty solid and boring with Voxity, and even allows MPRIS control (e.g., changing the volume), however, playback speed is a bit janky: at 0.1% the audio completely stops, and it can only go up to 8x before going silent (as opposed to Chrome allowing 14x) (not sure who is listening to music that fast but still noteworthy)
+
+Firefox, however, does not have the same PWA support as Chrome, and the closest way of that is the "Add tab to taskbar" button in the omnibox
+
+Ultimately, if you don't plan on installing as a PWA nor doing much, both Firefox and Chrome will work pretty much identically
+
 ## Things used
 - **jsmediatags**: https://github.com/aadsm/jsmediatags
 - **Font Awesome**: https://fontawesome.com
