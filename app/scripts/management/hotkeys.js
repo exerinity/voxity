@@ -148,7 +148,7 @@ document.addEventListener('keydown', (e) => {
                 const num = parseInt(e.code.slice(5), 10);
                 if (!isNaN(num)) {
                     e.preventDefault();
-                    let perc = num === 0 ? 0 : num * 0.1;
+                    let perc = num === 0 ? (e.shiftKey ? 1 : 0) : num * 0.1;
                     if (e.shiftKey) perc = Math.max(0, perc - 0.05);
                     jumpToPercent(perc);
                 }
