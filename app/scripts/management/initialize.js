@@ -262,7 +262,7 @@ function init() {
     });
 
     wheel(elements.index, () => 3);
-    wheel(elements.vol, () => 0.1);
+    wheel(elements.vol, () => 0.1, true);
     wheel(elements.speed, () => 0.01);
 
     if ('mediaSession' in navigator) {
