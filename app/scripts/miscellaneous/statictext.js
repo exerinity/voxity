@@ -54,15 +54,17 @@ const hotkeys_content = `<ul style="list-style-type:none;padding:0;margin:0;">
   <i style="font-size:0.9rem">While not a hot<u>key</u>, per se, you can also scroll your mousewheel over sliders to move them</i>
   `;
 
-const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.com" target="_blank" rel="noopener">exerinity</a>, written in vanilla JavaScript. It is not designed to replace or compete with any other players; but rather to be a fun, fast and quick way for casual listening.</p>
-<p>Voxity was incepted in July 2025 and largely focused on in August and September, where it is now a rather large project, at least in feature density.</p>
-        <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">Learn more about Voxity</a> - <a href="/releases" onclick="event.preventDefault(); relnote()" style="cursor: pointer">Release notes</a><br>
+const days_since_release = Math.floor((Date.now() - new Date(2025, 6, 11).getTime()) / 86400000);
+
+const about_content = `Voxity is a modular <abbr title="Progressive Web App">PWA</abbr> music player created by <a href="https://exerinity.com" target="_blank" rel="noopener">exerinity</a>, written in vanilla JavaScript.</p>
+<p>Voxity was incepted in July 2025 and first released on the 11th as "Music player" - ${days_since_release.toLocaleString()} days ago. It was renamed to <a href="/releases#v25" target="_blank"><strong>Audion</strong> on the 25th of August</a>, <a href="/releases#v59" target="_blank">then <strong>Voxity</strong> on the 13th of October</a>.</p>
+        <a href="/git/README.md" target="_blank" rel="noopener">Learn more about Voxity</a> - <a href="/releases" onclick="event.preventDefault(); relnote()" style="cursor: pointer">Release notes</a><br>
                 <p style="font-size:0.9rem; color:#888; margin:0.5rem 0 0;">
           ${typeof isElectron === 'function' && isElectron()
     ? "You are running the Electron version of Voxity"
     : isPWA()
         ? "Voxity is currently installed as a PWA, nice!"
-        : "Tip: You should install Voxity as an app. <a href='/install' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Learn how</a>"}
+        : "Tip: You should install Voxity as a PWA. <a href='/install' onclick='event.preventDefault(); pwamsg()' target='_blank' rel='noopener'>Show me...</a>"}
         </p>
         <hr>
         <p>Voxity uses <a href="https://github.com/aadsm/jsmediatags" target="_blank" rel="noopener">jsmediatags</a> for reading metadata, <a href="https://fontawesome.com/" target="_blank" rel="noopener">Font Awesome</a> for icons, and <a href="https://lrclib.net" target="_blank">LRCLIB</a>/<a href="https://www.musixmatch.com/" target="_blank" rel="noopener">Musixmatch</a> for lyrics. Voxity is <a href="https://github.com/exerinity/voxity/tree/main#license">public domain software</a>.</p><hr>Voxity is ${uptodate === false ? '<strong style="color:orange;">out of date</strong>! Please <a href="#" onclick="window.location.href=window.location.href.split(\'?\')[0]+\'?cachebuster=\'+Date.now();return false;">refresh to update</a>.' : '<strong style="color:green;">up to date!</strong>'}
