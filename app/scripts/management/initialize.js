@@ -1,4 +1,4 @@
-const deb_ms = 300;
+const deb_ms = 100;
 let lastact = 0;
 let showTimeRemaining = false;
 
@@ -170,7 +170,7 @@ function init() {
                     break;
             }
         }
-        throw_error(err_msg + ' - skipping in 5 seconds...');
+        throw_error(err_msg + ' - attempting to skip in 5s...');
 
         const failedSrc = elements.player.currentSrc || elements.player.src;
         setTimeout(() => {

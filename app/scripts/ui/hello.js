@@ -54,7 +54,7 @@ async function loadFA() {
 function welcome() {
     const modalPromise = msg(`<p>Voxity is a web-based audio player that lets you play local audio files directly in your browser. Just drag and drop files to get started!</p>
 <p>To learn more, visit Voxity's page on my website: <a href="https://exerinity.com/projects/voxity" target="_blank" rel="noopener">https://exerinity.com/projects/voxity</a></p>
-<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a>
+<p>Thanks, and have fun! <i class="fa-solid fa-broadcast-tower fa-beat bop"></i></p><a href="https://exerinity.com/twitter" target="_blank"><i class="fa-brands fa-twitter" style="color:#1da1f2;"></i> Follow me on Twitter</a> - <a href="https://github.com/exerinity/voxity" target="_blank"><i class="fa-brands fa-github"></i> Voxity on GitHub</a>
 <br><small><a href="/i/reload_fa" onclick="event.preventDefault(); loadFA()">Icons are not showing...</a></small>
 `, "Welcome to Voxity");
 }

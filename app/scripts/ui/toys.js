@@ -11,6 +11,7 @@ async function openToysModal() {
                     <button class="bu" id="toys-toast-error" style="background:#da0000;color:white;">Error</button>
                     <button class="bu" id="toys-toast-info" style="background:#0068c8;color:white;">Info</button>
                 </div>
+                <br><small style="color: #888;">Error and Info play a sound, Success does not</small>
             </section>
             <section class="voxity-settings-section">
                 <h3>Compose modal</h3>
