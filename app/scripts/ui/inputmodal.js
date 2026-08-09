@@ -116,7 +116,7 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
     const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input id="ind_inp" type="number" min="0" max="${Math.floor(dur)}" value="${Math.floor(cur)}" 
+                    <input id="ind_inp" type="text" inputmode="decimal" placeholder="92, 1:32, 32%" value="${Math.floor(cur)}" 
                         style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #444; background: #2a2a2a; color: white;">
                     <button id="set_ind" 
                         style="padding: 10px 20px; background: #333333; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">
@@ -132,13 +132,45 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
         const input = document.getElementById('ind_inp');
         const btn = document.getElementById('set_ind');
 
+        const parsePlaybackTimeInput = (value, duration) => {
+            if (typeof value !== 'string') value = String(value);
+            value = value.trim();
+            if (!value) return null;
+
+            let seconds = null;
+            if (value.endsWith('%')) {
+                const pct = parseFloat(value.slice(0, -1).trim());
+                if (!Number.isFinite(pct)) return null;
+                seconds = (duration * pct) / 100;
+            } else if (value.includes(':')) {
+                const parts = value.split(':').map((part) => part.trim());
+                if (parts.length === 2 || parts.length === 3) {
+                    const nums = parts.map((part) => parseFloat(part));
+                    if (nums.every((num) => Number.isFinite(num) && num >= 0)) {
+                        if (parts.length === 2) {
+                            seconds = nums[0] * 60 + nums[1];
+                        } else {
+                            seconds = nums[0] * 3600 + nums[1] * 60 + nums[2];
+                        }
+                    }
+                }
+            } else {
+                const num = parseFloat(value);
+                if (!Number.isFinite(num)) return null;
+                seconds = num;
+            }
+
+            if (seconds === null) return null;
+            return Math.max(0, Math.min(duration, seconds));
+        };
+
         if (input && btn) {
             input.focus();
             input.select();
 
             const set_ind = () => {
-                const val = parseInt(input.value);
-                if (isNaN(val) || val < 0 || val > dur) {
+                const val = parsePlaybackTimeInput(input.value, dur);
+                if (val === null || Number.isNaN(val) || val < 0 || val > dur) {
                     throw_error(`Out of range`);
                     return;
                 }
@@ -147,7 +179,6 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
 
                 throw_error(`Set index to: ${form_time(val)} / ${form_time(dur)}`, true);
                 document.getElementById('footer').innerHTML = `current: ${Math.floor(val)}s / duration: ${Math.floor(dur)}s`;
-
             };
 
             btn.addEventListener('click', set_ind);
