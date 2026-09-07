@@ -1,6 +1,6 @@
 document.getElementById('status').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
-        const modalPromise = msg(about_content, "About Voxity");
+        msg(about_content, "About Voxity");
         return modalPromise;
     }
     const name = metadata.title + ' by ' + metadata.artist;
