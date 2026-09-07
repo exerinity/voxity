@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', () => {
     (function settingsModal() {
         const THEMES = [
-            { 'adaptive': true, 'label': 'Adaptive (EXPERIMENTAL)' },
+            { 'adaptive': true, 'label': 'Adaptive' },
             { 'dim': true, 'label': 'Dim' },
             { 'lights-out': true, 'label': 'Lights out' },
             { 'purple': true, 'label': 'Purple' },
