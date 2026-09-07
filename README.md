@@ -1,5 +1,5 @@
 # Voxity - plays music.
-Voxity is a bizarre, feature-rich, semi-advanced PWA desktop music player written entirely in vanilla JavaScript that supports any file format your browser does. Everything is in one view and settings/whatnot are done through modals.
+Voxity is a bizarre, feature-rich, semi-advanced PWA desktop-focused music player written entirely in vanilla JavaScript that supports any file format your browser does. Everything is in one view and settings/whatnot are done through modals.
 
 [![](https://cologne.exerinity.com/voxity.png)](https://cologne.exerinity.com/voxity.png)
 
@@ -118,8 +118,10 @@ Instead, I urge you to donate to:
 I'm not affiliated with these, but LRCLIB is a major component within Voxity and the Tim Bergling Foundation is the charity founded in the name of my childhood hero, so...
 
 ## Well what about mobile?
-Simple answer: **No.**
+~~Simple answer: **No.**~~
 
-Voxity is not intended to be used on mobile, however, from my personal experience, it *might* work. On Android in landscape mode, it works perfectly fine (if you ignore the tiny fucking screen), on iPhone it's a bit finicky, but the reason I discourage mobile use is the design of Voxity. Voxity is a "two panel" or "two sided" player, information is split up into two sides on the screen, which is difficult (for me) to make work correctly on mobile, in portrait. That's not saying tablets won't run it fine, but nobody uses tablets anymore. Making Voxity mobile friendly would probably fundamentally change what it is and nevertheless simply not something I am interested in. Because your phone 100% has dozens of better music players that are native.
+~~Voxity is not intended to be used on mobile, however, from my personal experience, it *might* work. On Android in landscape mode, it works perfectly fine (if you ignore the tiny fucking screen), on iPhone it's a bit finicky, but the reason I discourage mobile use is the design of Voxity. Voxity is a "two panel" or "two sided" player, information is split up into two sides on the screen, which is difficult (for me) to make work correctly on mobile, in portrait. That's not saying tablets won't run it fine, but nobody uses tablets anymore. Making Voxity mobile friendly would probably fundamentally change what it is and nevertheless simply not something I am interested in. Because your phone 100% has dozens of better music players that are native.~~
 
-Please do not make a pull request or an issue about mobile in any concern. Whether something is not working on mobile (but does on desktop), requests to modify for mobile friendliness, whatever, **it will be ignored, closed or rejected**. Voxity is strictly a desktop player **only**.
+~~Please do not make a pull request or an issue about mobile in any concern. Whether something is not working on mobile (but does on desktop), requests to modify for mobile friendliness, whatever, **it will be ignored, closed or rejected**. Voxity is strictly a desktop player **only**.~~
+
+As of v99, I have added some elementary mobile support to Voxity: the two-panel layout should now be top-bottom instead of left-right on mobile. Not perfect, but eh...
