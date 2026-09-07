@@ -1,7 +1,7 @@
 document.getElementById('volc').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_vol = Math.round(elements.player.volume * 100);
-    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="vol_inp" type="number" min="0" max="100" value="${cur_vol}" 
@@ -56,7 +56,7 @@ const max_spd = /firefox|fxios/i.test(navigator.userAgent) ? 8.0 : 14.0;
 document.getElementById('speedc').addEventListener('click', debounce(() => {
     if (!elements.player.currentTime) return throw_error('No track playing!');
     const cur_spd = elements.speed.value;
-    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="spd_inp" type="number" min="0.1" max="${max_spd.toFixed(1)}" step="0.1" value="${cur_spd}"
@@ -113,7 +113,7 @@ document.getElementById('prog').addEventListener('click', debounce(() => {
         return throw_error('No track loaded!');
     }
 
-    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input id="ind_inp" type="text" inputmode="decimal" placeholder="92, 1:32, 32%" value="${Math.floor(cur)}" 
