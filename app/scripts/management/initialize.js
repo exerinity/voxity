@@ -63,7 +63,7 @@ const scrollIterationHandlers = new WeakMap();
 
 function init() {
     if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent)) {
-        msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. Since Voxity is a "two panel" design, only one panel would realistically fit.<br><br>Also, clean that dirty fucking screen.`);
+        msg(`Voxity is not recommended or optimized for mobile devices. For the best experience, please use a desktop. On smaller screens, the player controls appear above the lyrics and queue.<br><br>Also, clean that dirty fucking screen.`);
     }
 
     playUiSound(elements.welcomesound);
@@ -243,6 +243,14 @@ function init() {
         elements.speed_max.innerHTML = '2.0x';
         stat_up(`${icon} Speed: <strong>${elements.speed.value}x</strong>`);
         if (parseFloat(elements.speed.value) === 2.0) stat_up(`${icon} Speed: <strong>${elements.speed.value}x</strong> - to go higher, click "Speed" above the slider!`);
+    });
+
+    [elements.vol, elements.speed].forEach((slider) => {
+        slider.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            slider.value = slider.defaultValue;
+            slider.dispatchEvent(new Event('input', { bubbles: true }));
+        });
     });
 
     attachSliderTooltip(elements.vol, elements.volTooltip, { formatValue: formatVolumeTooltipText });
