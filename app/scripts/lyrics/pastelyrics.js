@@ -2,7 +2,7 @@ document.getElementById('pastelrc').addEventListener('click', debounce(() => {
     if (!metadata.title && !metadata.artist) {
         return throw_error('No track playing!');
     }
-    const modalPromise = msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
+    msg(`<div style="display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0; text-align: left;">
             <p style="margin: 0; color: #888;">Paste LRC, SRT, or VTT data here</p>
             <textarea id="lrc_textarea" placeholder="[00:00.00] Start\n[00:10.50] Next line" rows="10" 
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 0.95rem;"></textarea>
