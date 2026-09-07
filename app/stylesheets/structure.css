@@ -185,3 +185,58 @@ strong {
 .queue-item.drag-over {
     border: 2px dashed var(--lyric-color);
 }
+
+@media (max-width: 768px) {
+    .main {
+        flex-direction: column;
+        padding: 12px;
+    }
+
+    .left,
+    .right {
+        flex: none;
+        min-width: 0;
+    }
+
+    .header {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .inputg {
+        min-width: 0;
+    }
+
+    .inputg input {
+        box-sizing: border-box;
+    }
+
+    .metadata {
+        flex-wrap: wrap;
+    }
+
+    .metadata > div {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .slidez {
+        flex-basis: 100%;
+        min-width: 0;
+    }
+
+    .range-wrapper {
+        min-width: 0;
+    }
+
+    .queue-item .qi-left {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .queue-item .qi-num,
+    .queue-item .qi-remove {
+        flex-shrink: 0;
+    }
+}
