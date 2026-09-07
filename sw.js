@@ -1,4 +1,4 @@
-const CACHE_NAME = 'voxity98';
+const CACHE_NAME = 'voxity99';
 const sc = '/app/scripts/';
 const cs = '/app/stylesheets/';
 const ms = '/app/media/';
@@ -56,6 +56,7 @@ const FILES_TO_CACHE = [
   sc+'queue/drag.js',
   sc+'queue/handler.js',
   sc+'queue/loading.js',
+  sc+'queue/ctxmenu.js',
   sc+'queue/render.js',
   sc+'queue/shuffle.js',
   sc+'queue/statuses.js',
