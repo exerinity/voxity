@@ -60,15 +60,6 @@ and more!
 
 ## About this repository
 The code here is 1:1 of what you receive when loading the app in your browser. This repository is available mostly as-is, or in other words, I will probably not accept pull requests, feature requests, ideas or contributions unless it's *really* good. Nevertheless, if you can make a cool fork of Voxity, go ahead! I would love to see it!
-## Other repositories
-There is a simple Electron wrapper that exposes & obeys MPRIS control on Linux and works with [Music Presence for Discord](https://musicpresence.app): https://github.com/exerinity/voxity.electron
-
-The source code for the archived and now-removed remote control server is: https://github.com/exerinity/voxity.remote
-
-## License
-This project is released under the Unlicense, which is a public domain dedication. See the [license](LICENSE) file for details.
-
-(*this does not apply to Font Awesome icons, jsmediatags, Twemoji, or any other third party things used*)
 
 ## Browser?
 One of the best things about Voxity (and basically any PWA) is you don't need to install it, you only need a browser. But which browser works best with it? Well, from my personal testing:
